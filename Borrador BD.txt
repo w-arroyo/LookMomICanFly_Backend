@@ -2,6 +2,8 @@ PRODUCTOS:
 
 FABRICANTE (codigo,nombre)
 PRODUCTO (referencia, codigo_tipo_producto, nombre, precio, sku, fecha_lanzamiento, activo, codigo_fabricante)
+TALLA (codigo, talla, codigo_tipo_producto?)
+// HAY QUE HACER ESPECIALIZACION
 TIPO_PRODUCTO (codigo, nombre)
 COLOR (codigo, nombre)
 COLOR_PRODUCTO (referencia_producto, codigo_color)
@@ -16,7 +18,7 @@ PEDIDOS:
 
 COMPRA (id, codigo_cliente, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra)
 VENTA (id, codigo_cliente, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta)
-DETALLES_PEDIDO (numero, referencia_articulo, fecha, id_compra, id_venta) // no sé si añadirle de foráneas los id de compra y venta.
+DETALLES_PEDIDO (numero, referencia_articulo, codigo_talla, fecha, id_compra, id_venta) // no sé si añadirle de foráneas los id de compra y venta.
 ESTADO_COMPRA (codigo, descripcion)
 ESTADO_VENTA (codigo, descripcion)
 INCIDENCIA_COMPRA (codigo, id_compra, codigo_tipo_incidencia)
@@ -35,8 +37,8 @@ COMISION (codigo, porcentaje, defecto)
 PUJAS Y ANUNCIOS:
 // Almaceno la direccion para poder asignarla después al pedido en caso de venta.
 
-PUJA (referencia, ref_producto, id_cliente, precio, codigo_comision)
-ANUNCIO (referencia, ref_producto, id_cliente, precio, codigo_comision)
+PUJA (referencia, ref_producto, codigo_talla, id_cliente, precio, codigo_comision)
+ANUNCIO (referencia, ref_producto, codigo_talla, id_cliente, precio, codigo_comision)
 
 
 USUARIOS:
