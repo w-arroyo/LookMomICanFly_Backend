@@ -1,9 +1,9 @@
 PRODUCTOS:
 
 FABRICANTE (codigo,nombre)
-PRODUCTO (referencia, codigo_tipo_producto, nombre, precio, sku, fecha_lanzamiento, activo, codigo_fabricante)
+PRODUCTO (referencia, codigo_tipo_producto, nombre, sku, fecha_lanzamiento, activo, codigo_fabricante)
 TALLA (codigo, talla, codigo_tipo_producto?)
-// HAY QUE HACER ESPECIALIZACION
+// HAY QUE HACER ESPECIALIZACION ?? 1 H DESPUÉS ME DOY CUENTA QUE HAY QUE CAMBIAR MUCHO. LEER PAPEL PARA DOCUMENTACIÓN.
 TIPO_PRODUCTO (codigo, nombre)
 COLOR (codigo, nombre)
 COLOR_PRODUCTO (referencia_producto, codigo_color)
