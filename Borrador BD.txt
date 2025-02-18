@@ -1,21 +1,23 @@
 PRODUCTOS:
 
 FABRICANTE (codigo,nombre)
-PRODUCTO (referencia, codigo_categoria_producto, nombre, sku, fecha_lanzamiento, activo, codigo_fabricante)
+FABRICANTES_PRODUCTO(codigo_fabricante, referencia_producto)
+PRODUCTO (referencia, codigo_categoria_producto, nombre, sku, fecha_lanzamiento, activo)
 COLOR (codigo, nombre)
 COLOR_PRODUCTO (referencia_producto, codigo_color) // UNA TABLA PARA ASOCIAR UN PRODUCTO CON MÚLTIPLES COLORES.
 
 // HAY QUE HACER ESPECIALIZACION ?? 1 H DESPUÉS ME DOY CUENTA QUE HAY QUE CAMBIAR MUCHO. LEER PAPEL PARA DOCUMENTACIÓN.
 CATEGORIA_PRODUCTO (codigo, nombre)
-  - SNEAKERS (?)
+  - SNEAKERS (corte)
   - ROPA (categoria)
-  - ACCESORIO ()
-  - SKATEBOARD ()
+  - ACCESORIO (categoria) // todas estas subclases no me queda claro que atributos añadir
+  - SKATEBOARD (categoria, longitud)
   - MUSICA (codigo_soporte)
 
 TALLAJE (cod_categoria_producto, codigo_talla)
 TALLA (codigo, nombre)
-SOPORTE (codigo_soporte, descripcion)
+SUBCATEGORIA_PRODUCTO (codigo, descripcion, codigo_categoria_producto)
+// SOPORTE (codigo_soporte, descripcion)
 
 
 
@@ -24,13 +26,24 @@ PEDIDOS:
 // ¿Una compra y su venta generada comparten número de pedido? MEJOR SEPARAR COMPRAS DE VENTAS.
 // ¿Todas las incidencias en una misma tabla? MEJOR DIVIDIR. COMPRAS Y VENTAS NO TIENEN LOS MISMOS TIPOS. SE FILTRA MEJOR.
 
-// COMPRA (id, id_puja, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra)
-// VENTA (id, codigo_cliente, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta)
-DETALLES_PEDIDO (numero, referencia_articulo, codigo_talla, fecha, id_puja, id_anuncio, codigo_estado_pedido) // 
-ESTADO_PEDIDO (codigo, descripcion)
-INCIDENCIA_COMPRA (codigo, id_compra, codigo_tipo_incidencia)
-INCIDENCIA_VENTA (codigo, id_venta, codigo_tipo_incidencia)
-TIPO_INCIDENCIA (codigo, descripcion)
+// COMPRA (id, id_pedido, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra)
+// VENTA (id, id_pedido, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta)
+DETALLES_PEDIDO (numero, referencia_articulo, codigo_talla, fecha, id_puja, id_anuncio) 
+ESTADO_COMPRA (codigo, descripcion) // ejemplo: 1, producto aún no enviado por el comprador
+ESTADO_VENTA (codigo, descripcion) // ejemplo: 1, producto aún verificado
+// NO SÉ SI HACER TAMBIÉN UNA CATEGORÍA PARA
+// QUIZA INCIDENCIAS NO HACE FALTA SI SE INCLUYEN EN ESTADO DEL PEDIDO
+// INCIDENCIA_COMPRA (codigo, id_compra, codigo_tipo_incidencia)
+// INCIDENCIA_VENTA (codigo, id_venta, codigo_tipo_incidencia) 
+// TIPO_INCIDENCIA (codigo, descripcion)
+
+ENVÍOS:
+
+TIPO_ENVIO (codigo, descripcion, precio) // no se si asociar el precio con el tipo directamente
+EMPRESA_ENVIO (codigo, nombre)
+ENVIO (codigo, cod_empresa_envio)
+SEGUIMIENTO_ENVIO (id, tracking)
+// AQUI FALTA AUN ACLARAR EL TEMA
 
 COMISIONES:
 
@@ -40,14 +53,15 @@ COMISIONES:
 // QUIZA LA TABLA DE COMISION SOBRE Y SE PUEDA ALMACENAR EL % DIRECTAMENTE EN LA COMPRA/VENTA.
 
 COMISION (codigo, porcentaje, defecto)
+TIPO_COMISION (codigo, descripcion)
 
 PUJAS Y ANUNCIOS:
 // SI ESTÁ FINALIZADO SIGNIFICA QUE SE HA COMPRADO/VENDIDO.
 // NO TIENE SENTIDO CREAR CAMPOS DE COMPRA Y VENTA.
 // ASI ADEMAS SE GUARDA UN HISTORIAL DE PUJAS / ANUNCIOS.
 
-PUJA (referencia, ref_producto, talla, id_cliente, precio, codigo_comision, activa, finalizada)
-ANUNCIO (referencia, ref_producto, talla, id_cliente, precio, codigo_comision, actio, finalizado)
+PUJA (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision, activa, finalizada)
+ANUNCIO (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision, actio, finalizado)
 
 
 USUARIOS:
