@@ -26,8 +26,8 @@ PEDIDOS:
 // ¿Una compra y su venta generada comparten número de pedido? MEJOR SEPARAR COMPRAS DE VENTAS.
 // ¿Todas las incidencias en una misma tabla? MEJOR DIVIDIR. COMPRAS Y VENTAS NO TIENEN LOS MISMOS TIPOS. SE FILTRA MEJOR.
 
-// COMPRA (id, id_pedido, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra)
-// VENTA (id, id_pedido, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta)
+// COMPRA (id, id_pedido, id_seguimiento_envio, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra)
+// VENTA (id, id_pedido, id_seguimiento_envio, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta)
 DETALLES_PEDIDO (numero, referencia_articulo, codigo_talla, fecha, id_puja, id_anuncio) 
 ESTADO_COMPRA (codigo, descripcion) // ejemplo: 1, producto aún no enviado por el comprador
 ESTADO_VENTA (codigo, descripcion) // ejemplo: 1, producto aún verificado
@@ -39,11 +39,9 @@ ESTADO_VENTA (codigo, descripcion) // ejemplo: 1, producto aún verificado
 
 ENVÍOS:
 
-TIPO_ENVIO (codigo, descripcion, precio) // no se si asociar el precio con el tipo directamente
+TIPO_ENVIO (codigo, descripcion, precio, codigo_empresa_envio, activo)
 EMPRESA_ENVIO (codigo, nombre)
-ENVIO (codigo, cod_empresa_envio)
 SEGUIMIENTO_ENVIO (id, tracking)
-// AQUI FALTA AUN ACLARAR EL TEMA
 
 COMISIONES:
 
@@ -60,8 +58,8 @@ PUJAS Y ANUNCIOS:
 // NO TIENE SENTIDO CREAR CAMPOS DE COMPRA Y VENTA.
 // ASI ADEMAS SE GUARDA UN HISTORIAL DE PUJAS / ANUNCIOS.
 
-PUJA (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision, activa, finalizada)
-ANUNCIO (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision, actio, finalizado)
+PUJA (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision, codigo_tipo_envio, activa, finalizada)
+ANUNCIO (id, ref_producto, codigo_talla, id_cliente, precio, codigo_comision,codigo_tipo_envio, activo, finalizado)
 
 
 USUARIOS:
