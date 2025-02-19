@@ -70,9 +70,9 @@ jobs:
     - name: Run SonarQube analysis
       run: |
         ./gradlew sonar \
-          -Dsonar.projectKey=YOUR_PROJECT_KEY \
-          -Dsonar.host.url=YOUR_SONARQUBE_URL \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.projectKey=w-arroyo_LookMomICanFly \
+          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.login=${{ SONARCLOUD }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
