@@ -72,7 +72,8 @@ jobs:
         ./gradlew sonar \
           -Dsonar.projectKey=w-arroyo_LookMomICanFly \
           -Dsonar.host.url=http://localhost:9000 \
-          -Dsonar.login=${{ SONARCLOUD }}
+          -Dsonar.login=${{ secrets.SONARCLOUD }} \
+          -Dsonar.qualitygate.wait=true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
