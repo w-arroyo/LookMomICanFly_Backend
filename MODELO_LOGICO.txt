@@ -29,7 +29,3 @@ USUARIO: id (PK), email, password, nombre, activo, codigo_direccion_envio_defect
 TIPO_USUARIO: codigo (PK), descripcion.
 PRODUCTOS_FAVORITOS: referencia_producto (FK a PRODUCTO), id_cliente (FK a USUARIO).
 DIRECCION: codigo (PK), id_cliente (FK a USUARIO), activa, nombre_completo, calle, zip, ciudad, pais.
-COMPRAS_USUARIO: id_compra (FK a COMPRA), id_usuario (FK a USUARIO).
-VENTAS_USUARIO: id_venta (FK a VENTA), id_usuario (FK a USUARIO).
-PUJAS_USUARIO: id_puja (FK a PUJA), id_usuario (FK a USUARIO).
-ANUNCIOS_USUARIO: id_anuncio (FK a ANUNCIO), id_usuario (FK a USUARIO).
