@@ -37,6 +37,8 @@ public class User {
     private LocalDateTime registrationDate= LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "user_type_id", nullable = false)
+    @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
     private UserType userType;
+
+    private String nameAsString;
 }
