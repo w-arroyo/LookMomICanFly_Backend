@@ -30,11 +30,13 @@ public class User {
     @Column (nullable = false)
     private byte [] name;
 
-    @Column (nullable = false)
+    @Column (nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean active = true;
 
-    @Column (nullable = false)
+    @Column (name = "registration_date",nullable = false, updatable = false)
     private LocalDateTime registrationDate= LocalDateTime.now();
 
-
+    @ManyToOne
+    @JoinColumn(name = "user_type_id", nullable = false)
+    private UserType userType;
 }
