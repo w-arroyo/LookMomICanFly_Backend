@@ -37,8 +37,6 @@ public class UserService {
         catch (Exception ex){
             return null;
         }
-
-
     }
 
 }
