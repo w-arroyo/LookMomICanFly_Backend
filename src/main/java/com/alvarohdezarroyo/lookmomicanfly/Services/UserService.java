@@ -27,7 +27,7 @@ public class UserService {
 
     public User saveUser(User user) {
         if(user.getEmail().trim().isBlank() || user.getNameAsString().trim().isBlank() || user.getPassword().trim().isBlank()){
-            throw new IllegalArgumentException("Los campos no pueden estar vacíos");
+            throw new IllegalArgumentException("Empty fields are not allowed");
         }
         try {
             user.setName(AESEncryptionUtil.encrypt(user.getNameAsString()).getBytes());
@@ -35,7 +35,7 @@ public class UserService {
             return userRepository.save(user);
         }
         catch (Exception ex){
-            throw new IllegalArgumentException("Error del servidor.");
+            throw new IllegalArgumentException("Server error at UserService.saveUser");
         }
     }
 

@@ -24,11 +24,11 @@ public class UserController {
     public ResponseEntity<String> createUser(@RequestBody User user){
         try {
             userService.saveUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Creado");
+            return ResponseEntity.status(HttpStatus.CREATED).body("User created correctly.");
         }
         catch (IllegalArgumentException ex){
-            System.out.println("Error al registrar");
-            return ResponseEntity.status(500).body("Error al registrar");
+            System.out.println("Server error when saving new user");
+            return ResponseEntity.status(500).body("Server error when saving new user");
         }
     }
 }

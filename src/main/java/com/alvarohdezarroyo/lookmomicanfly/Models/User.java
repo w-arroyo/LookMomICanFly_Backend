@@ -23,7 +23,7 @@ public class User {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "El email es obligatorio vacío.")
+    @NotBlank(message = "Email is mandatory.")
     @Email
     @Column (nullable = false, unique = true)
     private String email;
@@ -42,7 +42,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
-    private UserType userType = new UserType(1, "Usuario");
+    private UserType userType = new UserType(1, "Standard User");
 
     @OneToOne (mappedBy = "user")
     @JoinColumn(name = "default_shipping_address_id", nullable = true)
@@ -53,6 +53,6 @@ public class User {
     private Address defaultBillingAddress;
 
     @Transient // this field does not belong to the database
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "Name is mandatory")
     private String nameAsString;
 }

@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,4 +40,24 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Transient
+    @NotBlank(message = "Name is mandatory.")
+    private String fullNameAsString;
+
+    @Transient
+    @NotBlank(message = "Street info is mandatory")
+    private String streetAsString;
+
+    @Transient
+    @NotBlank(message = "Zip code is mandatory")
+    private String zipCodeAsString;
+
+    @Transient
+    @NotBlank(message = "City is mandatory")
+    private String cityAsString;
+
+    @Transient
+    @NotBlank(message = "Country is mandatory")
+    private String countryAsString;
 }
