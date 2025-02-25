@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,8 @@ public class User {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "El email es obligatorio vacío.")
+    @Email
     @Column (nullable = false, unique = true)
     private String email;
 
@@ -38,7 +42,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
-    private UserType userType;
+    private UserType userType = new UserType(1, "Usuario");
 
     @OneToOne (mappedBy = "user")
     @JoinColumn(name = "default_shipping_address_id", nullable = true)
@@ -49,5 +53,6 @@ public class User {
     private Address defaultBillingAddress;
 
     @Transient // this field does not belong to the database
+    @NotBlank(message = "El nombre es obligatorio")
     private String nameAsString;
 }
