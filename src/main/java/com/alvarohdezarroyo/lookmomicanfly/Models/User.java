@@ -2,6 +2,8 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,17 +44,14 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
-    private UserType userType = new UserType(1, "Standard User");
-
-    @OneToOne (mappedBy = "user")
-    @JoinColumn(name = "default_shipping_address_id", nullable = true)
-    private Address defaultShippingAddress;
-
-    @OneToOne
-    @JoinColumn(name = "default_billing_address_id", nullable = true)
-    private Address defaultBillingAddress;
+    private UserType userType;
 
     @Transient // this field does not belong to the database
     @NotBlank(message = "Name is mandatory")
     private String nameAsString;
+
+    @Transient
+    @Min(value = 1, message = "PK MUST BE POSITIVE")
+    @Max(value = 2, message = "PK MUST BE EITHER 1 OR 2")
+    private Integer userTypeId;
 }
