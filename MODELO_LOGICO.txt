@@ -1,21 +1,24 @@
+Modelo lógico:
+
 FABRICANTE: codigo (PK), nombre.
 FABRICANTES_PRODUCTO: codigo_fabricante (FK a FABRICANTE), referencia_producto (FK a PRODUCTO).
 PRODUCTO: referencia (PK), codigo_categoria_producto (FK a CATEGORIA_PRODUCTO), nombre, año_lanzamiento, activo.
 COLOR: codigo (PK), nombre.
 COLOR_PRODUCTO: referencia_producto (FK a PRODUCTO), codigo_color (FK a COLOR).
 CATEGORIA_PRODUCTO (Superclase): codigo (PK), nombre.
-	- SNEAKERS: codigo_categoria_producto (PK, FK), sku.
-	- ROPA: codigo_categoria_producto (PK, FK), temporada.
-	- ACCESORIO: codigo_categoria_producto (PK, FK), material.
-	- COLECCIONABLE: codigo_categoria_producto (PK, FK), nombre_coleccion.
-	- SKATEBOARD: codigo_categoria_producto (PK, FK), longitud.
-	- MUSICA: codigo_categoria_producto (PK, FK), formato.
+- SNEAKERS: codigo_categoria_producto (PK, FK), sku.
+- ROPA: codigo_categoria_producto (PK, FK), temporada.
+- ACCESORIO: codigo_categoria_producto (PK, FK), material.
+- COLECCIONABLE: codigo_categoria_producto (PK, FK), nombre_coleccion.
+- SKATEBOARD: codigo_categoria_producto (PK, FK), longitud.
+- MUSICA: codigo_categoria_producto (PK, FK), formato.
+
 SUBCATEGORIA_PRODUCTO: codigo (PK), descripcion, codigo_categoria_producto (FK a CATEGORIA_PRODUCTO).
 TALLAJE: cod_categoria_producto (FK a CATEGORIA_PRODUCTO), codigo_talla (FK a TALLA).
 TALLA: codigo (PK), nombre.
-COMPRA: id (PK), id_pedido, id_seguimiento_envio, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_compra.
-VENTA: id (PK), id_pedido, id_seguimiento_envio, codigo_direccion_envio, codigo_direccion_facturacion, codigo_estado_venta.
-DETALLES_PEDIDO: numero (PK), fecha, id_puja, id_anuncio.
+COMPRA: id (PK), id_seguimiento_envio (FK A SEGUIMIENTO_ENVIO), codigo_direccion_envio (FK A DIRECCION), codigo_direccion_facturacion (FK A DIRECCION), codigo_estado_compra (FK a ESTADO_COMPRA).
+VENTA: id (PK), id_seguimiento_envio (FK A SEGUIMIENTO_ENVIO), codigo_direccion_envio (FK A DIRECCION), codigo_direccion_facturacion (FK A DIRECCION), codigo_estado_venta  (FK a ESTADO_VENTA).
+DETALLES_PEDIDO: numero (PK), fecha, id_puja (FK A PUJA), id_anuncio (FK A ANUNCIO).
 ESTADO_COMPRA: codigo (PK), descripcion.
 ESTADO_VENTA: codigo (PK), descripcion.
 TIPO_ENVIO: codigo (PK), descripcion, precio, codigo_empresa_envio (FK a EMPRESA_ENVIO), activo.
@@ -25,7 +28,7 @@ COMISION: codigo (PK), porcentaje, defecto, codigo_tipo_comision (FK a TIPO_COMI
 TIPO_COMISION: codigo (PK), descripcion.
 PUJA: id (PK), ref_producto (FK a PRODUCTO), codigo_talla (FK a TALLA), id_cliente (FK a USUARIO), precio, codigo_comision (FK a COMISION), codigo_tipo_envio (FK a TIPO_ENVIO), activo, finalizada.
 ANUNCIO: id (PK), ref_producto (FK a PRODUCTO), codigo_talla (FK a TALLA), id_cliente (FK a USUARIO), precio, codigo_comision (FK a COMISION), codigo_tipo_envio (FK a TIPO_ENVIO), activo, finalizado.
-USUARIO: id (PK), email, password, nombre, activo, codigo_direccion_envio_defecto, codigo_direccion_facturacion_defecto, fecha_alta, codigo_tipo_usuario (FK a TIPO_USUARIO).
+USUARIO: id (PK), email, password, nombre, activo, fecha_alta, codigo_tipo_usuario (FK a TIPO_USUARIO).
 TIPO_USUARIO: codigo (PK), descripcion.
 PRODUCTOS_FAVORITOS: referencia_producto (FK a PRODUCTO), id_cliente (FK a USUARIO).
 DIRECCION: codigo (PK), id_cliente (FK a USUARIO), activa, nombre_completo, calle, zip, ciudad, pais.
