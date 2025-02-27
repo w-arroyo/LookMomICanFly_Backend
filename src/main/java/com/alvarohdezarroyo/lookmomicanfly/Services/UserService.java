@@ -45,7 +45,7 @@ public class UserService {
         if(user.getEmail().trim().isBlank() || user.getNameAsString().trim().isBlank() || user.getPassword().trim().isBlank() || user.getUserTypeId()==null){
             throw new EmptyFieldsException("Empty fields are not allowed");
         }
-        if(!checkUserByEmail(user.getEmail())){
+        if(checkUserByEmail(user.getEmail())){
             throw new EmailAlreadyInUse("Email already in use.");
         }
         try {

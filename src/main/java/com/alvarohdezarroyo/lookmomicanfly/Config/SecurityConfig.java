@@ -26,7 +26,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
                     auth.requestMatchers("/api/users/login").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/users/deactivate/{email}").permitAll();
+                    auth.requestMatchers("/api/addresses/save").permitAll();
+                    //auth.requestMatchers(HttpMethod.GET, "/api/users/deactivate/{email}").permitAll();
                     auth.anyRequest().authenticated(); // any other route requires authorization
                 });
         return http.build();
