@@ -58,7 +58,7 @@ public class UserService {
             throw new UserNotFoundException("USERTYPE PK DOES NOT EXIST");
         }
         catch (Exception ex){
-            throw new IllegalArgumentException("Server error at UserService.saveUser");
+            throw new RuntimeException("Server error at UserService.saveUser");
         }
     }
     @Transactional

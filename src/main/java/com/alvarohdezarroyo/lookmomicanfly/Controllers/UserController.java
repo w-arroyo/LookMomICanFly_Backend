@@ -39,7 +39,7 @@ public class UserController {
         catch (EmailAlreadyInUse e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already in use.");
         }
-        catch (IllegalArgumentException ex){
+        catch (RuntimeException ex){
             return ResponseEntity.status(500).body("Server error when saving new user.");
         }
     }

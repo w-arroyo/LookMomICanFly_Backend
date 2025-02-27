@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,4 +61,8 @@ public class Address {
     @Transient
     @NotBlank(message = "Country is mandatory")
     private String countryAsString;
+
+    @Transient
+    @Min(value = 1, message = "FK must be positive.")
+    private Integer userId;
 }
