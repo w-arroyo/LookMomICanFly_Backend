@@ -16,12 +16,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/addresses")
-public class AddressRepository {
+public class AddressController {
 
     @Autowired
     private final AddressService addressService;
 
-    public AddressRepository(AddressService addressService) {
+    public AddressController(AddressService addressService) {
         this.addressService = addressService;
     }
 
