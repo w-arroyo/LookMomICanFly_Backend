@@ -63,22 +63,23 @@ public class UserService {
         }
     }
     @Transactional
-    public User deactivateAccount(String email){
-        final User user=userRepository.findByEmail(email);
-        if(user!=null){
-
-            user.setActive(false);
-
-            return userRepository.save(user);
+    public void deactivateAccount(String email){
+        final User user=userRepository.findByEmail(email).orElseThrow(
+                ()-> new UserNotFoundException("Email is not associated with any user account")
+        );
+        user.setActive(false);
+        try {
+            userRepository.save(user);
         }
-        throw new UserNotFoundException("USER NOT FOUND");
+        catch (Exception e){
+            throw new RuntimeException("Server error when updating the user");
+        }
     }
 
     @Transactional
     public List<Address> getUserAddresses(int id){
-        final User user=userRepository.findById(id).orElseThrow(
+        return userRepository.findById(id).orElseThrow(
                 ()-> new UserNotFoundException("Email is not associated with any user account in the DB.")
-        );
-        return user.getAddresses();
+        ).getAddresses();
     }
 }
