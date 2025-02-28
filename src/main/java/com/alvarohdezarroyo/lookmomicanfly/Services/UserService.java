@@ -1,9 +1,10 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUse;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserTypeNotFound;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserTypeNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Models.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
@@ -33,7 +34,7 @@ public class UserService {
     }
 
     private UserType returnUserTypeById(int idUserType){
-        return userTypeRepository.findById(idUserType).orElseThrow(()->new UserTypeNotFound("USERTYPE WITH ID "+idUserType+" DOES NOT EXIST"));
+        return userTypeRepository.findById(idUserType).orElseThrow(()->new UserTypeNotFoundException("USERTYPE WITH ID "+idUserType+" DOES NOT EXIST"));
     }
 
     private boolean checkUserByEmail(String email){
@@ -46,7 +47,7 @@ public class UserService {
             throw new EmptyFieldsException("Empty fields are not allowed");
         }
         if(checkUserByEmail(user.getEmail())){
-            throw new EmailAlreadyInUse("Email already in use.");
+            throw new EmailAlreadyInUseException("Email already in use.");
         }
         try {
             user.setUserType(returnUserTypeById(user.getUserTypeId()));
@@ -54,8 +55,8 @@ public class UserService {
             user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
             return userRepository.save(user);
         }
-        catch (UserTypeNotFound ex){
-            throw new UserNotFoundException("USERTYPE PK DOES NOT EXIST");
+        catch (UserTypeNotFoundException ex){
+            throw new UserTypeNotFoundException("USERTYPE PK DOES NOT EXIST");
         }
         catch (Exception ex){
             throw new RuntimeException("Server error at UserService.saveUser");
@@ -71,5 +72,13 @@ public class UserService {
             return userRepository.save(user);
         }
         throw new UserNotFoundException("USER NOT FOUND");
+    }
+
+    @Transactional
+    public List<Address> getUserAddresses(int id){
+        final User user=userRepository.findById(id).orElseThrow(
+                ()-> new UserNotFoundException("Email is not associated with any user account in the DB.")
+        );
+        return user.getAddresses();
     }
 }

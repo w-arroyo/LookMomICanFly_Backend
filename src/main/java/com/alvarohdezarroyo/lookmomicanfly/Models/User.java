@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table (name = "users")
@@ -45,6 +46,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
     private UserType userType;
+
+    @OneToMany (mappedBy = "user")
+    private List<Address> addresses;
 
     @Transient // this field does not belong to the database
     @NotBlank(message = "Name is mandatory")

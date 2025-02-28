@@ -15,15 +15,14 @@ CREATE TABLE users (
     FOREIGN KEY (user_type_id) REFERENCES user_types(id)
 );
 
--- 3. Crear la tabla addresses
 CREATE TABLE addresses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     active BOOLEAN DEFAULT TRUE,
     full_name VARCHAR(255) NOT NULL,
     street VARCHAR(255) NOT NULL,
-    zip_code VARCHAR(20) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    country VARCHAR(100) NOT NULL,
+    zip_code VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

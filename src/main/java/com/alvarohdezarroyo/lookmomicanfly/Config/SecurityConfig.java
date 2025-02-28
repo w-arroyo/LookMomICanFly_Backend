@@ -28,6 +28,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/login").permitAll();
                     auth.requestMatchers("/api/addresses/save").permitAll();
                     //auth.requestMatchers(HttpMethod.GET, "/api/users/deactivate/{email}").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/users/addresses/{userId}").permitAll();
                     auth.anyRequest().authenticated(); // any other route requires authorization
                 });
         return http.build();
