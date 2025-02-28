@@ -28,6 +28,7 @@ public class UserController {
 
     @PostMapping ("/register")
     public ResponseEntity<Map<String,Object>> createUser(@RequestBody User user){
+        // maybe creating UserDTO would help
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("userId",userService.saveUser(user).getId()));
         }
@@ -46,9 +47,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginAuthentication(@RequestBody User user){
+    //needs multiple improvements like better exception handling
+    public ResponseEntity<String> loginAuthentication(@RequestBody String email, String password){
         try {
-            if(loginService.authenticateUser(user).equals("SUCCESS")){
+            if(loginService.authenticateUser(email, password).equals("SUCCESS")){
                 return ResponseEntity.status(HttpStatus.OK).body("Login successful");
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials.");
@@ -78,11 +80,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/addresses/{userId}")
-    public ResponseEntity<Map<String, Object>> getUserAddresses(@PathVariable int userId){
+    @GetMapping("/addresses/{email}")
+    public ResponseEntity<Map<String, Object>> getUserAddresses(@PathVariable String email){
         try {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    Map.of("addresses", userService.getUserAddresses(userId))
+                    Map.of("addresses", userService.getUserAddresses(email))
             );
         }
         catch (UserNotFoundException ex){

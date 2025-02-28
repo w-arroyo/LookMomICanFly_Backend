@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
@@ -26,16 +27,16 @@ public class AddressController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String, Object>> saveAddress(@RequestBody Address address){
+    public ResponseEntity <String> saveAddress(@RequestBody AddressDTO address, int userId){
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("address_id",addressService.saveAddress(address).getId()));
+            addressService.saveAddress(address,userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("SUCCESSFUL");
         } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","User Id not found."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Id not found.");
         } catch (EmptyFieldsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Empty fields are not allowed."));
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("message","Server error."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty fields are not allowed.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Server error.");
         }
     }
 }

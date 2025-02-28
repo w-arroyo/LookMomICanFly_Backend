@@ -1,4 +1,4 @@
-package com.alvarohdezarroyo.lookmomicanfly.Utils;
+package com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

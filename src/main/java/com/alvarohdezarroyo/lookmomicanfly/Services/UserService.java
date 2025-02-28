@@ -10,8 +10,9 @@ import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Models.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserTypeRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.AESEncryptionUtil;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.PasswordUtils;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,14 +80,14 @@ public class UserService {
         }
     }
     @Transactional
-    public AddressDTO[] getUserAddresses(int id) throws Exception {
-        final List<Address> addresses = userRepository.findById(id).orElseThrow(
+    public AddressDTO[] getUserAddresses(String email) throws Exception {
+        final List<Address> addresses = userRepository.findByEmail(email).orElseThrow(
                 ()-> new UserNotFoundException("Email is not associated with any user account in the DB.")
         ).getAddresses();
         // meter excepcion o algo pa controlar que no tenga direcciones? que sea generica para usar mas veces
         AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];
         for (int address = 0; address < addresses.size(); address++) {
-            dtoAddresses[address]=addressService.decryptAllFieldsOfAnAddress(addresses.get(address));
+            dtoAddresses[address]= AddressMapper.toDTO(addresses.get(address));
         }
         return dtoAddresses;
     }
