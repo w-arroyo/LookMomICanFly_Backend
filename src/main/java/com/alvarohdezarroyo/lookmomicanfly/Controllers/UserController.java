@@ -27,22 +27,21 @@ public class UserController {
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<String> createUser(@RequestBody User user){
+    public ResponseEntity<Map<String,Object>> createUser(@RequestBody User user){
         try {
-            userService.saveUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body("User created correctly");
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("userId",userService.saveUser(user).getId()));
         }
         catch (UserTypeNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User type ID not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","User type ID not found"));
         }
         catch (EmptyFieldsException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty fields");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Empty fields"));
         }
         catch (EmailAlreadyInUseException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already in use");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Email is already in use"));
         }
         catch (RuntimeException ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error when saving new user");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message","Server error when saving new user"));
         }
     }
 
@@ -52,16 +51,16 @@ public class UserController {
             if(loginService.authenticateUser(user).equals("SUCCESS")){
                 return ResponseEntity.status(HttpStatus.OK).body("Login successful");
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials.");
         }
         catch (UserNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("USER NOT FOUND");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist.");
         }
         catch (EmptyFieldsException ex){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("EMPTY FIELDS");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty fields are not allowed.");
         }
         catch (Exception ex){
-            return ResponseEntity.status(500).body("Server error.");
+            return ResponseEntity.status(500).body("Server error. Try again later.");
         }
     }
 

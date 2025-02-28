@@ -21,13 +21,15 @@ public class LoginService {
         if(user.getEmail().trim().isBlank() || user.getPassword().trim().isBlank()){
             throw new EmptyFieldsException("EMPTY FIELDS ARE NOT ALLOWED");
         }
-        final User foundUser=userRepository.findByEmail(user.getEmail());
-        if(foundUser!=null){
-            if(PasswordUtils.checkPassword(user.getPassword(), foundUser.getPassword())){
-                return "SUCCESS";
-            }
-            return "INVALID CREDENTIALS";
+        final User foundUser=userRepository.findByEmail(user.getEmail()).orElseThrow(
+                ()-> new UserNotFoundException("Email does not belong to any user account.")
+        );
+        if(!foundUser.getActive()){
+            throw new UserNotFoundException("Your account is deactivated.");
         }
-        throw new UserNotFoundException("USER NOT FOUND");
+        if(PasswordUtils.checkPassword(user.getPassword(), foundUser.getPassword())){
+            return "SUCCESS";
+        }
+        return "INVALID CREDENTIALS";
     }
 }

@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
@@ -23,10 +24,12 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
+    private final AddressService addressService;
 
-    UserService(UserRepository userRepository, UserTypeRepository userTypeRepository){
+    UserService(UserRepository userRepository, UserTypeRepository userTypeRepository, AddressService addressService){
         this.userRepository=userRepository;
         this.userTypeRepository = userTypeRepository;
+        this.addressService = addressService;
     }
 
     protected List<User> findAllUsers(){
@@ -46,7 +49,7 @@ public class UserService {
         if(user.getEmail().trim().isBlank() || user.getNameAsString().trim().isBlank() || user.getPassword().trim().isBlank() || user.getUserTypeId()==null){
             throw new EmptyFieldsException("Empty fields are not allowed");
         }
-        if(checkUserByEmail(user.getEmail())){
+        if(!checkUserByEmail(user.getEmail())){
             throw new EmailAlreadyInUseException("Email already in use.");
         }
         try {
@@ -75,11 +78,16 @@ public class UserService {
             throw new RuntimeException("Server error when updating the user");
         }
     }
-
     @Transactional
-    public List<Address> getUserAddresses(int id){
-        return userRepository.findById(id).orElseThrow(
+    public AddressDTO[] getUserAddresses(int id) throws Exception {
+        final List<Address> addresses = userRepository.findById(id).orElseThrow(
                 ()-> new UserNotFoundException("Email is not associated with any user account in the DB.")
         ).getAddresses();
+        // meter excepcion o algo pa controlar que no tenga direcciones? que sea generica para usar mas veces
+        AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];
+        for (int address = 0; address < addresses.size(); address++) {
+            dtoAddresses[address]=addressService.decryptAllFieldsOfAnAddress(addresses.get(address));
+        }
+        return dtoAddresses;
     }
 }

@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
@@ -10,7 +11,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.AESEncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.rmi.UnexpectedException;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class AddressService {
@@ -51,5 +52,15 @@ public class AddressService {
         } catch (Exception e) {
             throw new RuntimeException("Server error");
         }
+    }
+    public AddressDTO decryptAllFieldsOfAnAddress(Address address) throws Exception {
+        AddressDTO addressDTO=new AddressDTO();
+        addressDTO.setId(address.getId());
+        addressDTO.setFullName(AESEncryptionUtil.decrypt(new String(address.getFullName(), StandardCharsets.UTF_8)));
+        addressDTO.setStreet(AESEncryptionUtil.decrypt(new String(address.getStreet(), StandardCharsets.UTF_8)));
+        addressDTO.setCity(AESEncryptionUtil.decrypt(new String(address.getCity(), StandardCharsets.UTF_8)));
+        addressDTO.setCountry(AESEncryptionUtil.decrypt(new String(address.getCountry(), StandardCharsets.UTF_8)));
+        addressDTO.setZipCode(AESEncryptionUtil.decrypt(new String(address.getZipCode(), StandardCharsets.UTF_8)));
+        return addressDTO;
     }
 }
