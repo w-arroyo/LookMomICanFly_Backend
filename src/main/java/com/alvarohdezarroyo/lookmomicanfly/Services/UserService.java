@@ -1,10 +1,10 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserTypeNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.DataNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Models.UserType;
@@ -13,6 +13,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserTypeRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,42 +26,41 @@ public class UserService {
     @Autowired
     private final UserRepository userRepository;
     private final UserTypeRepository userTypeRepository;
-    private final AddressService addressService;
 
-    UserService(UserRepository userRepository, UserTypeRepository userTypeRepository, AddressService addressService){
+    UserService(UserRepository userRepository, UserTypeRepository userTypeRepository){
         this.userRepository=userRepository;
         this.userTypeRepository = userTypeRepository;
-        this.addressService = addressService;
     }
 
-    protected List<User> findAllUsers(){
-        return userRepository.findAll();
+    public User checkIfUserIdExists(int id){
+        return userRepository.findById(id).orElseThrow(
+                ()-> new DataNotFoundException("User not found")
+        );
     }
 
     private UserType returnUserTypeById(int idUserType){
-        return userTypeRepository.findById(idUserType).orElseThrow(()->new UserTypeNotFoundException("USERTYPE WITH ID "+idUserType+" DOES NOT EXIST"));
+        return userTypeRepository.findById(idUserType).orElseThrow(()->new DataNotFoundException("USERTYPE WITH ID "+idUserType+" DOES NOT EXIST"));
     }
 
-    private boolean checkUserByEmail(String email){
-        return userRepository.findByEmail(email) != null;
+    public User checkUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new DataNotFoundException("Email does not belong to any user account")
+        );
     }
 
     @Transactional
-    public User saveUser(User user) {
-        if(user.getEmail().trim().isBlank() || user.getNameAsString().trim().isBlank() || user.getPassword().trim().isBlank() || user.getUserTypeId()==null){
+    public User saveUser(UserDTO user) {
+        if(user.getEmail().trim().isBlank() || user.getName().trim().isBlank() || user.getPassword().trim().isBlank() || user.getUserTypeId()==null){
             throw new EmptyFieldsException("Empty fields are not allowed");
         }
-        if(!checkUserByEmail(user.getEmail())){
+        if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new EmailAlreadyInUseException("Email already in use.");
         }
         try {
-            user.setUserType(returnUserTypeById(user.getUserTypeId()));
-            user.setName(AESEncryptionUtil.encrypt(user.getNameAsString()).getBytes());
-            user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
-            return userRepository.save(user);
+            return userRepository.save(UserMapper.toUser(user,returnUserTypeById(user.getUserTypeId())));
         }
-        catch (UserTypeNotFoundException ex){
-            throw new UserTypeNotFoundException("USERTYPE PK DOES NOT EXIST");
+        catch (DataNotFoundException ex){
+            throw new DataNotFoundException("USERTYPE PK DOES NOT EXIST");
         }
         catch (Exception ex){
             throw new RuntimeException("Server error at UserService.saveUser");
@@ -69,7 +69,7 @@ public class UserService {
     @Transactional
     public void deactivateAccount(String email){
         final User user=userRepository.findByEmail(email).orElseThrow(
-                ()-> new UserNotFoundException("Email is not associated with any user account")
+                ()-> new DataNotFoundException("Email is not associated with any user account")
         );
         user.setActive(false);
         try {
@@ -82,7 +82,7 @@ public class UserService {
     @Transactional
     public AddressDTO[] getUserAddresses(String email) throws Exception {
         final List<Address> addresses = userRepository.findByEmail(email).orElseThrow(
-                ()-> new UserNotFoundException("Email is not associated with any user account in the DB.")
+                ()-> new DataNotFoundException("Email is not associated with any user account in the DB.")
         ).getAddresses();
         // meter excepcion o algo pa controlar que no tenga direcciones? que sea generica para usar mas veces
         AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];

@@ -1,10 +1,11 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UserTypeNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Models.User;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.DataNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.LoginUnsuccessfulException;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.LoginService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,12 @@ public class UserController {
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<Map<String,Object>> createUser(@RequestBody User user){
-        // maybe creating UserDTO would help
+    public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user){
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("userId",userService.saveUser(user).getId()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id:",userService.saveUser(user).getId()));
         }
-        catch (UserTypeNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","User type ID not found"));
-        }
-        catch (EmptyFieldsException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Empty fields"));
+        catch (DataNotFoundException | EmptyFieldsException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
         catch (EmailAlreadyInUseException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Email is already in use"));
@@ -48,15 +45,13 @@ public class UserController {
 
     @PostMapping("/login")
     //needs multiple improvements like better exception handling
-    public ResponseEntity<String> loginAuthentication(@RequestBody String email, String password){
+    public ResponseEntity<String> loginAuthentication(@RequestBody LoginRequest loginRequest){
         try {
-            if(loginService.authenticateUser(email, password).equals("SUCCESS")){
-                return ResponseEntity.status(HttpStatus.OK).body("Login successful");
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials.");
+            loginService.authenticateUser(loginRequest.getEmail(),loginRequest.getPassword());
+            return ResponseEntity.status(HttpStatus.OK).body("Login successful");
         }
-        catch (UserNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist.");
+        catch (LoginUnsuccessfulException | DataNotFoundException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials");
         }
         catch (EmptyFieldsException ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty fields are not allowed.");
@@ -72,7 +67,7 @@ public class UserController {
             userService.deactivateAccount(email);
             return ResponseEntity.status(HttpStatus.OK).body("ACCOUNT DEACTIVATED");
         }
-        catch (UserNotFoundException ex){
+        catch (DataNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("USER NOT FOUND");
         }
         catch (Exception ex){
@@ -87,7 +82,7 @@ public class UserController {
                     Map.of("addresses", userService.getUserAddresses(email))
             );
         }
-        catch (UserNotFoundException ex){
+        catch (DataNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     Map.of("message", "User was not found")
             );

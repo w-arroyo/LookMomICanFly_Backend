@@ -2,11 +2,10 @@ package com.alvarohdezarroyo.lookmomicanfly.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Getter
 @Setter
-public class AddressDTO {
-
-    private int id;
-    private String fullName, street, city, zipCode, country;
-
+public class UserDTO {
+    private Integer id, userTypeId;
+    private String name, email, password;
 }

@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
+import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +20,10 @@ public class AddressMapper {
         return addressDTO;
     }
 
-    public static Address toEntity(AddressDTO addressDTO) throws Exception {
+    public static Address toEntity(AddressDTO addressDTO, User user) throws Exception {
         final Address address=new Address();
+        address.setUser(user);
+        address.setActive(true);
         address.setFullName(AESEncryptionUtil.encrypt(addressDTO.getFullName()).getBytes());
         address.setStreet(AESEncryptionUtil.encrypt(addressDTO.getStreet()).getBytes());
         address.setZipCode(AESEncryptionUtil.encrypt(addressDTO.getZipCode()).getBytes());
