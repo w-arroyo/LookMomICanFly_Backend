@@ -14,6 +14,7 @@ public class UserMapper {
         final UserDTO userDTO=new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(AESEncryptionUtil.decrypt(new String(user.getName(), StandardCharsets.UTF_8)));
+        userDTO.setEmail(user.getEmail());
         return userDTO;
     }
 

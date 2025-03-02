@@ -1,10 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.DataNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.LoginUnsuccessfulException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.LoginService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
@@ -29,10 +26,11 @@ public class UserController {
 
     @PostMapping ("/register")
     public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user){
+
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id:",userService.saveUser(user).getId()));
         }
-        catch (DataNotFoundException | EmptyFieldsException e){
+        catch (EntityNotFoundException | EmptyFieldsException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
         catch (EmailAlreadyInUseException e){
@@ -44,13 +42,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    //needs multiple improvements like better exception handling
     public ResponseEntity<String> loginAuthentication(@RequestBody LoginRequest loginRequest){
         try {
             loginService.authenticateUser(loginRequest.getEmail(),loginRequest.getPassword());
             return ResponseEntity.status(HttpStatus.OK).body("Login successful");
         }
-        catch (LoginUnsuccessfulException | DataNotFoundException ex){
+        catch (LoginUnsuccessfulException | EntityNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials");
         }
         catch (EmptyFieldsException ex){
@@ -67,7 +64,7 @@ public class UserController {
             userService.deactivateAccount(email);
             return ResponseEntity.status(HttpStatus.OK).body("ACCOUNT DEACTIVATED");
         }
-        catch (DataNotFoundException ex){
+        catch (EntityNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("USER NOT FOUND");
         }
         catch (Exception ex){
@@ -81,16 +78,28 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(
                     Map.of("addresses", userService.getUserAddresses(email))
             );
-        }
-        catch (DataNotFoundException ex){
+        } catch (EntityNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    Map.of("message", "User was not found")
+                    Map.of("error", "User was not found")
             );
         }
         catch (Exception ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    Map.of("message", "Server error")
+                    Map.of("error", "Server error")
             );
+        }
+    }
+    @GetMapping("/changeEmail")
+    public ResponseEntity<String> changeUserEmail(@RequestParam String ogEmail, @RequestParam String newEmail){
+        try{
+            userService.changeEmail(ogEmail,newEmail);
+            return ResponseEntity.status(HttpStatus.OK).body("User modified");
+        } catch (SameValuesException | EmailAlreadyInUseException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (EntityNotFoundException ex){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found");
+        } catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
         }
     }
 }

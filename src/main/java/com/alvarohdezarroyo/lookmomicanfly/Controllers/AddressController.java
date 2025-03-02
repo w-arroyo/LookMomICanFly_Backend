@@ -1,7 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.DataNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.AddressRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class AddressController {
         try {
             addressService.saveAddress(address.getAddress(), address.getEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body("SUCCESSFUL");
-        } catch (DataNotFoundException | EmptyFieldsException e) {
+        } catch (EntityNotFoundException | EmptyFieldsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Server error.");

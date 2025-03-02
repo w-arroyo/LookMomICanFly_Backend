@@ -1,7 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.DataNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.LoginUnsuccessfulException;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
@@ -22,7 +22,7 @@ public class LoginService {
             throw new EmptyFieldsException("EMPTY FIELDS ARE NOT ALLOWED");
         }
         if(!PasswordUtils.checkPassword(password,userRepository.findByEmail(email).orElseThrow(
-                ()->new DataNotFoundException("Email does not belong to any user account")
+                ()->new EntityNotFoundException("Email does not belong to any user account")
         ).getPassword())){
             throw new LoginUnsuccessfulException("Wrong credentials");
         }
