@@ -22,7 +22,7 @@ public class AddressMapper {
 
     public static Address toEntity(AddressDTO addressDTO, User user) throws Exception {
         final Address address=new Address();
-        address.setUser(user);
+        address.setUserId(user);
         address.setActive(true);
         address.setFullName(AESEncryptionUtil.encrypt(addressDTO.getFullName()).getBytes());
         address.setStreet(AESEncryptionUtil.encrypt(addressDTO.getStreet()).getBytes());
@@ -31,5 +31,4 @@ public class AddressMapper {
         address.setCountry(AESEncryptionUtil.encrypt(addressDTO.getCountry()).getBytes());
         return address;
     }
-
 }

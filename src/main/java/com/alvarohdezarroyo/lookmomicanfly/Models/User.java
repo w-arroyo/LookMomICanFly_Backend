@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
+import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,8 +22,8 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue (strategy = GenerationType.UUID)
+    private String id;
 
     @NotBlank(message = "Email is mandatory.")
     @Email
@@ -41,10 +42,10 @@ public class User {
     @Column (name = "registration_date",nullable = false, updatable = false)
     private LocalDateTime registrationDate= LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "user_type_id", nullable = false, updatable = false)
+    @Column
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    @OneToMany (mappedBy = "user")
+    @OneToMany (mappedBy = "userId")
     private List<Address> addresses;
 }

@@ -24,9 +24,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // disables CSRF (useful for developing APIs REST)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // enables CORS
                 .authorizeHttpRequests(auth -> {
-                    //auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
-                    //auth.requestMatchers("/api/users/login").permitAll();
-                    //auth.requestMatchers("/api/addresses/save").permitAll();
+                    auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
+                    auth.requestMatchers("/api/users/login").permitAll();
+                    auth.requestMatchers("/api/addresses/save").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/api").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api").permitAll();
                     auth.anyRequest().authenticated(); // any other route requires authorization

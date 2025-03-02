@@ -1,6 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.LoginUnsuccessfulException;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
@@ -18,9 +17,6 @@ public class LoginService {
     }
 
     public void authenticateUser(String email, String password){
-        if(email.trim().isBlank() || password.isBlank()){
-            throw new EmptyFieldsException("EMPTY FIELDS ARE NOT ALLOWED");
-        }
         if(!PasswordUtils.checkPassword(password,userRepository.findByEmail(email).orElseThrow(
                 ()->new EntityNotFoundException("Email does not belong to any user account")
         ).getPassword())){

@@ -1,10 +1,11 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AddressRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +13,16 @@ import org.springframework.stereotype.Service;
 public class AddressService {
     @Autowired
     private final AddressRepository addressRepository;
-    private final UserService userService;
+    private final UserValidator userValidator;
 
-    public AddressService(AddressRepository addressRepository, UserService userService) {
+    public AddressService(AddressRepository addressRepository, UserValidator userValidator) {
         this.addressRepository = addressRepository;
-        this.userService = userService;
+        this.userValidator = userValidator;
     }
 
-    public void saveAddress(AddressDTO addressDTO, String email) {
-        if(addressDTO.getFullName().trim().isEmpty() || addressDTO.getStreet().trim().isEmpty() || addressDTO.getZipCode().trim().isEmpty() || addressDTO.getCity().trim().isEmpty() || addressDTO.getCountry().trim().isEmpty() || email.trim().isEmpty()){
-            throw new EmptyFieldsException("Empty fields are not allowed");
-        }
+    public Address saveAddress(AddressDTO addressDTO) {
         try {
-            addressRepository.save(AddressMapper.toEntity(addressDTO, userService.checkUserByEmail(email)));
+            return addressRepository.save(AddressMapper.toEntity(addressDTO, userValidator.returnUserById(addressDTO.getUserId())));
         }
         catch (EntityNotFoundException ex){
             throw new EntityNotFoundException("User Id not found.");
@@ -32,9 +30,4 @@ public class AddressService {
             throw new RuntimeException("Server error");
         }
     }
-
-    public void deactivateAddress(int id){
-
-    }
-
 }

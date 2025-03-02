@@ -15,8 +15,8 @@ import lombok.Setter;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column (nullable = false)
     private Boolean active=true;
@@ -38,5 +38,5 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userId;
 }

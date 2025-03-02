@@ -1,13 +1,15 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.AddressRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.AddressValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -21,14 +23,21 @@ public class AddressController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity <String> saveAddress(@RequestBody AddressRequest address){
+    public ResponseEntity <Map<String,Object>> saveAddress(@RequestBody AddressDTO address){
+        /*
+        assertDePermisos (mismo user o admin)
+        validacionDeLosAtritbutos
+        Mappear de Dto a Model
+        Guardar model
+        Mappear de Model a Dto
+         */
         try {
-            addressService.saveAddress(address.getAddress(), address.getEmail());
-            return ResponseEntity.status(HttpStatus.CREATED).body("SUCCESSFUL");
-        } catch (EntityNotFoundException | EmptyFieldsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            AddressValidator.checkIfFieldsAreEmpty(address);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success", "Address with id: '"+addressService.saveAddress(address).getId()+"' saved successfully"));
+        } catch (EmptyFieldsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getEmptyFields()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Server error.");
+            throw new RuntimeException(e.getMessage());
         }
     }
     /*

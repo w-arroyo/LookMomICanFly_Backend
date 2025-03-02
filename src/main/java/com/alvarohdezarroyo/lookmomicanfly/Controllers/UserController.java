@@ -1,10 +1,13 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.LoginService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,80 +29,79 @@ public class UserController {
 
     @PostMapping ("/register")
     public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user){
-
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id:",userService.saveUser(user).getId()));
+            UserValidator.emptyFieldsValidator(user);
+            user.setUserType(UserType.STANDARD);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("user:",userService.saveUser(user)));
         }
-        catch (EntityNotFoundException | EmptyFieldsException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
+        catch (EmptyFieldsException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",e.getEmptyFields()));
         }
         catch (EmailAlreadyInUseException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Email is already in use"));
+            throw new EmailAlreadyInUseException(e.getMessage());
         }
         catch (RuntimeException ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message","Server error when saving new user"));
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginAuthentication(@RequestBody LoginRequest loginRequest){
+        if(loginRequest.getEmail().isBlank() || loginRequest.getPassword().isBlank())
+            throw new EmptyFieldsException("Empty fields are not allowed.");
         try {
             loginService.authenticateUser(loginRequest.getEmail(),loginRequest.getPassword());
             return ResponseEntity.status(HttpStatus.OK).body("Login successful");
         }
         catch (LoginUnsuccessfulException | EntityNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Wrong credentials");
-        }
-        catch (EmptyFieldsException ex){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty fields are not allowed.");
-        }
-        catch (Exception ex){
-            return ResponseEntity.status(500).body("Server error. Try again later.");
+            throw new LoginUnsuccessfulException(ex.getMessage());
+        } catch (Exception ex){
+           throw new RuntimeException(ex.getMessage());
         }
     }
 
-    @GetMapping("/deactivate/{email}")
-    public ResponseEntity<String> deactivateAccount(@PathVariable String email){
+    @GetMapping("/deactivate/{id}")
+    public ResponseEntity<String> deactivateAccount(@PathVariable String id){
+        if(id==null)
+            throw new EmptyFieldsException("User id must be stated.");
         try {
-            userService.deactivateAccount(email);
-            return ResponseEntity.status(HttpStatus.OK).body("ACCOUNT DEACTIVATED");
-        }
-        catch (EntityNotFoundException ex){
+            userService.deactivateAccount(id);
+            return ResponseEntity.status(HttpStatus.OK).body("User ID: '"+id+"' account successfully deactivated. ");
+        } catch (EntityNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("USER NOT FOUND");
-        }
-        catch (Exception ex){
+        } catch (Exception ex){
             return ResponseEntity.status(500).body("Server error.");
         }
     }
 
-    @GetMapping("/addresses/{email}")
-    public ResponseEntity<Map<String, Object>> getUserAddresses(@PathVariable String email){
+    @GetMapping("/addresses/{id}")
+    public ResponseEntity<AddressDTO[]> getUserAddresses(@PathVariable String id){
+        if (id==null)
+            throw new EmptyFieldsException("Request is empty.");
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    Map.of("addresses", userService.getUserAddresses(email))
-            );
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(id));
         } catch (EntityNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    Map.of("error", "User was not found")
-            );
-        }
-        catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    Map.of("error", "Server error")
-            );
+            throw new EntityNotFoundException(ex.getMessage());
+        } catch (Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
     }
     @GetMapping("/changeEmail")
     public ResponseEntity<String> changeUserEmail(@RequestParam String ogEmail, @RequestParam String newEmail){
+        if(ogEmail.isBlank() || newEmail.isBlank())
+            throw new EmptyFieldsException("Email must be filled.");
+        if(ogEmail.equalsIgnoreCase(newEmail)){
+            throw new SameValuesException("Same email");
+        }
         try{
             userService.changeEmail(ogEmail,newEmail);
-            return ResponseEntity.status(HttpStatus.OK).body("User modified");
-        } catch (SameValuesException | EmailAlreadyInUseException ex){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.OK).body("Email modification completed. Former email: "+ogEmail+". New email:"+newEmail);
+        } catch (EmailAlreadyInUseException ex){
+            throw new EmailAlreadyInUseException(ex.getMessage());
         } catch (EntityNotFoundException ex){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found");
+            throw new EntityNotFoundException(ex.getMessage());
         } catch (Exception ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
+            throw new RuntimeException(ex.getMessage());
         }
     }
 }

@@ -13,15 +13,17 @@ public interface UserRepository extends JpaRepository <User, Integer> {
 
     Optional<User> findByEmail(String email);
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE users SET active=false WHERE email =:email", nativeQuery = true)
-    int deactivateUserAccount(@Param("email") String email);
+    Optional<User> findById(String id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE users SET password= :password WHERE email=:email", nativeQuery = true)
-    int changeUserPassword(@Param("email") String email ,@Param("password") String password);
+    @Query(value = "UPDATE users SET active=false WHERE id =:id", nativeQuery = true)
+    int deactivateUserAccount(@Param("id") String id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE users SET password= :password WHERE id=:id", nativeQuery = true)
+    int changeUserPassword(@Param("id") String id ,@Param("password") String password);
 
     @Modifying
     @Transactional
