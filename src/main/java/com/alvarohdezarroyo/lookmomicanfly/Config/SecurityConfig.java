@@ -1,11 +1,16 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -17,6 +22,13 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private final AuthService authService;
+
+    public SecurityConfig(AuthService authService) {
+        this.authService = authService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,7 +49,8 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/addresses").permitAll();*/
                     auth.anyRequest().permitAll();
                     // auth.anyRequest().authenticated(); // requires authorization
-                });
+                })
+                .formLogin(AbstractHttpConfigurer::disable); // disables login via html form
         return http.build();
     }
 
@@ -51,4 +64,13 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration); // applies to all it's routes
         return source;
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(authService);
+        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        return new ProviderManager(provider);
+    }
+
 }

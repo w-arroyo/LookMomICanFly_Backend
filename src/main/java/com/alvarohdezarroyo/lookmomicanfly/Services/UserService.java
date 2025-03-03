@@ -31,6 +31,12 @@ public class UserService {
         this.userRepository=userRepository;
     }
 
+    public String returnUserIdByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(
+                ()-> new EntityNotFoundException("User email not found.")
+        ).getId();
+    }
+
     @Transactional
     public User saveUser(UserDTO user) {
         try {
@@ -39,7 +45,7 @@ public class UserService {
             return userRepository.save(UserMapper.toUser(user));
         }
         catch (Exception ex){
-            throw new RuntimeException("Server error. Try again later.");
+            throw new RuntimeException(ex.getMessage());
         }
     }
     @Transactional
@@ -49,13 +55,14 @@ public class UserService {
                 throw new EntityNotFoundException("ID does not belong to any user account.");
             if(userRepository.deactivateUserAccount(id)<1)
                throw new EntityNotFoundException("Server error. Try again later.");
-        } catch (Exception e){
-            throw new RuntimeException("Server error when updating the user");
+        } catch (Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
     @Transactional
     public void changeEmail(String id, String newEmail){
+        System.out.println(id+" "+newEmail);
         try{
             final User user=userRepository.findById(id)
                     .orElseThrow(()->new EntityNotFoundException("User ID not found."));
@@ -63,7 +70,6 @@ public class UserService {
             UserValidator.checkIfBothEmailsAreTheSame(user.getEmail(),newEmail);
             if(userValidator.checkUserByEmail(newEmail))
                 throw new EmailAlreadyInUseException("Email is already in use.");
-            System.out.println("So far so good.");
             if(userRepository.changeUserEmail(id,newEmail)<1)
                 throw new EntityNotFoundException("Server error.");
         } catch (SameValuesException ex){
@@ -71,7 +77,7 @@ public class UserService {
         } catch (FraudulentRequestException ex){
             throw new FraudulentRequestException(ex.getMessage());
         } catch (Exception ex){
-            throw new RuntimeException("Server error when updating the user");
+            throw new RuntimeException(ex.getMessage());
         }
     }
 

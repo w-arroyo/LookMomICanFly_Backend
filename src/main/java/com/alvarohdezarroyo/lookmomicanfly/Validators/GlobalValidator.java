@@ -10,9 +10,14 @@ public class GlobalValidator {
             throw new FraudulentRequestException("User sending the request does not have permission.");
     }
 
+    public static void checkIfAFieldIsEmpty(String field){
+        if(field==null || field.isBlank())
+            throw new EmptyFieldsException("Request is empty.");
+    }
+
     public static void checkIfTwoFieldsAreEmpty(String one, String two){
         if (one==null || one.isBlank() || two==null || two.isBlank())
-            throw new EmptyFieldsException("Request is empty.");
+            throw new EmptyFieldsException("Empty fields are not allowed.");
     }
 
 }

@@ -8,6 +8,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Repositories.AddressRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class AddressService {
         this.userValidator = userValidator;
     }
 
+    @Transactional
     public Address saveAddress(AddressDTO addressDTO) {
         try {
             return addressRepository.save(AddressMapper.toEntity(addressDTO, userValidator.returnUserById(addressDTO.getUserId())));
@@ -33,6 +35,7 @@ public class AddressService {
         }
     }
 
+    @Transactional
     public void deactivateAddress(String id, String userId){
         try{
             GlobalValidator.checkFraudulentRequest(userId, addressRepository.findById(id).orElseThrow(
