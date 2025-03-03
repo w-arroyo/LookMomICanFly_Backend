@@ -9,11 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository <User, Integer> {
+public interface UserRepository extends JpaRepository <User, String> {
 
     Optional<User> findByEmail(String email);
-
-    Optional<User> findById(String id);
 
     @Modifying
     @Transactional
@@ -27,6 +25,6 @@ public interface UserRepository extends JpaRepository <User, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value ="UPDATE users SET email = :newEmail WHERE email = :ogEmail", nativeQuery = true)
-    int changeUserEmail(@Param("ogEmail") String ogEmail, @Param("newEmail") String newEmail);
+    @Query(value ="UPDATE users SET email = :newEmail WHERE id = :id", nativeQuery = true)
+    int changeUserEmail(@Param("id") String id, @Param("newEmail") String newEmail);
 }

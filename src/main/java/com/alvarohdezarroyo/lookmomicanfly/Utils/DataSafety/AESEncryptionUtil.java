@@ -1,9 +1,12 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety;
 
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@Component
 public class AESEncryptionUtil {
     private static final String mySecreKey= "123456789012345678901234";
 

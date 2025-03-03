@@ -4,9 +4,11 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
+@Component
 public class UserMapper {
 
     public static UserDTO toDTO(User user) throws Exception {

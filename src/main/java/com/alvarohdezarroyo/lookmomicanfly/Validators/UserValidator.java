@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Validators;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,11 @@ public class UserValidator {
 
     public static void emptyFieldsValidator(UserDTO user){
         final List<String> errorsList=new ArrayList<>();
-        if(user.getEmail().isBlank())
+        if(user.getEmail()==null || user.getEmail().isBlank())
             errorsList.add("email");
-        if(user.getName().isBlank())
+        if(user.getName()==null || user.getName().isBlank())
             errorsList.add("name");
-        if (user.getPassword().isBlank())
+        if (user.getPassword()==null || user.getPassword().isBlank())
             errorsList.add("password");
         if(!errorsList.isEmpty())
             throw new EmptyFieldsException(errorsList);
@@ -39,8 +40,17 @@ public class UserValidator {
         );
     }
 
+    public boolean checkUserById(String id){
+        return userRepository.findById(id).isPresent();
+    }
+
     public boolean checkUserByEmail(String email){
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    public static void checkIfBothEmailsAreTheSame(String email1, String email2){
+        if(email1.trim().equalsIgnoreCase(email2.trim()))
+            throw new SameValuesException("New email can not be the same as the current one.");
     }
 
 }

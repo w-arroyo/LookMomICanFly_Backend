@@ -4,9 +4,11 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangeUserFieldsRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.LoginService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("user:",userService.saveUser(user)));
         }
         catch (EmptyFieldsException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",e.getEmptyFields()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("errors",e.getEmptyFields()));
         }
         catch (EmailAlreadyInUseException e){
             throw new EmailAlreadyInUseException(e.getMessage());
@@ -47,61 +49,54 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginAuthentication(@RequestBody LoginRequest loginRequest){
-        if(loginRequest.getEmail().isBlank() || loginRequest.getPassword().isBlank())
-            throw new EmptyFieldsException("Empty fields are not allowed.");
         try {
+            GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequest.getEmail(), loginRequest.getPassword());
             loginService.authenticateUser(loginRequest.getEmail(),loginRequest.getPassword());
             return ResponseEntity.status(HttpStatus.OK).body("Login successful");
         }
-        catch (LoginUnsuccessfulException | EntityNotFoundException ex){
+        catch (EmptyFieldsException | LoginUnsuccessfulException | EntityNotFoundException ex){
             throw new LoginUnsuccessfulException(ex.getMessage());
         } catch (Exception ex){
            throw new RuntimeException(ex.getMessage());
         }
     }
 
-    @GetMapping("/deactivate/{id}")
-    public ResponseEntity<String> deactivateAccount(@PathVariable String id){
-        if(id==null)
-            throw new EmptyFieldsException("User id must be stated.");
+    @PutMapping("/deactivate")
+    public ResponseEntity<String> deactivateAccount(@RequestParam String userId){
         try {
-            userService.deactivateAccount(id);
-            return ResponseEntity.status(HttpStatus.OK).body("User ID: '"+id+"' account successfully deactivated. ");
-        } catch (EntityNotFoundException ex){
+            if(userId==null || userId.isBlank())
+                throw new EmptyFieldsException("Empty fields are not allowed.");
+            userService.deactivateAccount(userId);
+            return ResponseEntity.status(HttpStatus.OK).body("User ID: '"+userId+"' account successfully deactivated. ");
+        } catch (EmptyFieldsException | EntityNotFoundException | FraudulentRequestException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("USER NOT FOUND");
         } catch (Exception ex){
-            return ResponseEntity.status(500).body("Server error.");
+            return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
 
-    @GetMapping("/addresses/{id}")
-    public ResponseEntity<AddressDTO[]> getUserAddresses(@PathVariable String id){
-        if (id==null)
-            throw new EmptyFieldsException("Request is empty.");
+    @GetMapping("/addresses")
+    public ResponseEntity<AddressDTO[]> getUserAddresses(@RequestParam String userId){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(id));
-        } catch (EntityNotFoundException ex){
-            throw new EntityNotFoundException(ex.getMessage());
+            if(userId==null || userId.isBlank())
+                throw new EmptyFieldsException("Empty fields are not allowed.");
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(userId));
+        } catch (EntityNotFoundException | FraudulentRequestException ex){
+            throw new IllegalArgumentException(ex.getMessage());
         } catch (Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
     }
-    @GetMapping("/changeEmail")
-    public ResponseEntity<String> changeUserEmail(@RequestParam String ogEmail, @RequestParam String newEmail){
-        if(ogEmail.isBlank() || newEmail.isBlank())
-            throw new EmptyFieldsException("Email must be filled.");
-        if(ogEmail.equalsIgnoreCase(newEmail)){
-            throw new SameValuesException("Same email");
-        }
+    @PutMapping("/changeEmail")
+    public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequest request){
         try{
-            userService.changeEmail(ogEmail,newEmail);
-            return ResponseEntity.status(HttpStatus.OK).body("Email modification completed. Former email: "+ogEmail+". New email:"+newEmail);
-        } catch (EmailAlreadyInUseException ex){
-            throw new EmailAlreadyInUseException(ex.getMessage());
-        } catch (EntityNotFoundException ex){
-            throw new EntityNotFoundException(ex.getMessage());
-        } catch (Exception ex){
-            throw new RuntimeException(ex.getMessage());
+            GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
+            userService.changeEmail(request.getUserId(), request.getNewField());
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Email modification completed. User ID: '"+request.getUserId()+"'. New email: '"+request.getNewField()+"'."));
+        } catch (EmptyFieldsException | EntityNotFoundException | EmailAlreadyInUseException | FraudulentRequestException ex){
+            throw new IllegalArgumentException(ex.getMessage());
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

@@ -2,10 +2,12 @@ package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class AddressValidator {
 
     public static void checkIfFieldsAreEmpty(AddressDTO addressDTO){

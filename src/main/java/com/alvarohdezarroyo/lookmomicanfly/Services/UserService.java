@@ -4,11 +4,14 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,34 +45,43 @@ public class UserService {
     @Transactional
     public void deactivateAccount(String id){
         try {
-            if(userRepository.deactivateUserAccount(id)<1){
-               throw new EntityNotFoundException("Email does not belong to any user account.");
-            }
+            if(!userValidator.checkUserById(id))
+                throw new EntityNotFoundException("ID does not belong to any user account.");
+            if(userRepository.deactivateUserAccount(id)<1)
+               throw new EntityNotFoundException("Server error. Try again later.");
         } catch (Exception e){
             throw new RuntimeException("Server error when updating the user");
         }
     }
 
     @Transactional
-    public void changeEmail(String ogEmail, String newEmail){
+    public void changeEmail(String id, String newEmail){
         try{
-            if(userValidator.checkUserByEmail(newEmail)){
+            final User user=userRepository.findById(id)
+                    .orElseThrow(()->new EntityNotFoundException("User ID not found."));
+            GlobalValidator.checkFraudulentRequest(id, user.getId());
+            UserValidator.checkIfBothEmailsAreTheSame(user.getEmail(),newEmail);
+            if(userValidator.checkUserByEmail(newEmail))
                 throw new EmailAlreadyInUseException("Email is already in use.");
-            }
-            if(userRepository.changeUserEmail(ogEmail,newEmail)<1){
-                throw new EntityNotFoundException("Former email does not belong to any user account.");
-            }
-        } catch (RuntimeException ex){
+            System.out.println("So far so good.");
+            if(userRepository.changeUserEmail(id,newEmail)<1)
+                throw new EntityNotFoundException("Server error.");
+        } catch (SameValuesException ex){
+            throw new SameValuesException(ex.getMessage());
+        } catch (FraudulentRequestException ex){
+            throw new FraudulentRequestException(ex.getMessage());
+        } catch (Exception ex){
             throw new RuntimeException("Server error when updating the user");
         }
     }
 
-    // change user password method left
+    // change user password method left. could be cool to create a random one and send it in an email to the user
 
     public AddressDTO[] getUserAddresses(String id) throws Exception {
         final List<Address> addresses = userRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("Email is not associated with any user account in the DB.")
+                ()-> new EntityNotFoundException("Id is not associated with any user account in the DB.")
         ).getAddresses();
+        addresses.removeIf(address -> !address.getActive());
         if(addresses.isEmpty())
             return null;
         final AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];

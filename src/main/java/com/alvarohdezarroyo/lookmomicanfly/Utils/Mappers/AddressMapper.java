@@ -4,14 +4,17 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
+@Component
 public class AddressMapper {
 
     public static AddressDTO toDTO(Address address) throws Exception {
         final AddressDTO addressDTO=new AddressDTO();
         addressDTO.setId(address.getId());
+        addressDTO.setUserId(address.getUserId().getId());
         addressDTO.setFullName(AESEncryptionUtil.decrypt(new String(address.getFullName(), StandardCharsets.UTF_8)));
         addressDTO.setStreet(AESEncryptionUtil.decrypt(new String(address.getStreet(), StandardCharsets.UTF_8)));
         addressDTO.setCity(AESEncryptionUtil.decrypt(new String(address.getCity(), StandardCharsets.UTF_8)));
