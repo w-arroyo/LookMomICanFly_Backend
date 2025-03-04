@@ -46,7 +46,7 @@ public class SecurityConfig {
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // handles sessions automatically
                 .securityContext(securityContext -> securityContext
-                        .securityContextRepository(new HttpSessionSecurityContextRepository())) // 🔥 saves session context
+                        .securityContextRepository(new HttpSessionSecurityContextRepository())) // saves session context
                 .formLogin(AbstractHttpConfigurer::disable) // disables login via html form
                 .logout(logout -> logout.logoutUrl("/api/users/logout").logoutSuccessHandler((request, response, authentication) -> {
                     response.setStatus(HttpServletResponse.SC_OK);

@@ -54,7 +54,6 @@ public class UserController {
         securityContext.setAuthentication(authentication);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
         session.setAttribute("userId", authentication.getName());
-        // need to implement usertype checker so that frontend know if a user in standard or admin
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("user",userService.returnUserDTOByUserId(authService.getAuthenticatedUserId())));
     }
 
