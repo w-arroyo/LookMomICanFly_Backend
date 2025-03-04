@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.rmi.UnexpectedException;
-import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -16,7 +15,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
     public ResponseEntity<String> emailAlreadyInUseHandler(EmailAlreadyInUseException ex){
-        System.out.println(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
@@ -34,6 +32,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FraudulentRequestException.class)
     public ResponseEntity<String> fraudulentRequestHandler(FraudulentRequestException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    public ResponseEntity<String> unauthorizedRequestExceptionHandler(UnauthorizedRequestException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
@@ -51,6 +54,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> sameValuesHandler(SameValuesException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> runTimeExceptionHandler(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());

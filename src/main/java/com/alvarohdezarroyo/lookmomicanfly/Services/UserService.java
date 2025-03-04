@@ -9,6 +9,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
@@ -48,6 +50,7 @@ public class UserService {
             throw new RuntimeException(ex.getMessage());
         }
     }
+
     @Transactional
     public void deactivateAccount(String id){
         try {
@@ -62,7 +65,6 @@ public class UserService {
 
     @Transactional
     public void changeEmail(String id, String newEmail){
-        System.out.println(id+" "+newEmail);
         try{
             final User user=userRepository.findById(id)
                     .orElseThrow(()->new EntityNotFoundException("User ID not found."));
@@ -81,7 +83,17 @@ public class UserService {
         }
     }
 
-    // change user password method left. could be cool to create a random one and send it in an email to the user
+    public void changeUserPassword(ChangePasswordRequest request){
+        try {
+            final User user=userValidator.returnUserById(request.getId());
+            if(PasswordUtils.checkPassword(request.getNewPassword(),user.getPassword()))
+                throw new SameValuesException("New password can't be the same as the former one.");
+            if(userRepository.changeUserPassword(request.getId(),PasswordUtils.hashPassword(request.getNewPassword()))<1)
+                throw new EntityNotFoundException("Server error. Try again later.");
+        } catch (Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
 
     public AddressDTO[] getUserAddresses(String id) throws Exception {
         final List<Address> addresses = userRepository.findById(id).orElseThrow(

@@ -6,6 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public class UserValidator {
         this.userRepository = userRepository;
     }
 
-    public static void emptyFieldsValidator(UserDTO user){
+    public static void emptyUserDTOFieldsValidator(UserDTO user){
         final List<String> errorsList=new ArrayList<>();
         if(user.getEmail()==null || user.getEmail().isBlank())
             errorsList.add("email");
@@ -51,6 +52,18 @@ public class UserValidator {
     public static void checkIfBothEmailsAreTheSame(String email1, String email2){
         if(email1.trim().equalsIgnoreCase(email2.trim()))
             throw new SameValuesException("New email can not be the same as the current one.");
+    }
+
+    public static void emptyChangePasswordFieldsValidator(ChangePasswordRequest request){
+        final List<String> errorsList=new ArrayList<>();
+        if(request.getId()==null || request.getId().isBlank())
+            errorsList.add("id");
+        if(request.getOldPassword()==null || request.getOldPassword().isBlank())
+            errorsList.add("oldPassword");
+        if (request.getNewPassword()==null || request.getNewPassword().isBlank())
+            errorsList.add("newPassword");
+        if(!errorsList.isEmpty())
+            throw new EmptyFieldsException(errorsList);
     }
 
 }

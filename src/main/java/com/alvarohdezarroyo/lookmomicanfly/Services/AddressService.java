@@ -45,7 +45,7 @@ public class AddressService {
         } catch (FraudulentRequestException e) {
             throw new FraudulentRequestException(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("Server error.");
+            throw new RuntimeException(e.getMessage());
         }
     }
 

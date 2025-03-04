@@ -9,6 +9,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import java.nio.charset.StandardCharsets;
 
+
 @Mapper(componentModel = "spring")
 public interface UserMapperExample {
 /*

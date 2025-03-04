@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangeUserFieldsRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
@@ -31,9 +32,9 @@ public class UserController {
 
     @PostMapping ("/register")
     public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user){
-        UserValidator.emptyFieldsValidator(user);
+        UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("user:",userService.saveUser(user)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id:",userService.saveUser(user).getId()));
     }
 
     @PostMapping("/login")
@@ -41,7 +42,8 @@ public class UserController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequest.getEmail(), loginRequest.getPassword());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("userId",userService.returnUserIdByEmail(loginRequest.getEmail())));
+        // need to implement usertype checker so that frontend know if a user in standard or admin
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("id",userService.returnUserIdByEmail(loginRequest.getEmail())));
     }
 
     @PutMapping("/deactivate")
@@ -56,11 +58,20 @@ public class UserController {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(userId));
     }
+
     @PutMapping("/changeEmail")
     public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequest request){
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         userService.changeEmail(request.getUserId(), request.getNewField());
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Email modification completed. User ID: '"+request.getUserId()+"'. New email: '"+request.getNewField()+"'."));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequest request){
+        UserValidator.emptyChangePasswordFieldsValidator(request);
+        GlobalValidator.checkIfTwoFieldsAreEmpty(request.getNewPassword(), request.getOldPassword());
+        userService.changeUserPassword(request);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Password modification completed. User ID: '"+request.getId()+"'."));
     }
 
 }

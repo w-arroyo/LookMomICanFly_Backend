@@ -12,22 +12,22 @@ public class AddressValidator {
 
     public static void checkIfFieldsAreEmpty(AddressDTO addressDTO){
         List<String> emptyFields=new ArrayList<>();
-        if(addressDTO.getUserId().isBlank()){
+        if(addressDTO.getUserId()==null || addressDTO.getUserId().isBlank()){
             emptyFields.add("userId");
         }
-        if(addressDTO.getFullName().isBlank()){
+        if(addressDTO.getFullName()==null || addressDTO.getFullName().isBlank()){
             emptyFields.add("fullName");
         }
-        if(addressDTO.getStreet().isBlank()){
+        if(addressDTO.getStreet()==null || addressDTO.getStreet().isBlank()){
             emptyFields.add("street");
         }
-        if(addressDTO.getCity().isBlank()){
+        if(addressDTO.getCity()==null || addressDTO.getCity().isBlank()){
             emptyFields.add("city");
         }
-        if(addressDTO.getZipCode().isBlank()){
+        if(addressDTO.getZipCode()==null || addressDTO.getZipCode().isBlank()){
             emptyFields.add("zipCode");
         }
-        if(addressDTO.getCountry().isBlank()){
+        if(addressDTO.getCountry()==null || addressDTO.getCountry().isBlank()){
             emptyFields.add("country");
         }
         if(!emptyFields.isEmpty())
