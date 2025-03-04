@@ -5,8 +5,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException
 
 public class GlobalValidator {
 
-    public static void checkFraudulentRequest(String requestUserId, String repositoryId){
-        if(!requestUserId.equalsIgnoreCase(repositoryId))
+    public static void checkFraudulentRequest(String requestUserId, String authenticatedUserId){
+        if(!requestUserId.equalsIgnoreCase(authenticatedUserId))
             throw new FraudulentRequestException("User sending the request does not have permission.");
     }
 

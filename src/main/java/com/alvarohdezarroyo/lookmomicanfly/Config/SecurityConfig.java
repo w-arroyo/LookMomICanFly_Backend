@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +11,10 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,21 +39,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // disables CSRF (useful for developing APIs REST)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // enables CORS
                 .authorizeHttpRequests(auth -> {
-                    /*
                     auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
                     auth.requestMatchers("/api/users/login").permitAll();
-                    auth.requestMatchers("/api/users/changeEmail").permitAll();
-                    auth.requestMatchers("/api/users/addresses").permitAll();
-                    auth.requestMatchers("/api/addresses/save").permitAll();
-                    auth.requestMatchers("/api/users/deactivate").permitAll();
-                    auth.requestMatchers("/api/addresses/deactivate").permitAll();
-                    auth.requestMatchers("/api/addresses/").permitAll();
-                    auth.requestMatchers("/api/users").permitAll();
-                    auth.requestMatchers("/api/addresses").permitAll();*/
-                    auth.anyRequest().permitAll();
-                    // auth.anyRequest().authenticated(); // requires authorization
+                    //auth.anyRequest().permitAll(); this would allow any request without being authenticated
+                    auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })
-                .formLogin(AbstractHttpConfigurer::disable); // disables login via html form
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // handles sessions automatically
+                .securityContext(securityContext -> securityContext
+                        .securityContextRepository(new HttpSessionSecurityContextRepository())) // 🔥 saves session context
+                .formLogin(AbstractHttpConfigurer::disable) // disables login via html form
+                .logout(logout -> logout.logoutUrl("/api/users/logout").logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("Successful logout");
+                }));
         return http.build();
     }
 

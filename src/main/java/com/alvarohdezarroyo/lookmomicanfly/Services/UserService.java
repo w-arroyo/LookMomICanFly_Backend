@@ -39,6 +39,12 @@ public class UserService {
         ).getId();
     }
 
+    public UserDTO returnUserDTOByUserId(String id) throws Exception {
+        return UserMapper.toDTO(userRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("User id not found.")
+        ));
+    }
+
     @Transactional
     public User saveUser(UserDTO user) {
         try {
@@ -86,6 +92,8 @@ public class UserService {
     public void changeUserPassword(ChangePasswordRequest request){
         try {
             final User user=userValidator.returnUserById(request.getId());
+            if(!PasswordUtils.checkPassword(request.getOldPassword(),user.getPassword()))
+                throw new IllegalArgumentException("Wrong password.");
             if(PasswordUtils.checkPassword(request.getNewPassword(),user.getPassword()))
                 throw new SameValuesException("New password can't be the same as the former one.");
             if(userRepository.changeUserPassword(request.getId(),PasswordUtils.hashPassword(request.getNewPassword()))<1)
