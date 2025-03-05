@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Clothing extends ProductCategory {
+public class Clothing extends Product {
 
     @Column(name = "season", nullable = false)
     @NotBlank

@@ -9,8 +9,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "product_categories")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "name")
+
 @Getter
 @Setter
 @NoArgsConstructor

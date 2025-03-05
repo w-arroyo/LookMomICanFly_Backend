@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Skateboard extends ProductCategory{
+public class Skateboard extends Product{
 
     @Column(name = "", nullable = false)
     @NotBlank

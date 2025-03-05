@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Collectible extends ProductCategory{
+public class Collectible extends Product{
 
     @Column(name = "length", nullable = false)
     private Integer length;

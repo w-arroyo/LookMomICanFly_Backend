@@ -41,8 +41,9 @@ CREATE TABLE IF NOT EXISTS music (
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY,
     product_category_id UUID NOT NULL REFERENCES product_categories(id),
+    product_subcategory_id UUID NOT NULL REFERENCES product_subcategories(id)
     name VARCHAR(255) NOT NULL,
-    launch_year INT,
+    release_year INT,
     active BOOLEAN NOT NULL,
     manufacturer_id UUID REFERENCES manufacturers(id)
 );

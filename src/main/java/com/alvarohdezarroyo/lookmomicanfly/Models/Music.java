@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Music extends ProductCategory{
+public class Music extends Product{
 
     @Column(name = "format", nullable = false)
     @Enumerated(EnumType.STRING)

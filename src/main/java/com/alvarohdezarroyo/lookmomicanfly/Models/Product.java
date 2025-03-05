@@ -14,6 +14,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "products")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "product_category_id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,16 +30,19 @@ public class Product {
     @Size(min = 10, max = 220, message = "Name length is invalid.")
     private String name;
 
-    @Column(name = "launch_year", nullable = false)
+    @Column(name = "release_year", nullable = false)
     @Min(value = 1950)
     @Max(value = Calendar.YEAR+1)
-    private Integer launchYear;
+    private Integer releaseYear;
 
     @Column(name = "active", nullable = false)
     private Boolean active=true;
 
     @Column(name = "product_category_id", nullable = false)
     private Integer productCategoryId;
+
+    @Column(name = "product_subcategory_id", nullable = false)
+    private Integer productSubcategoryId;
 
     @ManyToOne(fetch = FetchType.EAGER) // loads up the manufacturer of the product automatically
     @JoinColumn(name = "manufactured_id", nullable = false)
