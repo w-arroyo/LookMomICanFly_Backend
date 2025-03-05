@@ -1,0 +1,25 @@
+package com.alvarohdezarroyo.lookmomicanfly.Models;
+
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Season;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "clothing")
+@DiscriminatorValue("CLOTHING")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Clothing extends ProductCategory {
+
+    @Column(name = "season", nullable = false)
+    @NotBlank
+    @Enumerated(EnumType.STRING)
+    private Season season;
+
+}
