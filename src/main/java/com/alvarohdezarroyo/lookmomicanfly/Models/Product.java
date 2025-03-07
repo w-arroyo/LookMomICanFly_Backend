@@ -1,5 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductSubcategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -38,11 +40,13 @@ public class Product {
     @Column(name = "active", nullable = false)
     private Boolean active=true;
 
-    @Column(name = "product_category_id", nullable = false)
-    private Integer productCategoryId;
+    @Column(name = "product_category", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductCategory productCategory;
 
-    @Column(name = "product_subcategory_id", nullable = false)
-    private Integer productSubcategoryId;
+    @Column(name = "product_subcategory", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductSubcategory productSubcategory;
 
     @ManyToOne(fetch = FetchType.EAGER) // loads up the manufacturer of the product automatically
     @JoinColumn(name = "manufactured_id", nullable = false)

@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
+import com.alvarohdezarroyo.lookmomicanfly.Enums.SizeRun;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 
 public class GlobalValidator {
@@ -18,6 +20,15 @@ public class GlobalValidator {
     public static void checkIfTwoFieldsAreEmpty(String one, String two){
         if (one==null || one.isBlank() || two==null || two.isBlank())
             throw new EmptyFieldsException("Empty fields are not allowed.");
+    }
+
+    public static void checkIfSizeExists(String check){
+        for(SizeRun size: SizeRun.values()){
+            if (size.getValue().equalsIgnoreCase(check)) {
+                return;
+            }
+        }
+        throw new EntityNotFoundException("Size does not exists.");
     }
 
 }

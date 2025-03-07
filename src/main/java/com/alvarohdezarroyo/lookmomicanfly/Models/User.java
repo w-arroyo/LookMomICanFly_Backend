@@ -46,7 +46,7 @@ public class User {
     @Column (name = "registration_date",nullable = false, updatable = false)
     private LocalDateTime registrationDate= LocalDateTime.now();
 
-    @Column
+    @Column(name = "user_type")
     @Enumerated(EnumType.STRING)
     private UserType userType;
 

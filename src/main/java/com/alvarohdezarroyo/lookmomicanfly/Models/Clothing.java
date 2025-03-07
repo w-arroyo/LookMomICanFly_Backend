@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "clothing")
-@DiscriminatorValue("CLOTHING")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor

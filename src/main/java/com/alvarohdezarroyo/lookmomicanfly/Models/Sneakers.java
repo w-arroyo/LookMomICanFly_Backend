@@ -1,9 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +9,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "sneakers")
-@DiscriminatorValue("SNEAKERS")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -1,9 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,14 +9,14 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "skateboards")
-@DiscriminatorValue("SKATEBOARDS")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Skateboard extends Product{
 
-    @Column(name = "", nullable = false)
+    @Column(name = "collection_name", nullable = false)
     @NotBlank
     private String collectionName;
 
