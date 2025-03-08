@@ -1,5 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Enums;
 
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+
 public enum ProductCategory {
 
     SNEAKERS,
@@ -7,6 +9,8 @@ public enum ProductCategory {
     ACCESSORIES,
     COLLECTIBLES,
     SKATEBOARDS,
-    MUSIC
+    MUSIC;
+
+
 
 }

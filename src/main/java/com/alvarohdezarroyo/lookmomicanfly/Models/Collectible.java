@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Collectible extends Product{
 
-    @Column(name = "length", nullable = false)
-    private Integer length;
+    @Column(name = "collection_name", nullable = false)
+    @NotBlank
+    private String collectionName;
 
 }

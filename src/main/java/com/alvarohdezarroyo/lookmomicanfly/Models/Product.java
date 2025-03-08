@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 @Table(name = "products")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "product_category_id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,21 +39,21 @@ public class Product {
     @Column(name = "active", nullable = false)
     private Boolean active=true;
 
-    @Column(name = "product_category", nullable = false)
+    @Column(name = "category", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductCategory productCategory;
 
-    @Column(name = "product_subcategory", nullable = false)
+    @Column(name = "subcategory", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductSubcategory productSubcategory;
 
     @ManyToOne(fetch = FetchType.EAGER) // loads up the manufacturer of the product automatically
-    @JoinColumn(name = "manufactured_id", nullable = false)
+    @JoinColumn(name = "manufacturer_id", nullable = false)
     private Manufacturer manufacturer;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "product_colors",
+            name = "colors_products",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "color_id")
     )

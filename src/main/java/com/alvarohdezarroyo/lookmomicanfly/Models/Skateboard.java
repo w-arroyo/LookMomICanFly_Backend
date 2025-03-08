@@ -16,8 +16,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Skateboard extends Product{
 
-    @Column(name = "collection_name", nullable = false)
+    @Column(name = "length", nullable = false)
     @NotBlank
-    private String collectionName;
+    private String length;
 
 }
