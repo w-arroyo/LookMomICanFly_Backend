@@ -1,4 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Repositories;
 
-public interface ClothingRepository extends ProductRepository {
+import com.alvarohdezarroyo.lookmomicanfly.Models.Clothing;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClothingRepository extends JpaRepository<Clothing,String> {
 }

@@ -1,4 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Repositories;
 
-public interface SkateboardRepository extends ProductRepository {
+import com.alvarohdezarroyo.lookmomicanfly.Models.Skateboard;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SkateboardRepository extends JpaRepository<Skateboard,String> {
 }

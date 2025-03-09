@@ -1,4 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Repositories;
 
-public interface MusicRepository extends ProductRepository {
+import com.alvarohdezarroyo.lookmomicanfly.Models.Music;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MusicRepository extends JpaRepository<Music,String> {
 }

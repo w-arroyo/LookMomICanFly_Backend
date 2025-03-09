@@ -19,10 +19,10 @@ public class ProductDTO {
     private Boolean active;
     private String [] colors;
 
-    public void setColors(List<Color> colorList){
+    public void setColorList(List<Color> colorList){
         colors=new String[colorList.size()];
         int position=0;
-        for (Color color: colorList){
+        for (Color color: colorList) {
             colors[position]=color.getName();
             position++;
         }

@@ -18,13 +18,13 @@ public class ProductMapper {
 
     public static void fillProductDTOFields(ProductDTO productDTO, Product product){
         productDTO.setId(product.getId());
-        productDTO.setName(productDTO.getName());
+        productDTO.setName(product.getName());
         productDTO.setActive(product.getActive());
         productDTO.setManufacturer(product.getManufacturer().getName());
         productDTO.setCategory(product.getProductCategory().name());
         productDTO.setSubcategory(product.getProductSubcategory().name());
         productDTO.setReleaseYear(product.getReleaseYear());
-        productDTO.setColors(product.getColors());
+        productDTO.setColorList(product.getColors());
     }
 
     public static Product toProduct(ProductDTO productDTO){
