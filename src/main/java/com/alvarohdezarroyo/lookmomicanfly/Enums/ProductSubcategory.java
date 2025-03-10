@@ -48,4 +48,9 @@ public enum ProductSubcategory {
         }
         return subcategories;
     }
+
+    public static boolean checkIfSubcategoryBelongsToACategory(ProductCategory category,ProductSubcategory subcategory){
+        return subcategory.getProductCategory().equals(category);
+    }
+
 }

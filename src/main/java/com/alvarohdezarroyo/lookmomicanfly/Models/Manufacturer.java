@@ -19,7 +19,7 @@ public class Manufacturer {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @Size(min = 10, max = 220, message = "Name length is invalid.")
     private String name;
 

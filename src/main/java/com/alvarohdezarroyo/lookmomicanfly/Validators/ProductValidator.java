@@ -43,4 +43,9 @@ public class ProductValidator {
             throw new EntityNotFoundException("Product category does not have any subcategories.");
     }
 
+    public static void checkIfSubcategoryBelongsToACategory(ProductCategory productCategory,ProductSubcategory productSubcategory){
+        if(!ProductSubcategory.checkIfSubcategoryBelongsToACategory(productCategory,productSubcategory))
+            throw new IllegalArgumentException("Subcategory does not belong to that category.");
+    }
+
 }

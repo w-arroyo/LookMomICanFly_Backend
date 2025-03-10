@@ -3,17 +3,19 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.NoDataFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
+import com.alvarohdezarroyo.lookmomicanfly.Repositories.ColorRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Repositories.ManufacturerRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ProductRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,10 +23,14 @@ public class ProductService {
 
     @Autowired
     private final ProductRepository productRepository;
+    private final ManufacturerRepository manufacturerRepository;
+    private final ColorRepository colorRepository;
     private final WebClient webClient;
 
-    public ProductService(ProductRepository productRepository, WebClient webClient) {
+    public ProductService(ProductRepository productRepository, ManufacturerRepository manufacturerRepository, ColorRepository colorRepository, WebClient webClient) {
         this.productRepository = productRepository;
+        this.manufacturerRepository = manufacturerRepository;
+        this.colorRepository = colorRepository;
         this.webClient = webClient;
     }
 
@@ -74,6 +80,22 @@ public class ProductService {
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public Manufacturer getManufacturerByName(String name){
+        return manufacturerRepository.findByName(name).orElseThrow(
+                ()->new EntityNotFoundException("Manufacturer name does not exist.")
+        );
+    }
+
+    public List<Color> fillColorListFromDTO(String [] colorDTOs){
+        List<Color> colors=new ArrayList<>();
+        for (String colorDTO: colorDTOs){
+            colors.add(colorRepository.findByName(colorDTO).orElseThrow(
+                    ()-> new EntityNotFoundException("Color not found")
+            ));
+        }
+        return colors;
     }
 
 }

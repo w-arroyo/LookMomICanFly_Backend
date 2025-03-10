@@ -23,4 +23,10 @@ public class SneakersController {
         return ResponseEntity.status(HttpStatus.OK).body(sneakersService.getSneakersDTOById(id));
     }
 
+    @PostMapping("/save")
+    public ResponseEntity<String> saveSneakers(@RequestBody SneakersDTO sneakersDTO){
+        // left to complete
+        return ResponseEntity.status(HttpStatus.CREATED).body("Sneakers saved in the database successfully. Product ID associated: ");
+    }
+
 }

@@ -32,4 +32,6 @@ public enum SizeRun {
         this.categories=categories;
     }
 
+    // gotta create a method that receives a category and a size value. checks if it belongs to that category and returns the SizeRun itself
+
 }

@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,12 @@ public class ProductController {
                 .flatMap(productDto -> {
                     return Mono.just(ResponseEntity.status(HttpStatus.OK).body(Map.of(productCategory.name().toLowerCase(), productDto)));
                 });
+    }
+
+
+    private void fillManufacturerAndColors(Product product, String manufacturer, String [] colors){
+        product.setColors(productService.fillColorListFromDTO(colors));
+        product.setManufacturer(productService.getManufacturerByName(manufacturer));
     }
 
 }
