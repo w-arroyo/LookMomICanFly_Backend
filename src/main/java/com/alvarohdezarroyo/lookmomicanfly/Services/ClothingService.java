@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ClothingDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Clothing;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ClothingRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ public class ClothingService {
         return ProductMapper.toClothingDTO(clothingRepository.findById(id).orElseThrow(
                 ()->new EntityNotFoundException("Clothing id does not exist")
         ));
+    }
+
+    public Clothing saveClothing(Clothing clothing){
+        return clothingRepository.save(clothing);
     }
 
 }

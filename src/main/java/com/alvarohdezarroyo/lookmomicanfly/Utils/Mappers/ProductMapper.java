@@ -11,12 +11,6 @@ import org.mapstruct.Mapper;
 @Mapper
 public class ProductMapper {
 
-    public static ProductDTO toDTO(Product product){
-        final ProductDTO productDTO=new ProductDTO();
-        fillProductDTOFields(productDTO,product);
-        return productDTO;
-    }
-
     public static void fillProductDTOFields(ProductDTO productDTO, Product product){
         productDTO.setId(product.getId());
         productDTO.setName(product.getName());
@@ -35,14 +29,6 @@ public class ProductMapper {
         product.setProductCategory(ProductValidator.checkIfProductCategoryExists(productDTO.getCategory()));
         product.setProductSubcategory(ProductValidator.checkIfProductSubcategoryExists(productDTO.getSubcategory()));
         ProductValidator.checkIfSubcategoryBelongsToACategory(product.getProductCategory(),product.getProductSubcategory());
-    }
-
-    public static Product toProduct(ProductDTO productDTO){
-        final Product product=new Product();
-        fillProductFields(product,productDTO);
-        // colors and manufacturers are completed on controller level
-        // left to complete later
-        return product;
     }
 
     public static ProductSummaryDTO toSummary(Product product){

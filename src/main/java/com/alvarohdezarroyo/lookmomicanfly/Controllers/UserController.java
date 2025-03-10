@@ -80,6 +80,7 @@ public class UserController {
 
     @PutMapping("/changeEmail")
     public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequest request){
+        GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         GlobalValidator.checkFraudulentRequest(request.getUserId(), authService.getAuthenticatedUserId());
         userService.changeEmail(request.getUserId(), request.getNewField());
@@ -88,8 +89,8 @@ public class UserController {
 
     @PutMapping("/change-password")
     public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequest request){
+        GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
-        GlobalValidator.checkIfTwoFieldsAreEmpty(request.getNewPassword(), request.getOldPassword());
         GlobalValidator.checkFraudulentRequest(request.getId(), authService.getAuthenticatedUserId());
         userService.changeUserPassword(request);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Password modification completed. User ID: '"+request.getId()+"'."));

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Year;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,8 +33,7 @@ public class Product {
     private String name;
 
     @Column(name = "release_year", nullable = false)
-    @Min(value = 1950)
-    @Max(value = Calendar.YEAR+1)
+    @Min(value = 1950) // value must be constant, so I can't use a max validator.
     private Integer releaseYear;
 
     @Column(name = "active", nullable = false)

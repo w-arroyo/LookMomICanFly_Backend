@@ -1,10 +1,15 @@
 package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductSubcategory;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.SizeRun;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProductValidator {
@@ -25,15 +30,15 @@ public class ProductValidator {
         throw new EntityNotFoundException("Product subcategory does not exist.");
     }
 
-    public static SizeRun checkIfSizeExists(String check){
-        for(SizeRun size: SizeRun.values()){
+    public static Size checkIfSizeExists(String check){
+        for(Size size: Size.values()){
             if (size.getValue().equalsIgnoreCase(check))
                 return size;
         }
         throw new EntityNotFoundException("Size does not exists.");
     }
 
-    public static void checkIfSizeBelongsToACategory(SizeRun size, ProductCategory category){
+    public static void checkIfSizeBelongsToACategory(Size size, ProductCategory category){
         if(!size.getCategories().contains(category))
             throw new IllegalArgumentException("Size does not belong to that category");
     }
@@ -46,6 +51,35 @@ public class ProductValidator {
     public static void checkIfSubcategoryBelongsToACategory(ProductCategory productCategory,ProductSubcategory productSubcategory){
         if(!ProductSubcategory.checkIfSubcategoryBelongsToACategory(productCategory,productSubcategory))
             throw new IllegalArgumentException("Subcategory does not belong to that category.");
+    }
+
+    public static void checkIfProductFieldsAreEmpty(ProductDTO productDTO, String specialField, String specialFieldName){
+        final List<String> emptyFields=new ArrayList<>();
+        if(productDTO.getName()==null || productDTO.getName().trim().isEmpty())
+            emptyFields.add("name");
+        if(productDTO.getCategory()==null || productDTO.getCategory().trim().isEmpty())
+            emptyFields.add("category");
+        if(productDTO.getSubcategory()==null || productDTO.getSubcategory().trim().isEmpty())
+            emptyFields.add("category");
+        if(productDTO.getReleaseYear()==null)
+            emptyFields.add("release_year");
+        else{
+            try {
+                Integer.parseInt(productDTO.getReleaseYear()+"");
+            }
+            catch (NumberFormatException e){
+                emptyFields.add("release_year");
+            }
+        }
+
+        if(productDTO.getManufacturer()==null || productDTO.getManufacturer().trim().isEmpty())
+            emptyFields.add("manufacturer");
+        if(productDTO.getColors()==null || productDTO.getColors().length==0)
+            emptyFields.add("colors");
+        if(specialField==null || specialField.trim().isEmpty())
+            emptyFields.add(specialFieldName);
+        if(!emptyFields.isEmpty())
+            throw new EmptyFieldsException(emptyFields);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
@@ -82,13 +83,13 @@ public class ProductService {
         }
     }
 
-    public Manufacturer getManufacturerByName(String name){
+    private Manufacturer getManufacturerByName(String name){
         return manufacturerRepository.findByName(name).orElseThrow(
                 ()->new EntityNotFoundException("Manufacturer name does not exist.")
         );
     }
 
-    public List<Color> fillColorListFromDTO(String [] colorDTOs){
+    private List<Color> fillColorListFromDTO(String [] colorDTOs){
         List<Color> colors=new ArrayList<>();
         for (String colorDTO: colorDTOs){
             colors.add(colorRepository.findByName(colorDTO).orElseThrow(
@@ -96,6 +97,11 @@ public class ProductService {
             ));
         }
         return colors;
+    }
+
+    public void fillManufacturerAndColors(Product product, ProductDTO productDTO){
+        product.setManufacturer(getManufacturerByName(productDTO.getManufacturer()));
+        product.setColors(fillColorListFromDTO(productDTO.getColors()));
     }
 
 }
