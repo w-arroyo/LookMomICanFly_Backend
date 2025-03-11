@@ -15,17 +15,22 @@ public enum ProductSubcategory {
     PANTS(ProductCategory.CLOTHING),
     TEE(ProductCategory.CLOTHING),
     JACKET(ProductCategory.CLOTHING),
+    HOODIE(ProductCategory.CLOTHING),
     CREWNECK(ProductCategory.CLOTHING),
     COAT(ProductCategory.CLOTHING),
+    BOXERS(ProductCategory.CLOTHING),
+    PUFFER(ProductCategory.CLOTHING),
 
     CAP(ProductCategory.ACCESSORIES),
     SHADES(ProductCategory.ACCESSORIES),
     GLOVES(ProductCategory.ACCESSORIES),
+    BACKPACK(ProductCategory.ACCESSORIES),
 
     CARD(ProductCategory.COLLECTIBLES),
     FIGURE(ProductCategory.COLLECTIBLES),
+    PLUSH(ProductCategory.COLLECTIBLES),
 
-    POPSICLE(ProductCategory.SKATEBOARDS),
+    SKATEBOARD(ProductCategory.SKATEBOARDS),
     SNOWBOARD(ProductCategory.SKATEBOARDS),
 
     CD(ProductCategory.MUSIC),

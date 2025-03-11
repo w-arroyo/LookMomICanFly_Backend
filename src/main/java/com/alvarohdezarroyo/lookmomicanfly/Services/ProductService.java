@@ -54,12 +54,19 @@ public class ProductService {
         };
     }
 
+    public List<Product> findAllProducts(){
+        return productRepository.findAll();
+    }
 
-    public ProductSummaryDTO[] getAllProductsSummary(){
+    public List<Product> findAllProductsByCategory(String category){
+        return productRepository.findAllByCategory(category);
+    }
+
+
+    public ProductSummaryDTO[] moveProductListToSummaryList(List<Product> productList){
         try{
-            List<Product> productList=productRepository.findAll();
             if(productList.isEmpty())
-                throw new NoDataFoundException("No products in the database.");
+                throw new NoDataFoundException("No products saved in the database.");
             ProductSummaryDTO[] list=new ProductSummaryDTO[productList.size()];
             for (int product = 0; product < productList.size(); product++) {
                 list[product]= ProductMapper.toSummary(productList.get(product));

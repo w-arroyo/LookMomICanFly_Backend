@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product,String> {
+
+    List<Product> findAllByCategory(String category);
 
     @Query(value = "SELECT category from products where id= :id", nativeQuery = true)
     ProductCategory getProductCategoryByProductId(@Param("id") String id);

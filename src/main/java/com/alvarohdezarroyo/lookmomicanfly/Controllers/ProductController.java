@@ -1,8 +1,10 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/get/all/")
-    public ResponseEntity<Map<String,Object>> getAllProductsSummary(){
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("products",productService.getAllProductsSummary()));
-    }
-
     @GetMapping("/get/")
     public Mono<ResponseEntity<Map<String,Object>>> findProductById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
@@ -35,6 +32,17 @@ public class ProductController {
                 .flatMap(productDto -> {
                     return Mono.just(ResponseEntity.status(HttpStatus.OK).body(Map.of(productCategory.name().toLowerCase(), productDto)));
                 });
+    }
+
+    @GetMapping("/get-all-summary")
+    public ResponseEntity<ProductSummaryDTO[]> getAllProductsSummary(){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.moveProductListToSummaryList(productService.findAllProducts()));
+    }
+
+    @GetMapping("/get-all-summary-by-category")
+    public ResponseEntity<ProductSummaryDTO[]> getCategorySummary(@RequestParam String category){
+        GlobalValidator.checkIfAFieldIsEmpty(category);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.moveProductListToSummaryList(productService.findAllProductsByCategory(ProductValidator.checkIfProductCategoryExists(category).name())));
     }
 
 }
