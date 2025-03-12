@@ -16,8 +16,8 @@ public class ProductMapper {
         productDTO.setName(product.getName());
         productDTO.setActive(product.getActive());
         productDTO.setManufacturer(product.getManufacturer().getName());
-        productDTO.setCategory(product.getProductCategory().name());
-        productDTO.setSubcategory(product.getProductSubcategory().name());
+        productDTO.setCategory(product.getCategory().name());
+        productDTO.setSubcategory(product.getSubcategory().name());
         productDTO.setReleaseYear(product.getReleaseYear());
         productDTO.setColorList(product.getColors());
     }
@@ -26,9 +26,9 @@ public class ProductMapper {
         product.setName(productDTO.getName());
         product.setActive(true);
         product.setReleaseYear(productDTO.getReleaseYear());
-        product.setProductCategory(ProductValidator.checkIfProductCategoryExists(productDTO.getCategory()));
-        product.setProductSubcategory(ProductValidator.checkIfProductSubcategoryExists(productDTO.getSubcategory()));
-        ProductValidator.checkIfSubcategoryBelongsToACategory(product.getProductCategory(),product.getProductSubcategory());
+        product.setCategory(ProductValidator.checkIfProductCategoryExists(productDTO.getCategory()));
+        product.setSubcategory(ProductValidator.checkIfProductSubcategoryExists(productDTO.getSubcategory()));
+        ProductValidator.checkIfSubcategoryBelongsToACategory(product.getCategory(),product.getSubcategory());
     }
 
     public static ProductSummaryDTO toSummary(Product product){
@@ -64,22 +64,22 @@ public class ProductMapper {
     public static Clothing toClothing(ClothingDTO clothingDTO){
         Clothing clothing=new Clothing();
         fillProductFields(clothing,clothingDTO);
-        clothing.setSeason(Season.getSeasonFromName(clothing.getName()));
+        clothing.setSeason(Season.getSeasonFromName(clothingDTO.getSeason()));
         return clothing;
     }
 
-    public static AccessoryDTO toAccessoryDTO(Accesory accesory){
+    public static AccessoryDTO toAccessoryDTO(Accessory accessory){
         final AccessoryDTO accessoryDTO=new AccessoryDTO();
-        fillProductDTOFields(accessoryDTO,accesory);
-        accessoryDTO.setMaterial(accesory.getMaterial().name());
+        fillProductDTOFields(accessoryDTO, accessory);
+        accessoryDTO.setMaterial(accessory.getMaterial().name());
         return accessoryDTO;
     }
 
-    public static Accesory toAccessory(AccessoryDTO accessoryDTO){
-        final Accesory accesory=new Accesory();
-        fillProductFields(accesory,accessoryDTO);
-        accesory.setMaterial(Material.getMaterialFromName(accessoryDTO.getMaterial()));
-        return accesory;
+    public static Accessory toAccessory(AccessoryDTO accessoryDTO){
+        final Accessory accessory =new Accessory();
+        fillProductFields(accessory,accessoryDTO);
+        accessory.setMaterial(Material.getMaterialFromName(accessoryDTO.getMaterial()));
+        return accessory;
     }
 
     public static CollectibleDTO toCollectibleDTO(Collectible collectible){
@@ -118,7 +118,7 @@ public class ProductMapper {
     }
 
     public static Music toMusic(MusicDTO musicDTO){
-        Music music=new Music();
+        final Music music=new Music();
         fillProductFields(music,musicDTO);
         music.setFormat(Format.getFormatByName(musicDTO.getFormat()));
         return music;

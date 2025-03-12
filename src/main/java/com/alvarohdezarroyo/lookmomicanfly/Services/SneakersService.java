@@ -5,6 +5,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sneakers;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.SneakersRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class SneakersService {
         this.sneakersRepository = sneakersRepository;
     }
 
+    @Transactional
     public Sneakers saveSneakers(Sneakers sneakers){
         return sneakersRepository.save(sneakers);
     }

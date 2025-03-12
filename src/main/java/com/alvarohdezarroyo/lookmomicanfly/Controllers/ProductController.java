@@ -34,15 +34,16 @@ public class ProductController {
                 });
     }
 
-    @GetMapping("/get-all-summary")
+    @GetMapping("/get/all-summary")
     public ResponseEntity<ProductSummaryDTO[]> getAllProductsSummary(){
         return ResponseEntity.status(HttpStatus.OK).body(productService.moveProductListToSummaryList(productService.findAllProducts()));
     }
 
-    @GetMapping("/get-all-summary-by-category")
+    @GetMapping("/get/all-summary-by-category/")
     public ResponseEntity<ProductSummaryDTO[]> getCategorySummary(@RequestParam String category){
+        System.out.println(category);
         GlobalValidator.checkIfAFieldIsEmpty(category);
-        return ResponseEntity.status(HttpStatus.OK).body(productService.moveProductListToSummaryList(productService.findAllProductsByCategory(ProductValidator.checkIfProductCategoryExists(category).name())));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.moveProductListToSummaryList(productService.findAllProductsByCategory(ProductValidator.checkIfProductCategoryExists(category))));
     }
 
 }

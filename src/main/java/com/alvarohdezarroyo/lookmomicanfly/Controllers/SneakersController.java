@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sneakers;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SneakersService;
@@ -38,6 +39,7 @@ public class SneakersController {
         GlobalValidator.checkIfRequestBodyIsEmpty(sneakersDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(sneakersDTO,sneakersDTO.getSku(),"sku");
         final Sneakers sneakers=ProductMapper.toSneakers(sneakersDTO);
+        ProductValidator.checkIfCategoryIsCorrect(sneakers.getCategory(), ProductCategory.SNEAKERS);
         productService.fillManufacturerAndColors(sneakers,sneakersDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sneakersService.saveSneakers(sneakers)));
     }

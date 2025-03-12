@@ -2,7 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AccessoryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Accesory;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Accessory;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AccesoryRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class AccessoryService {
         ));
     }
 
-    public Accesory saveAccessory(Accesory accesory){
-        return accesoryRepository.save(accesory);
+    public Accessory saveAccessory(Accessory accessory){
+        return accesoryRepository.save(accessory);
     }
 }

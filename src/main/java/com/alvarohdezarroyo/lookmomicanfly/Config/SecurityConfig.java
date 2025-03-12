@@ -43,6 +43,11 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/login").permitAll();
                     auth.requestMatchers("/api/products/get/**").permitAll();
                     auth.requestMatchers("/api/products/sneakers/get/**").permitAll();
+                    auth.requestMatchers("/api/products/collectibles/get/**").permitAll();
+                    auth.requestMatchers("/api/products/accessories/get/**").permitAll();
+                    auth.requestMatchers("/api/products/music/get/**").permitAll();
+                    auth.requestMatchers("/api/products/skateboards/get/**").permitAll();
+                    auth.requestMatchers("/api/products/clothing/get/**").permitAll();
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })

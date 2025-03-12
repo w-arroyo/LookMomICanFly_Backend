@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.CollectibleDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Collectible;
 import com.alvarohdezarroyo.lookmomicanfly.Services.CollectibleService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
@@ -36,6 +37,7 @@ public class CollectibleController {
         GlobalValidator.checkIfRequestBodyIsEmpty(collectibleDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(collectibleDTO,collectibleDTO.getCollectionName(),"collection_name");
         final Collectible collectible= ProductMapper.toCollectible(collectibleDTO);
+        ProductValidator.checkIfCategoryIsCorrect(collectible.getCategory(), ProductCategory.COLLECTIBLES);
         productService.fillManufacturerAndColors(collectible,collectibleDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",collectibleService.saveCollectible(collectible)));
     }

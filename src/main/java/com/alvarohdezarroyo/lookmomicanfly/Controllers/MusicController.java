@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.MusicDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Music;
 import com.alvarohdezarroyo.lookmomicanfly.Services.MusicService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
@@ -36,7 +37,9 @@ public class MusicController {
         GlobalValidator.checkIfRequestBodyIsEmpty(musicDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(musicDTO,musicDTO.getFormat(),"format");
         final Music music= ProductMapper.toMusic(musicDTO);
+        ProductValidator.checkIfCategoryIsCorrect(music.getCategory(), ProductCategory.MUSIC);
         productService.fillManufacturerAndColors(music,musicDTO);
+        //System.out.println(music.getName()+", "+music.getFormat().name()+", "+music.getSubcategory().name()+", "+music.getCategory().name()+", "+music.getManufacturer().getName()+", "+music.getReleaseYear()+", "+music.getColors().size()+", "+music.getActive());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",musicService.saveMusic(music)));
     }
 

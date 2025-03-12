@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ClothingDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Clothing;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ClothingService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
@@ -38,8 +39,10 @@ public class ClothingController {
         //remember to validate user is ADMIN to allow this request
         GlobalValidator.checkIfRequestBodyIsEmpty(clothingDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(clothingDTO, clothingDTO.getSeason(), "season");
-        final Clothing clothing=new Clothing();
-        ProductMapper.fillProductFields(clothing,clothingDTO);
+        final Clothing clothing= ProductMapper.toClothing(clothingDTO);
+        //ProductMapper.fillProductFields(clothing,clothingDTO);
+        System.out.println(clothing.getName()+", "+clothing.getCategory()+", "+clothing.getSeason()+", "+clothing.getSubcategory());
+        ProductValidator.checkIfCategoryIsCorrect(clothing.getCategory(), ProductCategory.CLOTHING);
         productService.fillManufacturerAndColors(clothing,clothingDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",clothingService.saveClothing(clothing)));
     }

@@ -38,6 +38,11 @@ public class ProductValidator {
         throw new EntityNotFoundException("Size does not exists.");
     }
 
+    public static void checkIfCategoryIsCorrect(ProductCategory categoryToCheck, ProductCategory category){
+        if(!category.equals(categoryToCheck))
+            throw new IllegalArgumentException("Wrong endpoint.");
+    }
+
     public static void checkIfSizeBelongsToACategory(Size size, ProductCategory category){
         if(!size.getCategories().contains(category))
             throw new IllegalArgumentException("Size does not belong to that category");

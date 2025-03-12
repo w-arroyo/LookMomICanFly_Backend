@@ -5,6 +5,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Music;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.MusicRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class MusicService {
         ));
     }
 
+    @Transactional
     public Music saveMusic(Music music){
         return musicRepository.save(music);
     }

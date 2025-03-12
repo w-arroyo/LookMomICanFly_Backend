@@ -2,7 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Format;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class Music extends Product{
 
     @Column(name = "format", nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotBlank
+    @NotNull
     private Format format;
 
 }

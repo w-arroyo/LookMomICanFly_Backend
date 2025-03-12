@@ -47,7 +47,7 @@ public class ProductService {
         return switch (category){
             case SNEAKERS -> SneakersDTO.class;
             case CLOTHING -> Clothing.class;
-            case ACCESSORIES -> Accesory.class;
+            case ACCESSORIES -> Accessory.class;
             case SKATEBOARDS -> Skateboard.class;
             case COLLECTIBLES -> Collectible.class;
             case MUSIC -> Music.class;
@@ -58,7 +58,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> findAllProductsByCategory(String category){
+    public List<Product> findAllProductsByCategory(ProductCategory category){
+        //return productRepository.findAllByCategory(category);
         return productRepository.findAllByCategory(category);
     }
 

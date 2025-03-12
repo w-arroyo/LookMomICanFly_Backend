@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SkateboardDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Skateboard;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SkateboardService;
@@ -36,6 +37,7 @@ public class SkateboardController {
         GlobalValidator.checkIfRequestBodyIsEmpty(skateboardDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(skateboardDTO,skateboardDTO.getLength(),"length");
         final Skateboard skateboard= ProductMapper.toSkateboard(skateboardDTO);
+        ProductValidator.checkIfCategoryIsCorrect(skateboard.getCategory(), ProductCategory.SKATEBOARDS);
         productService.fillManufacturerAndColors(skateboard,skateboardDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",skateboardService.saveSkateboard(skateboard)));
     }

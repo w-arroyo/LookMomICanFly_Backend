@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Accesory extends Product {
+public class Accessory extends Product {
 
     @Column(name = "material", nullable = false)
     @NotBlank

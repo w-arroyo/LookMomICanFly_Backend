@@ -3,7 +3,6 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductSubcategory;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Year;
-import java.util.Calendar;
 import java.util.List;
 
 @Entity
@@ -41,11 +38,11 @@ public class Product {
 
     @Column(name = "category", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProductCategory productCategory;
+    private ProductCategory category;
 
     @Column(name = "subcategory", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProductSubcategory productSubcategory;
+    private ProductSubcategory subcategory;
 
     @ManyToOne(fetch = FetchType.EAGER) // loads up the manufacturer of the product automatically
     @JoinColumn(name = "manufacturer_id", nullable = false)
