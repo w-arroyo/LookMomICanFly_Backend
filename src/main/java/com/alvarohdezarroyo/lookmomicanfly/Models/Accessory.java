@@ -2,7 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Material;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.Setter;
 public class Accessory extends Product {
 
     @Column(name = "material", nullable = false)
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Material material;
 
