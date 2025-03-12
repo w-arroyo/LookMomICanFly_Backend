@@ -38,7 +38,6 @@ public class AccessoryController {
         ProductValidator.checkIfProductFieldsAreEmpty(accessoryDTO,accessoryDTO.getMaterial(),"material");
         final Accessory accessory= ProductMapper.toAccessory(accessoryDTO);
         ProductValidator.checkIfCategoryIsCorrect(accessory.getCategory(), ProductCategory.ACCESSORIES);
-        System.out.println(accessory.getName()+","+accessory.getCategory()+", "+accessory.getMaterial()+", "+accessory.getSubcategory());
         productService.fillManufacturerAndColors(accessory,accessoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",accessoryService.saveAccessory(accessory)));
     }

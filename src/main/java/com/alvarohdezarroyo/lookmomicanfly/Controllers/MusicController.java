@@ -39,7 +39,6 @@ public class MusicController {
         final Music music= ProductMapper.toMusic(musicDTO);
         ProductValidator.checkIfCategoryIsCorrect(music.getCategory(), ProductCategory.MUSIC);
         productService.fillManufacturerAndColors(music,musicDTO);
-        //System.out.println(music.getName()+", "+music.getFormat().name()+", "+music.getSubcategory().name()+", "+music.getCategory().name()+", "+music.getManufacturer().getName()+", "+music.getReleaseYear()+", "+music.getColors().size()+", "+music.getActive());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",musicService.saveMusic(music)));
     }
 
