@@ -28,6 +28,7 @@ public class AddressController {
 
     @PostMapping("/save")
     public ResponseEntity <Map<String,Object>> saveAddress(@RequestBody AddressDTO address){
+        GlobalValidator.checkIfRequestBodyIsEmpty(address);
         AddressValidator.checkIfFieldsAreEmpty(address);
         authService.checkIfAUserIsLoggedIn();
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success", "Address with id: '"+addressService.saveAddress(address).getId()+"' saved successfully"));
@@ -35,6 +36,7 @@ public class AddressController {
 
     @PutMapping("/deactivate")
     public ResponseEntity<String> deactivateAddress(@RequestBody DeactivateAddressRequest request){
+        GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getId(), request.getUserId());
         GlobalValidator.checkFraudulentRequest(request.getUserId(), authService.getAuthenticatedUserId());
         addressService.deactivateAddress(request.getId(), request.getUserId());

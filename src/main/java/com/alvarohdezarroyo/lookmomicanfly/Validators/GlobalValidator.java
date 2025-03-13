@@ -20,4 +20,9 @@ public class GlobalValidator {
             throw new EmptyFieldsException("Empty fields are not allowed.");
     }
 
+    public static void checkIfRequestBodyIsEmpty(Object object){
+        if(object==null)
+            throw new IllegalArgumentException("Request is empty.");
+    }
+
 }

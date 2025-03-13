@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.rmi.UnexpectedException;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -57,6 +58,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> runTimeExceptionHandler(RuntimeException ex){
+        /*
+        Arrays.stream(ex.getStackTrace()).toList().forEach(
+                System.out::println
+        );
+        */
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 
@@ -67,6 +73,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnexpectedException.class)
     public ResponseEntity<String> unexpectedExceptionHandler(UnexpectedException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> illegalArgumentExceptionHandler(IllegalArgumentException ex){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 

@@ -4,6 +4,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,12 @@ public class User {
     @NotBlank(message = "Email is mandatory.")
     @Email
     @Column (nullable = false, unique = true)
+    @Size(min = 10, max = 220, message = "Email length is invalid.")
     private String email;
 
     @Column (nullable = false)
+    @NotBlank
+    @Size(min = 5, max = 220, message = "Password length is invalid.")
     private String password;
 
     @Column (nullable = false)
@@ -42,7 +46,7 @@ public class User {
     @Column (name = "registration_date",nullable = false, updatable = false)
     private LocalDateTime registrationDate= LocalDateTime.now();
 
-    @Column
+    @Column(name = "user_type")
     @Enumerated(EnumType.STRING)
     private UserType userType;
 

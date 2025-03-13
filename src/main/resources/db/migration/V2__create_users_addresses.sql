@@ -1,5 +1,3 @@
-USE lookmomicanfly;
-
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(36) PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
