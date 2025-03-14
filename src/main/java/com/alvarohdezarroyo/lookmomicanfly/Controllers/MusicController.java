@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.MusicDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Music;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.MusicService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -20,10 +21,12 @@ public class MusicController {
 
     private final MusicService musicService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public MusicController(MusicService musicService, ProductService productService) {
+    public MusicController(MusicService musicService, ProductService productService, AuthService authService) {
         this.musicService = musicService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -33,7 +36,7 @@ public class MusicController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveMusic(@RequestBody MusicDTO musicDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(musicDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(musicDTO,musicDTO.getFormat(),"format");
         final Music music= ProductMapper.toMusic(musicDTO);

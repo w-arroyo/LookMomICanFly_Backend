@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ClothingDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Clothing;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ClothingService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -22,10 +23,12 @@ public class ClothingController {
     @Autowired
     private final ClothingService clothingService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public ClothingController(ClothingService clothingService, ProductService productService) {
+    public ClothingController(ClothingService clothingService, ProductService productService, AuthService authService) {
         this.clothingService = clothingService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -36,7 +39,7 @@ public class ClothingController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Clothing>> saveClothingProduct(@RequestBody ClothingDTO clothingDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(clothingDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(clothingDTO, clothingDTO.getSeason(), "season");
         final Clothing clothing= ProductMapper.toClothing(clothingDTO);

@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SkateboardDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Skateboard;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SkateboardService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -20,10 +21,12 @@ public class SkateboardController {
 
     private final SkateboardService skateboardService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public SkateboardController(SkateboardService skateboardService, ProductService productService) {
+    public SkateboardController(SkateboardService skateboardService, ProductService productService, AuthService authService) {
         this.skateboardService = skateboardService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -33,7 +36,7 @@ public class SkateboardController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveSkateboard(@RequestBody SkateboardDTO skateboardDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(skateboardDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(skateboardDTO,skateboardDTO.getLength(),"length");
         final Skateboard skateboard= ProductMapper.toSkateboard(skateboardDTO);

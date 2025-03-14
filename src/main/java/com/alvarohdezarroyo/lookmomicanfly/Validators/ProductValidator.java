@@ -66,17 +66,12 @@ public class ProductValidator {
             emptyFields.add("category");
         if(productDTO.getSubcategory()==null || productDTO.getSubcategory().trim().isEmpty())
             emptyFields.add("category");
-        if(productDTO.getReleaseYear()==null)
-            emptyFields.add("release_year");
-        else{
-            try {
-                Integer.parseInt(productDTO.getReleaseYear()+"");
-            }
-            catch (NumberFormatException e){
-                emptyFields.add("release_year");
-            }
+        try {
+            GlobalValidator.checkIfANumberFieldIsValid(productDTO.getReleaseYear());
         }
-
+        catch (IllegalArgumentException e){
+            emptyFields.add("release_year");
+        }
         if(productDTO.getManufacturer()==null || productDTO.getManufacturer().trim().isEmpty())
             emptyFields.add("manufacturer");
         if(productDTO.getColors()==null || productDTO.getColors().length==0)

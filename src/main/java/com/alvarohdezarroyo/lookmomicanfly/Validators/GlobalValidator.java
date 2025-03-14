@@ -25,4 +25,12 @@ public class GlobalValidator {
             throw new IllegalArgumentException("Request is empty.");
     }
 
+    public static void checkIfANumberFieldIsValid(int field){
+        try{
+            Integer.parseInt(field+"");
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Number field invalid.");
+        }
+    }
+
 }

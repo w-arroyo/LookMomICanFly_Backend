@@ -35,6 +35,12 @@ public class ProductService {
         this.webClient = webClient;
     }
 
+    public Product findProductById(String id){
+        return productRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("Product id does not exist.")
+        );
+    }
+
     public ProductCategory getProductCategoryById(String id){
         try {
             return productRepository.getProductCategoryByProductId(id);

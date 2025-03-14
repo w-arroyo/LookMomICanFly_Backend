@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UnauthorizedRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
@@ -32,7 +34,7 @@ public class AuthService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getId(), // this sets the id as the username instead of the email
                 user.getPassword(),
-                Collections.emptyList() // handle roles needed
+                Collections.emptyList() // handles roles
         );
     }
 
@@ -45,6 +47,13 @@ public class AuthService implements UserDetailsService {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated())
             throw new UnauthorizedRequestException("User is not logged in.");
+    }
+
+    public void checkIfAUserIsAdmin(){
+        if(!userRepository.findById(getAuthenticatedUserId()).orElseThrow(
+                ()-> new EntityNotFoundException("User id does not exist.")
+        ).getUserType().equals(UserType.ADMIN))
+            throw new FraudulentRequestException("You do not have permission to make this request.");
     }
 
 }
