@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,9 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Post {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
@@ -38,6 +37,7 @@ public class Post {
     private Size size;
 
     @Column(name = "amount")
+    @Min(value = 1)
     @NotNull
     private Integer amount;
 

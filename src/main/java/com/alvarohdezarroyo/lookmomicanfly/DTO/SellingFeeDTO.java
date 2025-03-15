@@ -12,6 +12,6 @@ import lombok.Setter;
 public class SellingFeeDTO {
 
     private String id, description;
-    private Double percentage;
+    private Integer percentage;
 
 }

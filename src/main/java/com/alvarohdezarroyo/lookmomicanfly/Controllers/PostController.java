@@ -1,11 +1,12 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.AskRequest;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AskService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.BidService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.SellingFeeService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.PostValidator;
@@ -46,6 +47,17 @@ public class PostController {
         final Ask ask= postMapper.toAsk(askRequest);
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",askService.saveAsk(ask)));
+    }
+
+    @PostMapping("/bids/save")
+    public ResponseEntity<Map<String,Object>> saveBid(@RequestBody BidRequest bidRequest){
+        GlobalValidator.checkIfRequestBodyIsEmpty(bidRequest);
+        PostValidator.checkIfPostFieldsAreEmpty(bidRequest, bidRequest.getShippingOptionId(), "shipping option");
+        authService.checkFraudulentRequest(bidRequest.getUserId());
+        ProductValidator.checkIfSizeExists(bidRequest.getSize());
+        final Bid bid= postMapper.toBid(bidRequest);
+        ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",bidService.saveBid(bid)));
     }
 
 }

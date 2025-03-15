@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fees")
+@Table(name = "selling_fees")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,12 +23,14 @@ public class SellingFee {
     private String id;
 
     @Column(name = "percentage")
+    @Min(value = 0)
+    @Max(value = 100)
     @NotNull
-    private Double percentage;
+    private Integer percentage;
 
-    @Column(name = "default")
+    @Column(name = "by_default")
     @NotNull
-    private Boolean byDefault=false;
+    private Boolean byDefault;
 
     @Column(name = "description", nullable = false)
     @NotBlank

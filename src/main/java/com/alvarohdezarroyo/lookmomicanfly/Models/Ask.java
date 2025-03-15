@@ -1,9 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +14,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ask extends Post {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @JoinColumn(name = "fee_id")
     @NotNull

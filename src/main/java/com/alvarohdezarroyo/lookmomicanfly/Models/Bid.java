@@ -12,6 +12,10 @@ import lombok.*;
 @AllArgsConstructor
 public class Bid extends Post{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
     @Column(name = "shipping_option_id")
     @NotNull
     private ShippingOption shippingOption;

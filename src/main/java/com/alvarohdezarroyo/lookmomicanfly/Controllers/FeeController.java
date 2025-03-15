@@ -38,7 +38,7 @@ public class FeeController {
     public ResponseEntity<Map<String,Object>> saveNewDefaultSellingFee(@RequestBody SellingFeeDTO sellingFeeDTO){
         GlobalValidator.checkIfRequestBodyIsEmpty(sellingFeeDTO);
         GlobalValidator.checkIfAFieldIsEmpty(sellingFeeDTO.getDescription());
-        GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage());
+        GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage().intValue());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sellingFeeService.saveSellingFeeOffer(SellingFeeMapper.toSellingFee(sellingFeeDTO))));
     }
 

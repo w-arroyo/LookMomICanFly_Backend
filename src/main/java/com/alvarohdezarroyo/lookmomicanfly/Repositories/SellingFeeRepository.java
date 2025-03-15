@@ -15,10 +15,10 @@ public interface SellingFeeRepository extends JpaRepository<SellingFee,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE selling_fees SET default=false")
+    @Query(value = "UPDATE selling_fees SET by_default=false")
     void deactivateCurrentSellingFeeOffers();
 
-    @Query(value = "SELECT * from selling_fees WHERE default=true", nativeQuery = true)
+    @Query(value = "SELECT * from selling_fees WHERE by_default=true", nativeQuery = true)
     Optional<SellingFee> findByDefault();
 
     @Query(value = "SELECT count(*) from transactions where date >= (NOW() - INTERVAL 3 MONTH) AND ask_id IN (SELECT id from asks WHERE user_id =: id)", nativeQuery = true)

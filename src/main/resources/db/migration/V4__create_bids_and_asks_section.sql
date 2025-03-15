@@ -3,16 +3,16 @@ CREATE TABLE IF NOT EXISTS shipping_companies (
   name VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS fees (
+CREATE TABLE IF NOT EXISTS selling_fees (
     id VARCHAR(36) PRIMARY KEY,
-    percentage DECIMAL(10,1) NOT NULL,
+    percentage INTEGER NOT NULL CHECK (percentage BETWEEN 0 AND 100),
     description VARCHAR(255) NOT NULL,
-    default BOOLEAN NOT NULL DEFAULT FALSE
+    by_default BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS shipping_options (
     id VARCHAR(36) PRIMARY KEY,
-    price DECIMAL(10,2) NOT NULL,
+    price DECIMAL(7,2) NOT NULL,
     name VARCHAR(255) NOT NULL,
     estimated_time VARCHAR(255) NOT NULL,
     shipping_company_id VARCHAR(36) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS asks (
     active BOOLEAN NOT NULL DEFAULT TRUE,
     finalized BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE CASCADE,
-    FOREIGN KEY (fee_id) REFERENCES fees(id) ON DELETE CASCADE,
+    FOREIGN KEY (fee_id) REFERENCES selling_fees(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -68,7 +68,7 @@ INSERT INTO shipping_options (id, price, name, estimated_time, shipping_company_
 (UUID(), 16.99, 'STANDARD', 'Around 14 days', @ups_id, TRUE),
 (UUID(), 25.00, 'EXPRESS', 'Around 9 days', @dhl_id, TRUE);
 
-INSERT INTO fees (id, percentage, description, active) VALUES
+INSERT INTO selling_fees (id, percentage, description, by_default) VALUES
 (UUID(), 14, 'LEVEL_1', FALSE),
 (UUID(), 13, 'LEVEL_2', FALSE),
 (UUID(), 12, 'LEVEL 3', FALSE),
