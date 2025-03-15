@@ -20,7 +20,7 @@ public class SellingFeeService {
 
     @Transactional
     public SellingFee saveSellingFeeOffer(SellingFee sellingFee){
-        sellingFeeRepository.deactivateCurrentSellingFeeOffers();
+        //sellingFeeRepository.deactivateCurrentSellingFeeOffers();
         return sellingFeeRepository.save(sellingFee);
     }
 

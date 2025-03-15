@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ShippingOptionDTO {
 
-    private String id,name,companyName;
+    private String id,name,companyName, estimatedTime;
     private Double price;
 
 }

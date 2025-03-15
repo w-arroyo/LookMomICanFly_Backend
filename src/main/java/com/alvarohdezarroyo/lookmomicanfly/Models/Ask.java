@@ -19,6 +19,7 @@ public class Ask extends Post {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @ManyToOne
     @JoinColumn(name = "fee_id")
     @NotNull
     private SellingFee sellingFee;

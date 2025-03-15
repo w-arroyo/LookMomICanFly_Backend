@@ -12,12 +12,12 @@ import java.util.Optional;
 public interface SellingFeeRepository extends JpaRepository<SellingFee,String> {
 
     Optional<SellingFee> findByDescription(String s);
-
+/*
     @Modifying
     @Transactional
     @Query(value = "UPDATE selling_fees SET by_default=false")
-    void deactivateCurrentSellingFeeOffers();
-
+    int deactivateCurrentSellingFeeOffers();
+    */
     @Query(value = "SELECT * from selling_fees WHERE by_default=true", nativeQuery = true)
     Optional<SellingFee> findByDefault();
 

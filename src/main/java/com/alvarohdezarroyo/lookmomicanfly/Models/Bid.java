@@ -16,7 +16,8 @@ public class Bid extends Post{
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "shipping_option_id")
+    @ManyToOne
+    @JoinColumn(name = "shipping_option_id")
     @NotNull
     private ShippingOption shippingOption;
 

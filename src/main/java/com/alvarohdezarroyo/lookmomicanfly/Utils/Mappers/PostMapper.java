@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 public class PostMapper {
 
     @Value("${app.sellingShippingFee}")
-    private final Double sellingShippingFee;
+    private Double sellingShippingFee;
     @Value("${app.operationalFee}")
-    private final Double operationalFee;
+    private Double operationalFee;
 
     @Autowired
     private final ProductService productService;
@@ -35,9 +35,7 @@ public class PostMapper {
     private final SellingFeeService sellingFeeService;
     private final ShippingOptionService shippingOptionService;
 
-    public PostMapper(Double sellingShippingFee, Double operationalFee, ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService) {
-        this.sellingShippingFee = sellingShippingFee;
-        this.operationalFee = operationalFee;
+    public PostMapper(ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService) {
         this.productService = productService;
         this.userValidator = userValidator;
         this.addressService = addressService;

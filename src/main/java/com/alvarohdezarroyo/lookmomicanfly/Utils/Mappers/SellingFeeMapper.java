@@ -2,7 +2,6 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SellingFeeDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.SellingFee;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
 @Component
