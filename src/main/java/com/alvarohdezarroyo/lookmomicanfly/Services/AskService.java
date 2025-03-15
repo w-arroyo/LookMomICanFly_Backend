@@ -15,8 +15,11 @@ public class AskService {
         this.askRepository = askRepository;
     }
 
-    public Ask saveAsk(Ask ask){
-        return askRepository.save(ask);
+    public Object saveAsk(Ask ask){
+        System.out.println(ask.getSize().name()+"/"+ask.getSize());
+        final Ask askTwo=askRepository.save(ask);
+        System.out.println(askTwo.getSize()+"/"+askTwo.getProduct().getName()+"/"+askTwo.getUser().getEmail()+"/"+askTwo.getShippingFee()+"/"+askTwo.getAmount()+"/");
+        return "";
     }
 
 }

@@ -9,15 +9,12 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "asks")
+@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ask extends Post {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
 
     @ManyToOne
     @JoinColumn(name = "fee_id")
@@ -27,7 +24,5 @@ public class Ask extends Post {
     @Column(name = "shipping_fee")
     @NotNull
     private Double shippingFee;
-
-    // add shipping fee to app properties
 
 }

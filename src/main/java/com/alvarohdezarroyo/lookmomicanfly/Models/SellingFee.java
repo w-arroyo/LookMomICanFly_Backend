@@ -30,7 +30,7 @@ public class SellingFee {
 
     @Column(name = "by_default")
     @NotNull
-    private Boolean byDefault;
+    private Boolean byDefault=false;
 
     @Column(name = "description", nullable = false)
     @NotBlank

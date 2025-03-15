@@ -27,4 +27,9 @@ public class GlobalValidator {
         }
     }
 
+    public static void checkIfANumberIsGreaterThan(int numberOne, int comparison){
+        if(numberOne<comparison)
+            throw new IllegalArgumentException("Number must be grater than "+comparison+".");
+    }
+
 }

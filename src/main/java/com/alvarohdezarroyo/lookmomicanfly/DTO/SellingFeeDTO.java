@@ -13,5 +13,6 @@ public class SellingFeeDTO {
 
     private String id, description;
     private Integer percentage;
+    private boolean byDefault;
 
 }

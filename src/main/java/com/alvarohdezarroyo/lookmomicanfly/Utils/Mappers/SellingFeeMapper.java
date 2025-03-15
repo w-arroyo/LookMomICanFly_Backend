@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class SellingFeeMapper {
 
     public static SellingFeeDTO toDTO(SellingFee sellingFee){
-        return new SellingFeeDTO(sellingFee.getId(),sellingFee.getDescription(),sellingFee.getPercentage());
+        return new SellingFeeDTO(sellingFee.getId(),sellingFee.getDescription(),sellingFee.getPercentage(), sellingFee.getByDefault());
     }
 
     public static SellingFee toSellingFee(SellingFeeDTO sellingFeeDTO){
@@ -16,6 +16,7 @@ public class SellingFeeMapper {
         sellingFee.setByDefault(true);
         sellingFee.setDescription(sellingFeeDTO.getDescription());
         sellingFee.setPercentage(sellingFeeDTO.getPercentage());
+        sellingFee.setByDefault(sellingFeeDTO.isByDefault());
         return sellingFee;
     }
 

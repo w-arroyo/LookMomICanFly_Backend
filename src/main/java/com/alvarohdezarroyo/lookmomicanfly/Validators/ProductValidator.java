@@ -30,17 +30,17 @@ public class ProductValidator {
         throw new EntityNotFoundException("Product subcategory does not exist.");
     }
 
-    public static Size checkIfSizeExists(String check){
-        for(Size size: Size.values()){
-            if (size.getValue().equalsIgnoreCase(check))
-                return size;
-        }
-        throw new EntityNotFoundException("Size does not exists.");
-    }
-
     public static void checkIfCategoryIsCorrect(ProductCategory categoryToCheck, ProductCategory category){
         if(!category.equals(categoryToCheck))
             throw new IllegalArgumentException("Wrong endpoint.");
+    }
+
+    public static Size checkIfASizeExists(String sizeString){
+        for(Size size: Size.values()){
+            if(size.getValue().equalsIgnoreCase(sizeString))
+                return size;
+        }
+        throw new EntityNotFoundException("Size does not exist.");
     }
 
     public static void checkIfSizeBelongsToACategory(Size size, ProductCategory category){
