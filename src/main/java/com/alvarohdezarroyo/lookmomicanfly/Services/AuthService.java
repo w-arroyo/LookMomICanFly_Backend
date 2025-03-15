@@ -49,6 +49,11 @@ public class AuthService implements UserDetailsService {
             throw new UnauthorizedRequestException("User is not logged in.");
     }
 
+    public void checkFraudulentRequest(String requestUserId){
+        if(!requestUserId.equalsIgnoreCase(getAuthenticatedUserId()))
+            throw new FraudulentRequestException("User sending the request does not have permission.");
+    }
+
     public void checkIfAUserIsAdmin(){
         if(!userRepository.findById(getAuthenticatedUserId()).orElseThrow(
                 ()-> new EntityNotFoundException("User id does not exist.")

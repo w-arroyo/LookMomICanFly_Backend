@@ -7,7 +7,9 @@ import lombok.Setter;
 @Setter
 public class PostDTO {
 
-    private String id, userId, productId, size;
-    private Integer amount, fee;
+    private String id, size;
+    private AddressDTO addressDTO;
+    private ProductSummaryDTO productSummaryDTO;
+    private Integer amount;
 
 }

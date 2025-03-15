@@ -24,6 +24,12 @@ public class SellingFeeService {
         return sellingFeeRepository.save(sellingFee);
     }
 
+    public SellingFee getSellingFeeById(String id){
+        return sellingFeeRepository.findById(id).orElseThrow(
+                ()->   new EntityNotFoundException("Fee description does not exist.")
+        );
+    }
+
     public int returnUserNumberSalesDuringPastThreeMonths(String id){
         return sellingFeeRepository.getUserSalesDuringPastThreeMonths(id);
     }

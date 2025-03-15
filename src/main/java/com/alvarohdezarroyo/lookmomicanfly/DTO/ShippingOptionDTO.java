@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AskDTO extends PostDTO{
+public class ShippingOptionDTO {
 
-    private Double shippingFee;
-    private SellingFeeDTO sellingFee;
+    private String id,name,companyName;
+    private Double price;
 
 }

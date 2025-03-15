@@ -12,9 +12,9 @@ import lombok.*;
 @AllArgsConstructor
 public class Bid extends Post{
 
-    @Column(name = "shipping_method_id")
+    @Column(name = "shipping_option_id")
     @NotNull
-    private String shippingMethod;
+    private ShippingOption shippingOption;
 
     @Column(name = "operational_fee")
     @NotNull

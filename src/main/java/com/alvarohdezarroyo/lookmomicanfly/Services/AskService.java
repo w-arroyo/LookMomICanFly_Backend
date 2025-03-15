@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,10 @@ public class AskService {
 
     public AskService(AskRepository askRepository) {
         this.askRepository = askRepository;
+    }
+
+    public Ask saveAsk(Ask ask){
+        return askRepository.save(ask);
     }
 
 }

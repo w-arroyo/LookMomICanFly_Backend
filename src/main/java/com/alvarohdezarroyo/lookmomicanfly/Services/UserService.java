@@ -13,7 +13,6 @@ import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +73,6 @@ public class UserService {
         try{
             final User user=userRepository.findById(id)
                     .orElseThrow(()->new EntityNotFoundException("User ID not found."));
-            GlobalValidator.checkFraudulentRequest(id, user.getId());
             UserValidator.checkIfBothEmailsAreTheSame(user.getEmail(),newEmail);
             if(userValidator.checkUserByEmail(newEmail))
                 throw new EmailAlreadyInUseException("Email is already in use.");

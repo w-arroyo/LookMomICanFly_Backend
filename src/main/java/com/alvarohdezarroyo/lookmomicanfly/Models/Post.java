@@ -28,6 +28,11 @@ public class Post {
     @NotNull
     private User user;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    @NotNull
+    private Address address;
+
     @Column(name = "size")
     @NotNull
     private Size size;

@@ -66,7 +66,7 @@ public class UserController {
     @PutMapping("/deactivate")
     public ResponseEntity<String> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
-        GlobalValidator.checkFraudulentRequest(userId, authService.getAuthenticatedUserId());
+        authService.checkFraudulentRequest(userId);
         userService.deactivateAccount(userId);
         return ResponseEntity.status(HttpStatus.OK).body("User ID: '"+userId+"' account successfully deactivated. ");
     }
@@ -74,7 +74,7 @@ public class UserController {
     @GetMapping("/addresses")
     public ResponseEntity<AddressDTO[]> getUserAddresses(@RequestParam String userId) throws Exception {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
-        GlobalValidator.checkFraudulentRequest(userId, authService.getAuthenticatedUserId());
+        authService.checkFraudulentRequest(userId);
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(userId));
     }
 
@@ -82,7 +82,7 @@ public class UserController {
     public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequest request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
-        GlobalValidator.checkFraudulentRequest(request.getUserId(), authService.getAuthenticatedUserId());
+        authService.checkFraudulentRequest(request.getUserId());
         userService.changeEmail(request.getUserId(), request.getNewField());
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Email modification completed. User ID: '"+request.getUserId()+"'. New email: '"+request.getNewField()+"'."));
     }
@@ -91,7 +91,7 @@ public class UserController {
     public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequest request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
-        GlobalValidator.checkFraudulentRequest(request.getId(), authService.getAuthenticatedUserId());
+        authService.checkFraudulentRequest(request.getId());
         userService.changeUserPassword(request);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success","Password modification completed. User ID: '"+request.getId()+"'."));
     }

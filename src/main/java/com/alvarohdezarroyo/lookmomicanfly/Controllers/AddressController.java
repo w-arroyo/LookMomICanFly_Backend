@@ -38,7 +38,7 @@ public class AddressController {
     public ResponseEntity<String> deactivateAddress(@RequestBody DeactivateAddressRequest request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getId(), request.getUserId());
-        GlobalValidator.checkFraudulentRequest(request.getUserId(), authService.getAuthenticatedUserId());
+        authService.checkFraudulentRequest(request.getUserId());
         addressService.deactivateAddress(request.getId(), request.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body("Address with ID: '"+request.getId()+"' deactivated");
     }

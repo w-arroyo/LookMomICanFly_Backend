@@ -22,7 +22,7 @@ public class SellingFee {
 
     @Column(name = "percentage")
     @NotNull
-    private Integer percentage;
+    private Double percentage;
 
     @Column(name = "default")
     @NotNull

@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class BidDTO extends PostDTO {
 
-    private String shippingMethodId;
+    private ShippingOptionDTO shippingOptionDTO;
+    private Double operatingFee;
 
 }
