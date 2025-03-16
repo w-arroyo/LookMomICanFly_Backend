@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sneakers;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SneakersService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -22,10 +23,12 @@ public class SneakersController {
     @Autowired
     private final SneakersService sneakersService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public SneakersController(SneakersService sneakersService, ProductService productService) {
+    public SneakersController(SneakersService sneakersService, ProductService productService, AuthService authService) {
         this.sneakersService = sneakersService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -35,7 +38,7 @@ public class SneakersController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveSneakers(@RequestBody SneakersDTO sneakersDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(sneakersDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(sneakersDTO,sneakersDTO.getSku(),"sku");
         final Sneakers sneakers=ProductMapper.toSneakers(sneakersDTO);

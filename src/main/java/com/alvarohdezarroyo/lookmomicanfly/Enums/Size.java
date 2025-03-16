@@ -33,17 +33,4 @@ public enum Size {
         this.categories=categories;
     }
 
-    public static Size checkIfASizeExists(String sizeString){
-        for(Size size: Size.values()){
-            if(size.name().equalsIgnoreCase(sizeString))
-                return size;
-        }
-        throw new EntityNotFoundException("Size does not exist.");
-    }
-
-    public static void checkIfASizeBelongsToACategory(Size size, ProductCategory category){
-        if(!size.getCategories().contains(category))
-            throw new IllegalArgumentException("Size does not belong to that category.");
-    }
-
 }

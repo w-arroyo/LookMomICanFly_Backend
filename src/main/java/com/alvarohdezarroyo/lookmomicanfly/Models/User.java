@@ -50,6 +50,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    @OneToMany (mappedBy = "userId")
+    @OneToMany (mappedBy = "userId", fetch = FetchType.LAZY)
     private List<Address> addresses;
 }

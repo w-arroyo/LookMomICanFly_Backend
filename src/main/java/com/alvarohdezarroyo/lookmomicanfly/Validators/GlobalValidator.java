@@ -1,14 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 
 public class GlobalValidator {
-
-    public static void checkFraudulentRequest(String requestUserId, String authenticatedUserId){
-        if(!requestUserId.equalsIgnoreCase(authenticatedUserId))
-            throw new FraudulentRequestException("User sending the request does not have permission.");
-    }
 
     public static void checkIfAFieldIsEmpty(String field){
         if(field==null || field.isBlank())
@@ -23,6 +17,19 @@ public class GlobalValidator {
     public static void checkIfRequestBodyIsEmpty(Object object){
         if(object==null)
             throw new IllegalArgumentException("Request is empty.");
+    }
+
+    public static void checkIfANumberFieldIsValid(int field){
+        try{
+            Integer.parseInt(field+"");
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Number field invalid.");
+        }
+    }
+
+    public static void checkIfANumberIsGreaterThan(int numberOne, int comparison){
+        if(numberOne<comparison)
+            throw new IllegalArgumentException("Number must be grater than "+comparison+".");
     }
 
 }

@@ -2,6 +2,8 @@ package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,6 +34,11 @@ public class AddressValidator {
         }
         if(!emptyFields.isEmpty())
             throw new EmptyFieldsException(emptyFields);
+    }
+
+    public static void checkIfAddressBelongsToAUser(String userId, Address address){
+        if(!address.getUserId().getId().equalsIgnoreCase(userId))
+            throw new FraudulentRequestException("Address does not belong to the user.");
     }
 
 }

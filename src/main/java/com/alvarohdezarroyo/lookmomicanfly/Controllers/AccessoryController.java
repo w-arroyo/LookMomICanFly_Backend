@@ -4,6 +4,7 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.AccessoryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Accessory;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AccessoryService;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
@@ -20,10 +21,12 @@ public class AccessoryController {
 
     private final AccessoryService accessoryService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public AccessoryController(AccessoryService accessoryService, ProductService productService) {
+    public AccessoryController(AccessoryService accessoryService, ProductService productService, AuthService authService) {
         this.accessoryService = accessoryService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -33,7 +36,7 @@ public class AccessoryController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveAccessory(@RequestBody AccessoryDTO accessoryDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(accessoryDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(accessoryDTO,accessoryDTO.getMaterial(),"material");
         final Accessory accessory= ProductMapper.toAccessory(accessoryDTO);

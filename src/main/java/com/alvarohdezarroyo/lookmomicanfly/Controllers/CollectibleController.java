@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.CollectibleDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Collectible;
+import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.CollectibleService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -20,10 +21,12 @@ public class CollectibleController {
 
     private final CollectibleService collectibleService;
     private final ProductService productService;
+    private final AuthService authService;
 
-    public CollectibleController(CollectibleService collectibleService, ProductService productService) {
+    public CollectibleController(CollectibleService collectibleService, ProductService productService, AuthService authService) {
         this.collectibleService = collectibleService;
         this.productService = productService;
+        this.authService = authService;
     }
 
     @GetMapping("/get/")
@@ -33,7 +36,7 @@ public class CollectibleController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveCollectible(@RequestBody CollectibleDTO collectibleDTO){
-        //remember to validate user is ADMIN to allow this request
+        authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(collectibleDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(collectibleDTO,collectibleDTO.getCollectionName(),"collection_name");
         final Collectible collectible= ProductMapper.toCollectible(collectibleDTO);

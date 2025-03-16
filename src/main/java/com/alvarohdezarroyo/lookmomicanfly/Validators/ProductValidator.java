@@ -30,17 +30,17 @@ public class ProductValidator {
         throw new EntityNotFoundException("Product subcategory does not exist.");
     }
 
-    public static Size checkIfSizeExists(String check){
-        for(Size size: Size.values()){
-            if (size.getValue().equalsIgnoreCase(check))
-                return size;
-        }
-        throw new EntityNotFoundException("Size does not exists.");
-    }
-
     public static void checkIfCategoryIsCorrect(ProductCategory categoryToCheck, ProductCategory category){
         if(!category.equals(categoryToCheck))
             throw new IllegalArgumentException("Wrong endpoint.");
+    }
+
+    public static Size checkIfASizeExists(String sizeString){
+        for(Size size: Size.values()){
+            if(size.getValue().equalsIgnoreCase(sizeString))
+                return size;
+        }
+        throw new EntityNotFoundException("Size does not exist.");
     }
 
     public static void checkIfSizeBelongsToACategory(Size size, ProductCategory category){
@@ -66,17 +66,12 @@ public class ProductValidator {
             emptyFields.add("category");
         if(productDTO.getSubcategory()==null || productDTO.getSubcategory().trim().isEmpty())
             emptyFields.add("category");
-        if(productDTO.getReleaseYear()==null)
-            emptyFields.add("release_year");
-        else{
-            try {
-                Integer.parseInt(productDTO.getReleaseYear()+"");
-            }
-            catch (NumberFormatException e){
-                emptyFields.add("release_year");
-            }
+        try {
+            GlobalValidator.checkIfANumberFieldIsValid(productDTO.getReleaseYear());
         }
-
+        catch (IllegalArgumentException e){
+            emptyFields.add("release_year");
+        }
         if(productDTO.getManufacturer()==null || productDTO.getManufacturer().trim().isEmpty())
             emptyFields.add("manufacturer");
         if(productDTO.getColors()==null || productDTO.getColors().length==0)
