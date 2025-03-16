@@ -37,6 +37,7 @@ public class Post {
     @NotNull
     private Address address;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "size")
     @NotNull
     private Size size;

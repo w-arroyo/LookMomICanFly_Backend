@@ -1,24 +1,15 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
-import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.AskRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Services.AskService;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangeUserFieldsRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.BidService;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.AddressValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.PostValidator;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -28,39 +19,31 @@ public class PostController {
 
     @Autowired
     private final AuthService authService;
-    private final BidService bidService;
-    private final AskService askService;
-    private final PostMapper postMapper;
+    private final PostService postService;
 
-    public PostController(AuthService authService, BidService bidService, AskService askService, PostMapper postMapper) {
+    public PostController(AuthService authService, PostService postService) {
         this.authService = authService;
-        this.bidService = bidService;
-        this.askService = askService;
-        this.postMapper = postMapper;
+        this.postService = postService;
     }
 
-    @PostMapping("/asks/save")
-    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody AskRequest askRequest){
-        GlobalValidator.checkIfRequestBodyIsEmpty(askRequest);
-        PostValidator.checkIfPostFieldsAreEmpty(askRequest, askRequest.getSellingFeeId(), "selling fee");
-        GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
-        authService.checkFraudulentRequest(askRequest.getUserId());
-        final Ask ask= postMapper.toAsk(askRequest);
-        ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
-        AddressValidator.checkIfAddressBelongsToAUser(askRequest.getUserId(), ask.getAddress());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",askService.saveAsk(ask)));
+    @PutMapping("/deactivate")
+    public ResponseEntity<String> deactivatePost(@RequestBody ChangeUserFieldsRequest request){
+        checkIfBodyIsEmpty(request);
+        authService.checkFraudulentRequest(request.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(postService.deactivatePost(request.getNewField(), request.getUserId()));
     }
 
-    @PostMapping("/bids/save")
-    public ResponseEntity<Map<String,Object>> saveBid(@RequestBody BidRequest bidRequest){
-        GlobalValidator.checkIfRequestBodyIsEmpty(bidRequest);
-        PostValidator.checkIfPostFieldsAreEmpty(bidRequest, bidRequest.getShippingOptionId(), "shipping option");
-        GlobalValidator.checkIfANumberIsGreaterThan(bidRequest.getAmount(), 1);
-        authService.checkFraudulentRequest(bidRequest.getUserId());
-        final Bid bid= postMapper.toBid(bidRequest);
-        AddressValidator.checkIfAddressBelongsToAUser(bidRequest.getUserId(), bid.getAddress());
-        ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",bidService.saveBid(bid)));
+    @PostMapping("/get-all-summary")
+    public ResponseEntity<Map<String, PostSummaryDTO[]>> getAllUserBidsSummaryDTO(@RequestBody ChangeUserFieldsRequest request){
+        checkIfBodyIsEmpty(request);
+        PostValidator.checkIfEntityExists(request.getNewField());
+        authService.checkFraudulentRequest(request.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("posts", postService.getAllUserActivePosts(request.getUserId(), request.getNewField())));
+    }
+
+    private void checkIfBodyIsEmpty(ChangeUserFieldsRequest request){
+        GlobalValidator.checkIfRequestBodyIsEmpty(request);
+        GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
     }
 
 }

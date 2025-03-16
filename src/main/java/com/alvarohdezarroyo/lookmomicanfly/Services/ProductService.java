@@ -73,7 +73,7 @@ public class ProductService {
     public ProductSummaryDTO[] moveProductListToSummaryList(List<Product> productList){
         try{
             if(productList.isEmpty())
-                throw new NoDataFoundException("No products saved in the database.");
+                return new ProductSummaryDTO[0];
             ProductSummaryDTO[] list=new ProductSummaryDTO[productList.size()];
             for (int product = 0; product < productList.size(); product++) {
                 list[product]= ProductMapper.toSummary(productList.get(product));

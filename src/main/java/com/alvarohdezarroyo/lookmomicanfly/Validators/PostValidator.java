@@ -1,6 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import org.springframework.stereotype.Component;
@@ -31,6 +30,11 @@ public class PostValidator {
             emptyFields.add(specialFieldName);
         if(!emptyFields.isEmpty())
             throw new EmptyFieldsException(emptyFields);
+    }
+
+    public static void checkIfEntityExists(String entity){
+        if(!entity.equals("Bid") && !entity.equals("Ask"))
+            throw new IllegalArgumentException(entity+" does not exist as entity.");
     }
 
 }

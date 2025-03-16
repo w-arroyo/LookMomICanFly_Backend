@@ -59,13 +59,13 @@ SET @dhl_id = (SELECT id FROM shipping_companies WHERE name = 'DHL' LIMIT 1);
 SET @ups_id = (SELECT id FROM shipping_companies WHERE name = 'UPS' LIMIT 1);
 SET @correos_id = (SELECT id FROM shipping_companies WHERE name = 'CORREOS' LIMIT 1);
 
-INSERT INTO shipping_options (id, price, name, estimated_time, shipping_company_id, active) VALUES
-(UUID(), 9.99, 'ECONOMY', 'Around 22 days', @correos_id, TRUE),
-(UUID(), 16.99, 'STANDARD', 'Around 14 days', @ups_id, TRUE),
-(UUID(), 25.00, 'EXPRESS', 'Around 9 days', @dhl_id, TRUE);
+INSERT INTO shipping_options (id, price, name, estimated_time, shipping_company_id, active) VALUES (UUID(), 9.99, 'ECONOMY', 'Around 22 days', @correos_id, TRUE);
+INSERT INTO shipping_options (id, price, name, estimated_time, shipping_company_id, active) VALUES (UUID(), 16.99, 'STANDARD', 'Around 14 days', @ups_id, TRUE);
+INSERT INTO shipping_options (id, price, name, estimated_time, shipping_company_id, active) VALUES (UUID(), 25.00, 'EXPRESS', 'Around 9 days', @dhl_id, TRUE);
 
-INSERT INTO selling_fees (id, percentage, description, by_default) VALUES
-(UUID(), 14, 'LEVEL_1', FALSE),
-(UUID(), 13, 'LEVEL_2', FALSE),
-(UUID(), 12, 'LEVEL 3', FALSE),
-(UUID(), 11, 'LEVEL 4', FALSE);
+INSERT INTO selling_fees (id, percentage, description, by_default) VALUES (UUID(), 14, 'LEVEL_1', FALSE);
+INSERT INTO selling_fees (id, percentage, description, by_default) VALUES (UUID(), 13, 'LEVEL_2', FALSE);
+INSERT INTO selling_fees (id, percentage, description, by_default) VALUES (UUID(), 12, 'LEVEL_3', FALSE);
+INSERT INTO selling_fees (id, percentage, description, by_default) VALUES (UUID(), 11, 'LEVEL_4', FALSE);
+
+

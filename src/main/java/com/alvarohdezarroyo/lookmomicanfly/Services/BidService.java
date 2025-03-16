@@ -15,8 +15,8 @@ public class BidService {
         this.bidRepository = bidRepository;
     }
 
-    public Bid saveBid(Bid bid){
-        return bidRepository.save(bid);
+    public String saveBid(Bid bid){
+        return bidRepository.save(bid).getId();
     }
 
 }

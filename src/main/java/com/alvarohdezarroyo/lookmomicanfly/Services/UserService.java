@@ -107,7 +107,7 @@ public class UserService {
         ).getAddresses();
         addresses.removeIf(address -> !address.getActive());
         if(addresses.isEmpty())
-            return null;
+            return new AddressDTO[0];
         final AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];
         for (int address = 0; address < addresses.size(); address++) {
             dtoAddresses[address]= AddressMapper.toDTO(addresses.get(address));

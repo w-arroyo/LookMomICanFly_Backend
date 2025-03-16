@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AskDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.BidDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
@@ -50,6 +51,10 @@ public class PostMapper {
         post.setAddress(addressService.getAddressById(postRequest.getAddressId()));
         post.setAmount(postRequest.getAmount());
         post.setSize(ProductValidator.checkIfASizeExists(postRequest.getSize()));
+    }
+
+    public PostSummaryDTO toSummaryDTO(Post post){
+        return new PostSummaryDTO(post.getId(),productService.findProductById(post.getProduct().getId()).getName(),post.getSize().getValue(),post.getAmount());
     }
 
     private void fillPostDTOFields(PostDTO postDTO, Post post) throws Exception {

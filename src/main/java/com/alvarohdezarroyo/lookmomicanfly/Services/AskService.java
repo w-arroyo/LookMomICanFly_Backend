@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AskRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,9 @@ public class AskService {
         this.askRepository = askRepository;
     }
 
+    @Transactional
     public Object saveAsk(Ask ask){
-        System.out.println(ask.getSize().name()+"/"+ask.getSize());
-        final Ask askTwo=askRepository.save(ask);
-        System.out.println(askTwo.getSize()+"/"+askTwo.getProduct().getName()+"/"+askTwo.getUser().getEmail()+"/"+askTwo.getShippingFee()+"/"+askTwo.getAmount()+"/");
-        return "";
+        return askRepository.save(ask).getId();
     }
 
 }

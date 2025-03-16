@@ -34,11 +34,17 @@ public class FeeController {
         return ResponseEntity.status(HttpStatus.OK).body(SellingFeeMapper.toDTO(sellingFeeService.checkIfThereIsADefaultFee(userId)));
     }
 
+    @PutMapping("/remove-default")
+    public ResponseEntity<String> removeSellingFeeOffer(@RequestParam String feeId){
+        sellingFeeService.removeSellingFeeOffers();
+        return ResponseEntity.status(HttpStatus.OK).body(sellingFeeService.deactivateAsksWithASpecificFeeId(feeId));
+    }
+
     @PostMapping("/save-default")
     public ResponseEntity<Map<String,Object>> saveNewDefaultSellingFee(@RequestBody SellingFeeDTO sellingFeeDTO){
         GlobalValidator.checkIfRequestBodyIsEmpty(sellingFeeDTO);
         GlobalValidator.checkIfAFieldIsEmpty(sellingFeeDTO.getDescription());
-        GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage().intValue());
+        GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage());
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sellingFeeService.saveSellingFeeOffer(SellingFeeMapper.toSellingFee(sellingFeeDTO))));
     }
 
