@@ -22,14 +22,14 @@ public class Transaction {
     private String id;
 
     @OneToOne
-    @JoinColumn(name = "ask_id")
+    @JoinColumn(name = "sale_id")
     @NotNull
-    private Ask ask;
+    private Sale sale;
 
     @OneToOne
-    @JoinColumn(name = "bid_id")
+    @JoinColumn(name = "order_id")
     @NotNull
-    private Bid bid;
+    private Order order;
 
     @Column (name = "date", updatable = false)
     @NotNull

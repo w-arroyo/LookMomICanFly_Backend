@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AskRepository;
 import jakarta.transaction.Transactional;
@@ -19,6 +20,10 @@ public class AskService {
     @Transactional
     public Object saveAsk(Ask ask){
         return askRepository.save(ask).getId();
+    }
+
+    public Ask getLowestAsk(String productId, Size size){
+        return askRepository.getLowestAskForASizeOfAProduct(productId, size).orElse(null);
     }
 
 }

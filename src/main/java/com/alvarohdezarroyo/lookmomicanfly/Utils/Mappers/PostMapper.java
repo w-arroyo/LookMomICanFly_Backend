@@ -1,9 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.AskDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.BidDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.PostDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
@@ -95,6 +93,15 @@ public class PostMapper {
         bidDTO.setShippingOptionDTO(ShippingOptionMapper.toDTO(bid.getShippingOption()));
         bidDTO.setOperatingFee(bid.getOperationalFee());
         return bidDTO;
+    }
+
+    public HighestLowestPostDTO toHighestLowestPostDTO(Post post, Size size){
+        final HighestLowestPostDTO lowestPostDTO=new HighestLowestPostDTO();
+        lowestPostDTO.setSize(size.getValue());
+        if(post==null)
+            lowestPostDTO.setAmount("-");
+        else lowestPostDTO.setAmount(post.getAmount()+"");
+        return lowestPostDTO;
     }
 
 }

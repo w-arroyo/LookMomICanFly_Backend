@@ -1,11 +1,14 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.HighestLowestPostDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangeUserFieldsRequest;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.GetAllSizesPostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.PostValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,14 @@ public class PostController {
         PostValidator.checkIfEntityExists(request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("posts", postService.getAllUserActivePosts(request.getUserId(), request.getNewField())));
+    }
+
+    @PostMapping("/sizes")
+    public ResponseEntity<Map<String, HighestLowestPostDTO[]>> getAllSizesPosts(@RequestBody GetAllSizesPostRequest request){
+        GlobalValidator.checkIfRequestBodyIsEmpty(request);
+        PostValidator.checkIfAllGetSizesRequestAreEmpty(request);
+        PostValidator.checkIfEntityExists(request.getEntity());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("posts",postService.getAllHighestLowestPost(request.getProductId(),ProductValidator.checkIfProductCategoryExists(request.getCategory()), request.getEntity())));
     }
 
     private void checkIfBodyIsEmpty(ChangeUserFieldsRequest request){

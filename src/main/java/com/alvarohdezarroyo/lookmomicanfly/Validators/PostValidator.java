@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.GetAllSizesPostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,11 @@ public class PostValidator {
             emptyFields.add(specialFieldName);
         if(!emptyFields.isEmpty())
             throw new EmptyFieldsException(emptyFields);
+    }
+
+    public static void checkIfAllGetSizesRequestAreEmpty(GetAllSizesPostRequest request){
+        if(request.getProductId()==null || request.getProductId().trim().isEmpty() || request.getCategory()==null || request.getCategory().trim().isEmpty() || request.getEntity()==null || request.getEntity().trim().isEmpty())
+            throw new EmptyFieldsException("Empty fields are not allowed");
     }
 
     public static void checkIfEntityExists(String entity){

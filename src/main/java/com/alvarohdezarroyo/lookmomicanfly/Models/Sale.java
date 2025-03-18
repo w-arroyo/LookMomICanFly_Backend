@@ -12,17 +12,25 @@ import java.util.List;
 
 @Entity
 @Table(name = "sales")
-@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sale extends Transaction{
+public class Sale {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @NotNull
     private SaleStatus status;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ask_id")
+    @NotNull
+    private Ask ask;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(

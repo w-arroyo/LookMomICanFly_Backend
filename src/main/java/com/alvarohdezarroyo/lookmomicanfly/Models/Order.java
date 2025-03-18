@@ -12,17 +12,25 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order extends Transaction{
+public class Order{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @NotNull
     private OrderStatus status;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bid_id")
+    @NotNull
+    private Bid bid;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(

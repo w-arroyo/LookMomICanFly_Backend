@@ -1,10 +1,14 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.HighestLowestPostDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
+import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +21,14 @@ public class PostService {
     @Autowired
     private final PostRepository postRepository;
     private final PostMapper postMapper;
+    private final AskService askService;
+    private final BidService bidService;
 
-    public PostService(PostRepository postRepository, PostMapper postMapper) {
+    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
+        this.askService = askService;
+        this.bidService = bidService;
     }
 
     @Transactional
@@ -42,6 +50,18 @@ public class PostService {
             summary[post]=postMapper.toSummaryDTO(posts.get(post));
         }
         return summary;
+    }
+
+    public HighestLowestPostDTO[] getAllHighestLowestPost(String productId, ProductCategory category, String table){
+        final List<Size> sizes= ProductValidator.getSizesByCategory(category);
+        final HighestLowestPostDTO[] lowestHighest= new HighestLowestPostDTO[sizes.size()];
+        int increaser=0;
+        for(Size size: sizes){
+            if(table.equalsIgnoreCase("bid"))
+                lowestHighest[increaser]=postMapper.toHighestLowestPostDTO(bidService.getHighestBid(productId,size),size);
+            else lowestHighest[increaser]=postMapper.toHighestLowestPostDTO(askService.getLowestAsk(productId,size),size);
+        }
+        return lowestHighest;
     }
 
 }
