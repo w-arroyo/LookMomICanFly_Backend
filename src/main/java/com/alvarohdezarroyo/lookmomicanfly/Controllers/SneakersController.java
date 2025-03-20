@@ -1,12 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Sneakers;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SneakersService;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +18,10 @@ public class SneakersController {
 
     @Autowired
     private final SneakersService sneakersService;
-    private final ProductService productService;
     private final AuthService authService;
 
-    public SneakersController(SneakersService sneakersService, ProductService productService, AuthService authService) {
+    public SneakersController(SneakersService sneakersService,AuthService authService) {
         this.sneakersService = sneakersService;
-        this.productService = productService;
         this.authService = authService;
     }
 
@@ -41,10 +35,7 @@ public class SneakersController {
         authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(sneakersDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(sneakersDTO,sneakersDTO.getSku(),"sku");
-        final Sneakers sneakers=ProductMapper.toSneakers(sneakersDTO);
-        ProductValidator.checkIfCategoryIsCorrect(sneakers.getCategory(), ProductCategory.SNEAKERS);
-        productService.fillManufacturerAndColors(sneakers,sneakersDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sneakersService.saveSneakers(sneakers)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sneakersService.saveSneakers(sneakersDTO)));
     }
 
 }

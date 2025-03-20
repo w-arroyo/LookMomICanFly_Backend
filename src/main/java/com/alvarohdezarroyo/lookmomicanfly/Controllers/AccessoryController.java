@@ -1,12 +1,9 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AccessoryDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Accessory;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AccessoryService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.http.HttpStatus;
@@ -20,12 +17,10 @@ import java.util.Map;
 public class AccessoryController {
 
     private final AccessoryService accessoryService;
-    private final ProductService productService;
     private final AuthService authService;
 
-    public AccessoryController(AccessoryService accessoryService, ProductService productService, AuthService authService) {
+    public AccessoryController(AccessoryService accessoryService, AuthService authService) {
         this.accessoryService = accessoryService;
-        this.productService = productService;
         this.authService = authService;
     }
 
@@ -35,14 +30,11 @@ public class AccessoryController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String,Object>> saveAccessory(@RequestBody AccessoryDTO accessoryDTO){
+    public ResponseEntity<Map<String,Accessory>> saveAccessory(@RequestBody AccessoryDTO accessoryDTO){
         authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(accessoryDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(accessoryDTO,accessoryDTO.getMaterial(),"material");
-        final Accessory accessory= ProductMapper.toAccessory(accessoryDTO);
-        ProductValidator.checkIfCategoryIsCorrect(accessory.getCategory(), ProductCategory.ACCESSORIES);
-        productService.fillManufacturerAndColors(accessory,accessoryDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",accessoryService.saveAccessory(accessory)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",accessoryService.saveAccessory(accessoryDTO)));
     }
 
 }
