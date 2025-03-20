@@ -10,7 +10,10 @@ import java.util.Optional;
 
 public interface AskRepository extends JpaRepository<Ask,String> {
 
-    @Query("SELECT a FROM Ask a WHERE a.product.id = :productId AND a.size = :size ORDER BY a.amount ASC LIMIT 1")
-    Optional<Ask> getLowestAskForASizeOfAProduct(@Param("id") String id, @Param("size") Size size);
+    @Query("SELECT a FROM Ask a WHERE a.product.id = :productId AND a.size = :size AND a.active=true ORDER BY a.amount ASC LIMIT 1")
+    Optional<Ask> getLowestAskForASizeOfAProduct(@Param("productId") String id, @Param("size") Size size);
+
+    @Query(value = "SELECT amount from asks WHERE size= :size AND product_id= :id AND active=true ORDER BY amount ASC limit 1",nativeQuery = true)
+    Integer getLowestAskAmount(@Param("productId") String productId, @Param("size") String size);
 
 }

@@ -58,11 +58,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> runTimeExceptionHandler(RuntimeException ex){
-        /*
+
         Arrays.stream(ex.getStackTrace()).toList().forEach(
                 System.out::println
         );
-        */
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 

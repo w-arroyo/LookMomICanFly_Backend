@@ -18,12 +18,16 @@ public class AskService {
     }
 
     @Transactional
-    public Object saveAsk(Ask ask){
-        return askRepository.save(ask).getId();
+    public Ask saveAsk(Ask ask){
+        return askRepository.save(ask);
     }
 
     public Ask getLowestAsk(String productId, Size size){
         return askRepository.getLowestAskForASizeOfAProduct(productId, size).orElse(null);
+    }
+
+    public Integer getLowestAskAmount(String productId, Size size){
+        return askRepository.getLowestAskAmount(productId,size.getValue());
     }
 
 }

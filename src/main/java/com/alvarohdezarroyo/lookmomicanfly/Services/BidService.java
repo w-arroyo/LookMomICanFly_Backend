@@ -16,12 +16,16 @@ public class BidService {
         this.bidRepository = bidRepository;
     }
 
-    public String saveBid(Bid bid){
-        return bidRepository.save(bid).getId();
+    public Bid saveBid(Bid bid){
+        return bidRepository.save(bid);
     }
 
     public Bid getHighestBid(String productId, Size size){
         return bidRepository.getHighestBid(productId,size).orElse(null);
+    }
+
+    public Integer getHighestBidAmount(String productId, Size size){
+        return bidRepository.getHighestBidAmount(productId,size.getValue());
     }
 
 }

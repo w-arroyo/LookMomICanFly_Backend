@@ -38,7 +38,6 @@ public class Order{
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "tracking_number_id")
     )
-    @NotNull
     private List<TrackingNumber> trackingNumbers;
 
 }
