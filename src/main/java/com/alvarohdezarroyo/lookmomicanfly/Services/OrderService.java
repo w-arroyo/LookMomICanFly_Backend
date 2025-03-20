@@ -18,7 +18,6 @@ public class OrderService {
 
     @Transactional
     public Order saveOrder(Order order){
-        System.out.println(order.getId()+"/"+order.getStatus().name()+"/"+order.getBid().getId());
         return orderRepository.save(order);
     }
 

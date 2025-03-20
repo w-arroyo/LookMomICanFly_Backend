@@ -32,7 +32,6 @@ public class TransactionMapper {
         final Transaction transaction=new Transaction();
         transaction.setSale(sale);
         transaction.setOrder(order);
-        System.out.println(transaction.getSale().getId()+"/"+transaction.getOrder().getId()+"/"+transaction.getDate());
         return transaction;
     }
 
