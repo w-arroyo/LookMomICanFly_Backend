@@ -2,12 +2,12 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Generators;
 
 import org.springframework.stereotype.Component;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 @Component
 public class TrackingNumberGenerator {
 
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
 
     private static int generateRandomNumberBetweenARange(int min, int maxNotIncluded){
         return random.nextInt(min,maxNotIncluded);
