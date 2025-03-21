@@ -1,12 +1,9 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ClothingDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Clothing;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ClothingService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +19,10 @@ public class ClothingController {
 
     @Autowired
     private final ClothingService clothingService;
-    private final ProductService productService;
     private final AuthService authService;
 
-    public ClothingController(ClothingService clothingService, ProductService productService, AuthService authService) {
+    public ClothingController(ClothingService clothingService, AuthService authService) {
         this.clothingService = clothingService;
-        this.productService = productService;
         this.authService = authService;
     }
 
@@ -42,10 +37,7 @@ public class ClothingController {
         authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(clothingDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(clothingDTO, clothingDTO.getSeason(), "season");
-        final Clothing clothing= ProductMapper.toClothing(clothingDTO);
-        ProductValidator.checkIfCategoryIsCorrect(clothing.getCategory(), ProductCategory.CLOTHING);
-        productService.fillManufacturerAndColors(clothing,clothingDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",clothingService.saveClothing(clothing)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",clothingService.saveClothing(clothingDTO)));
     }
 
 }

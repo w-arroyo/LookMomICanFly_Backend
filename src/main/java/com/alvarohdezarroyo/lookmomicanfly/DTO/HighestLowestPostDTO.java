@@ -1,4 +1,4 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequest {
+public class HighestLowestPostDTO {
 
-    private String userId, productId, size, addressId;
-    private Integer amount;
+    private String size, amount;
 
 }

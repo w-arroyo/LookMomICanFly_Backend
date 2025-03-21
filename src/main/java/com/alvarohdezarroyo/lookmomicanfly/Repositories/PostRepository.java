@@ -16,6 +16,11 @@ public interface PostRepository extends JpaRepository<Post,String> {
     @Query(value = "UPDATE posts SET active=false WHERE id= :id AND user_id= :userId", nativeQuery = true)
     int deactivatePost(@Param("id") String id, @Param("user_id") String userId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE posts SET active=false, finalized=true WHERE id= :id", nativeQuery = true)
+    int completePost(@Param("id") String id);
+
     @Query("SELECT a FROM Ask a WHERE a.user.id = :id AND a.active = true")
     List<Post> getAllUserActiveAsks(@Param("id") String id);
 

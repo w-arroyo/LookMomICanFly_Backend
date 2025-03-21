@@ -3,6 +3,8 @@ package com.alvarohdezarroyo.lookmomicanfly.Enums;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter

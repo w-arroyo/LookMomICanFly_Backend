@@ -4,13 +4,13 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 
 public enum SaleStatus {
 
-    NOT_SHIPPED("You haven't shipped the product yet."),
+    PENDING("You haven't shipped the product yet."),
     SHIPPED("Your product is on route to us."),
     RECEIVED("We have your product."),
     VERIFYING("We are authenticating your product."),
     FAILED("Your product is not authentic and failed the process."),
     COMPLETED("Your sale was completed and we processed your payout"),
-    CANCELLED("You didn't ship the product to us.");
+    CANCELLED("Your sale was cancelled.");
 
     final String value;
 

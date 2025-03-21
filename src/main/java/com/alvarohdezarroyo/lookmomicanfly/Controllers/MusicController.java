@@ -1,12 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.MusicDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Music;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.MusicService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
 import org.springframework.http.HttpStatus;
@@ -20,12 +16,10 @@ import java.util.Map;
 public class MusicController {
 
     private final MusicService musicService;
-    private final ProductService productService;
     private final AuthService authService;
 
-    public MusicController(MusicService musicService, ProductService productService, AuthService authService) {
+    public MusicController(MusicService musicService, AuthService authService) {
         this.musicService = musicService;
-        this.productService = productService;
         this.authService = authService;
     }
 
@@ -39,10 +33,7 @@ public class MusicController {
         authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(musicDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(musicDTO,musicDTO.getFormat(),"format");
-        final Music music= ProductMapper.toMusic(musicDTO);
-        ProductValidator.checkIfCategoryIsCorrect(music.getCategory(), ProductCategory.MUSIC);
-        productService.fillManufacturerAndColors(music,musicDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",musicService.saveMusic(music)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",musicService.saveMusic(musicDTO)));
     }
 
 }

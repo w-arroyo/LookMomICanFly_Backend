@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS addresses (
 
 INSERT INTO users (id, email, password, name, active, registration_date, user_type) VALUES
 (UUID(), 'adminarroyo@lookmomicanfly.com', '$2a$10$roKxmra2SwWEYe2uDmjk4eRvR0AdAgSabWq6NRonSQRO6SE6/rDdq',
-UNHEX('536f6d65456e637279707465644e616d65'), 1, NOW(), 'ADMIN');
+FROM_BASE64('RVhFTGw3SExXdy9MeVU2WC9xdUN0K2VGVjFwTVFQQnhmTjJoQlMydldXYz0='), 1, NOW(), 'ADMIN');

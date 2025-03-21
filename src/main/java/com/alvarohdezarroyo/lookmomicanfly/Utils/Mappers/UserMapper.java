@@ -7,6 +7,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @Component
 public class UserMapper {
@@ -17,6 +18,7 @@ public class UserMapper {
         userDTO.setUserType(user.getUserType());
         userDTO.setId(user.getId());
         userDTO.setName(AESEncryptionUtil.decrypt(new String(user.getName(), StandardCharsets.UTF_8)));
+
         return userDTO;
     }
     public static User toUser(UserDTO userDTO) throws Exception {
@@ -26,6 +28,8 @@ public class UserMapper {
         user.setUserType(userDTO.getUserType());
         user.setPassword(PasswordUtils.hashPassword(userDTO.getPassword()));
         user.setName(AESEncryptionUtil.encrypt(userDTO.getName()).getBytes());
+        String encryptedName = AESEncryptionUtil.encrypt("Montoya Por Favor");
+        System.out.println(Base64.getEncoder().encodeToString(encryptedName.getBytes()));
         return user;
     }
 }

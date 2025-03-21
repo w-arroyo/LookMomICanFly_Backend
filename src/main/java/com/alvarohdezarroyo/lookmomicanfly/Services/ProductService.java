@@ -5,12 +5,11 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SneakersDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.NoDataFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
-import com.alvarohdezarroyo.lookmomicanfly.Repositories.ColorRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ManufacturerRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ProductRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,14 +24,14 @@ public class ProductService {
     @Autowired
     private final ProductRepository productRepository;
     private final ManufacturerRepository manufacturerRepository;
-    private final ColorRepository colorRepository;
     private final WebClient webClient;
+    private final ColorService colorService;
 
-    public ProductService(ProductRepository productRepository, ManufacturerRepository manufacturerRepository, ColorRepository colorRepository, WebClient webClient) {
+    public ProductService(ProductRepository productRepository, ManufacturerRepository manufacturerRepository, WebClient webClient, ColorService colorService) {
         this.productRepository = productRepository;
         this.manufacturerRepository = manufacturerRepository;
-        this.colorRepository = colorRepository;
         this.webClient = webClient;
+        this.colorService = colorService;
     }
 
     public Product findProductById(String id){
@@ -65,7 +64,6 @@ public class ProductService {
     }
 
     public List<Product> findAllProductsByCategory(ProductCategory category){
-        //return productRepository.findAllByCategory(category);
         return productRepository.findAllByCategory(category);
     }
 
@@ -106,11 +104,14 @@ public class ProductService {
     private List<Color> fillColorListFromDTO(String [] colorDTOs){
         List<Color> colors=new ArrayList<>();
         for (String colorDTO: colorDTOs){
-            colors.add(colorRepository.findByName(colorDTO).orElseThrow(
-                    ()-> new EntityNotFoundException("Color not found")
-            ));
+            colors.add(colorService.findColorByName(colorDTO));
         }
         return colors;
+    }
+
+    @Transactional
+    public void saveProductColors(Product product){
+        colorService.saveProductColors(product);
     }
 
     public void fillManufacturerAndColors(Product product, ProductDTO productDTO){

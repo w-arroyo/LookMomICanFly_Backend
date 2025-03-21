@@ -1,9 +1,11 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SellingFeeDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserLevel;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.SellingFee;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.SellingFeeRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.SellingFeeMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,19 +15,20 @@ public class SellingFeeService {
 
     @Autowired
     private final SellingFeeRepository sellingFeeRepository;
+    private final SaleService saleService;
 
-    public SellingFeeService(SellingFeeRepository sellingFeeRepository) {
+    public SellingFeeService(SellingFeeRepository sellingFeeRepository, SaleService saleService) {
         this.sellingFeeRepository = sellingFeeRepository;
+        this.saleService = saleService;
     }
 
     @Transactional
-    public SellingFee saveSellingFeeOffer(SellingFee sellingFee){
-        removeSellingFeeOffers();
-        return sellingFeeRepository.save(sellingFee);
+    public SellingFee saveSellingFeeOffer(SellingFeeDTO sellingFeeDTO){
+        deactivateCurrentSellingFeeOffers();
+        return sellingFeeRepository.save(SellingFeeMapper.toSellingFee(sellingFeeDTO));
     }
 
-    @Transactional
-    public void removeSellingFeeOffers(){
+    public void deactivateCurrentSellingFeeOffers(){
         sellingFeeRepository.deactivateCurrentSellingFeeOffers();
     }
 
@@ -35,10 +38,6 @@ public class SellingFeeService {
         );
     }
 
-    public int returnUserNumberSalesDuringPastThreeMonths(String id){
-        return sellingFeeRepository.getUserSalesDuringPastThreeMonths(id);
-    }
-
     public SellingFee getSellingFeeByDescription(String description){
         return sellingFeeRepository.findByDescription(description).orElseThrow(
                 ()->   new EntityNotFoundException("Fee description does not exist.")
@@ -46,26 +45,20 @@ public class SellingFeeService {
     }
 
     public SellingFee checkIfThereIsADefaultFee(String userId){
-        return sellingFeeRepository.getDefaultSellingFee().orElse(
-                selectFeeByNumberSales(returnUserNumberSalesDuringPastThreeMonths(userId))
+        return sellingFeeRepository.findByByDefaultTrue().orElse(
+                selectFeeByNumberSales(userId)
                 );
     }
 
-    public SellingFee selectFeeByNumberSales(Integer sales){
-        if(sales==null)
-            throw new EntityNotFoundException("User id doesn't exist.");
-        else if(sales<3)
+    public SellingFee selectFeeByNumberSales(String userId){
+        final int sales=saleService.getUserNumberSalesDuringLastThreeMonths(userId);
+        if(sales<3)
             return getSellingFeeByDescription(UserLevel.LEVEL_1.name());
         else if(sales<10)
             return getSellingFeeByDescription(UserLevel.LEVEL_2.name());
         else if(sales<50)
             return getSellingFeeByDescription(UserLevel.LEVEL_3.name());
         else return getSellingFeeByDescription(UserLevel.LEVEL_4.name());
-    }
-
-    @Transactional
-    public String deactivateAsksWithASpecificFeeId(String id){
-        return ("Selling fee removed successfully. "+sellingFeeRepository.deactivateAsksWithASpecificFeeId(id)+" asks were deactivated.");
     }
 
 }

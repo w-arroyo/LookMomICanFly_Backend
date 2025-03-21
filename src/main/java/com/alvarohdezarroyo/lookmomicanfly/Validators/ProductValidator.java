@@ -48,6 +48,17 @@ public class ProductValidator {
             throw new IllegalArgumentException("Size does not belong to that category");
     }
 
+    public static List<Size> getSizesByCategory(ProductCategory category){
+        final List<Size> sizes=new ArrayList<>();
+        for(Size size: Size.values()){
+            if(size.getCategories().contains(category))
+                sizes.add(size);
+        }
+        if(!sizes.isEmpty())
+            return sizes;
+        throw new EntityNotFoundException("Product category does not exist.");
+    }
+
     public static void checkSubcategoriesByCategory(String category){
         if(ProductSubcategory.getSubcategoriesByCategory(category).isEmpty())
             throw new EntityNotFoundException("Product category does not have any subcategories.");

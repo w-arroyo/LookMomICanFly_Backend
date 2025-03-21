@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AskRequest extends PostRequest {
+public class GetPostRequest {
 
-    private String sellingFeeId;
+    private String productId, entity, category;
 
 }
