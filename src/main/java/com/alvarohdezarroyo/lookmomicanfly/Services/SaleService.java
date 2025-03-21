@@ -21,4 +21,8 @@ public class SaleService {
         return saleRepository.save(sale);
     }
 
+    public int getUserNumberSalesDuringLastThreeMonths(String userId){
+        return saleRepository.getUserSalesDuringPastThreeMonths(userId);
+    }
+
 }

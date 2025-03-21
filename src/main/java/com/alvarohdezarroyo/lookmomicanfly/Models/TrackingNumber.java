@@ -29,4 +29,9 @@ public class TrackingNumber {
     @NotNull
     private Boolean used;
 
+    public TrackingNumber(String code, boolean used){
+        this.code=code;
+        this.used=used;
+    }
+
 }

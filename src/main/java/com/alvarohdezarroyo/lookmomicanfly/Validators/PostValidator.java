@@ -4,6 +4,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.GetPostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import java.util.List;
 @Component
 public class PostValidator {
 
-    public static void checkIfPostFieldsAreEmpty(PostRequest postRequest, String specialField, String specialFieldName){
+    public static void checkIfPostFieldsAreEmpty(PostRequest postRequest){
         final List<String> emptyFields=new ArrayList<>();
         if(postRequest.getAddressId()==null || postRequest.getAddressId().trim().isEmpty())
             emptyFields.add("address");
@@ -32,13 +33,17 @@ public class PostValidator {
                 emptyFields.add("amount");
             }
         }
-
+        if(postRequest instanceof BidRequest)
+            checkIfBidFieldsAreEmpty(emptyFields,(BidRequest) postRequest);
         if(postRequest.getProductId()==null || postRequest.getProductId().trim().isEmpty())
             emptyFields.add("product");
-        if(specialField==null || specialField.trim().isEmpty())
-            emptyFields.add(specialFieldName);
         if(!emptyFields.isEmpty())
             throw new EmptyFieldsException(emptyFields);
+    }
+
+    public static void checkIfBidFieldsAreEmpty(List<String> emptyFields, BidRequest bid){
+        if(bid.getShippingOptionId()==null || bid.getShippingOptionId().trim().isEmpty())
+            emptyFields.add("shipping option id");
     }
 
     public static void checkIfGetPostRequestFieldsAreEmpty(GetPostRequest request){

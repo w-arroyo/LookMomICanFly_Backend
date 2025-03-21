@@ -1,6 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
-import com.alvarohdezarroyo.lookmomicanfly.Requests.AskRequest;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
@@ -26,9 +26,9 @@ public class AskController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody AskRequest askRequest) throws Exception {
+    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody PostRequest askRequest) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(askRequest);
-        PostValidator.checkIfPostFieldsAreEmpty(askRequest, askRequest.getSellingFeeId(), "selling fee");
+        PostValidator.checkIfPostFieldsAreEmpty(askRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
         authService.checkFraudulentRequest(askRequest.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.saveAskFromRequest(askRequest));

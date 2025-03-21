@@ -25,7 +25,7 @@ public class FeeController {
     @GetMapping("/level/")
     public ResponseEntity<SellingFeeDTO> getUserLevelSellingFee(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(SellingFeeMapper.toDTO(sellingFeeService.selectFeeByNumberSales(sellingFeeService.returnUserNumberSalesDuringPastThreeMonths(userId))));
+        return ResponseEntity.status(HttpStatus.OK).body(SellingFeeMapper.toDTO(sellingFeeService.selectFeeByNumberSales(userId)));
     }
 
     @GetMapping("/default/")
@@ -35,9 +35,9 @@ public class FeeController {
     }
 
     @PutMapping("/remove-default")
-    public ResponseEntity<String> removeSellingFeeOffer(@RequestParam String feeId){
-        sellingFeeService.removeSellingFeeOffers();
-        return ResponseEntity.status(HttpStatus.OK).body(sellingFeeService.deactivateAsksWithASpecificFeeId(feeId));
+    public ResponseEntity<String> removeSellingFeeOffer(){
+        sellingFeeService.deactivateCurrentSellingFeeOffers();
+        return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
     @PostMapping("/save-default")
@@ -45,7 +45,7 @@ public class FeeController {
         GlobalValidator.checkIfRequestBodyIsEmpty(sellingFeeDTO);
         GlobalValidator.checkIfAFieldIsEmpty(sellingFeeDTO.getDescription());
         GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sellingFeeService.saveSellingFeeOffer(SellingFeeMapper.toSellingFee(sellingFeeDTO))));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sellingFeeService.saveSellingFeeOffer(sellingFeeDTO)));
     }
 
 }

@@ -10,8 +10,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Transaction;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.AskRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
+import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Validators.AddressValidator;
@@ -104,7 +104,7 @@ public class PostService {
     }
 
     @Transactional
-    public Map<String,Object> saveAskFromRequest(AskRequest askRequest) throws Exception {
+    public Map<String,Object> saveAskFromRequest(PostRequest askRequest) throws Exception {
         final Ask ask= postMapper.toAsk(askRequest);
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
         AddressValidator.checkIfAddressBelongsToAUser(askRequest.getUserId(), ask.getAddress());

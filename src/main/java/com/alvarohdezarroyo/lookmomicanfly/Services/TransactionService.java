@@ -14,15 +14,18 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final OrderService orderService;
     private final SaleService saleService;
+    private final TrackingNumberService trackingNumberService;
 
-    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService) {
+    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService) {
         this.transactionRepository = transactionRepository;
         this.orderService = orderService;
         this.saleService=saleService;
+        this.trackingNumberService = trackingNumberService;
     }
 
     @Transactional
     public Transaction saveTransaction(Order order, Sale sale){
+        trackingNumberService.saveSaleTrackingNumber(sale.getId());
         return transactionRepository.save(TransactionMapper.createTransaction(order,sale));
     }
 

@@ -5,7 +5,6 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.AskRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
@@ -63,11 +62,11 @@ public class PostMapper {
         postDTO.setProductSummaryDTO(ProductMapper.toSummary(post.getProduct()));
     }
 
-    public Ask toAsk(AskRequest askRequest){
+    public Ask toAsk(PostRequest askRequest){
         final Ask ask=new Ask();
         fillPostFields(askRequest,ask);
         ask.setShippingFee(sellingShippingFee);
-        ask.setSellingFee(sellingFeeService.getSellingFeeById(askRequest.getSellingFeeId()));
+        ask.setSellingFee(sellingFeeService.checkIfThereIsADefaultFee(askRequest.getUserId()));
         return ask;
     }
 
