@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user){
         UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id:",userService.saveUser(user).getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success:",userService.saveUser(user).getId()));
     }
 
     @PostMapping("/login")
@@ -54,28 +54,28 @@ public class UserController {
         securityContext.setAuthentication(authentication);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
         session.setAttribute("userId", authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("user",userService.returnUserDTOByUserId(authService.getAuthenticatedUserId())));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userService.returnUserDTOByUserId(authService.getAuthenticatedUserId())));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.invalidate(); // session logout
-        return ResponseEntity.ok("Successful logout.");
+        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/deactivate")
-    public ResponseEntity<String> deactivateAccount(@RequestParam String userId){
+    public ResponseEntity <Map<String,String>> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         userService.deactivateAccount(userId);
-        return ResponseEntity.status(HttpStatus.OK).body("User ID: '"+userId+"' account successfully deactivated. ");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 
     @GetMapping("/addresses")
-    public ResponseEntity<AddressDTO[]> getUserAddresses(@RequestParam String userId) throws Exception {
+    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId) throws Exception {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserAddresses(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("addresses",userService.getUserAddresses(userId)));
     }
 
     @PutMapping("/changeEmail")

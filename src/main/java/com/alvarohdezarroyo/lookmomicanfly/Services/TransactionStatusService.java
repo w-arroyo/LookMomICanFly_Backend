@@ -41,7 +41,7 @@ public class TransactionStatusService {
         SaleStatus newStatus;
         switch (status){
             case PENDING ->{
-                if(generateRandomNumberComparison())
+                if(!generateRandomNumberComparison())
                     newStatus=SaleStatus.SHIPPED;
                 else newStatus=SaleStatus.CANCELLED;
             }
@@ -55,7 +55,7 @@ public class TransactionStatusService {
             case AUTHENTICATED -> newStatus=SaleStatus.COMPLETED;
             default -> newStatus=null;
         }
-        changeOrderStatus(status,sale.getId());
+        changeOrderStatus(newStatus,sale.getId());
         return newStatus;
     }
 

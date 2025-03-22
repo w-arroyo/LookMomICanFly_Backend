@@ -11,12 +11,12 @@ public interface OrderRepository extends JpaRepository<Order,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE orders SET status= :status WHERE id= : orderId", nativeQuery = true)
+    @Query(value = "UPDATE orders SET status= :status WHERE id= :orderId", nativeQuery = true)
     int changeOrderStatus(@Param("orderId") String orderId, @Param("status") String status);
 
     @Modifying
     @Transactional
-    @Query("UPDATE orders SET status = 'DELIVERED' WHERE status IN ('SHIPPED')")
+    @Query(value = "UPDATE orders SET status = 'DELIVERED' WHERE status IN ('SHIPPED')", nativeQuery = true)
     int completeShippedOrders();
 
 }

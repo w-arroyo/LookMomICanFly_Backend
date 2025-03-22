@@ -13,7 +13,7 @@ public interface TrackingNumberRepository extends JpaRepository<TrackingNumber,S
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE tracking_numbers SET used=true where ID =: id", nativeQuery = true)
+    @Query(value = "UPDATE tracking_numbers SET used=true where ID = :id", nativeQuery = true)
     int useTrackingNumber(@Param("id")String id);
 
     @Modifying
@@ -23,12 +23,15 @@ public interface TrackingNumberRepository extends JpaRepository<TrackingNumber,S
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO tracking_and_orders VALUES (':trackingId',':orderId')", nativeQuery = true)
+    @Query(value = "INSERT INTO tracking_and_orders VALUES (:trackingId,:orderId)", nativeQuery = true)
     void insertIntoOrdersTrackingTable(@Param("trackingId") String trackingId, @Param("orderId") String orderId);
 
     @Query(value = "SELECT * FROM tracking_numbers WHERE id IN (SELECT tracking_number_id FROM tracking_and_sales WHERE sale_id = :id) ORDER BY date DESC LIMIT 1", nativeQuery = true)
     Optional<TrackingNumber> getSaleTrackingNumber(@Param("id") String id);
 
-    @Query(value = "SELECT count(id) from tracking_and_sales WHERE sale_id= :id", nativeQuery = true)
+    @Query(value = "SELECT count(*) from tracking_and_sales WHERE sale_id= :id", nativeQuery = true)
     int getSaleAmountOfTrackingNumbers(@Param("id") String id);
+
+    @Query(value = "SELECT code FROM tracking_numbers WHERE id IN (SELECT tracking_number_id FROM tracking_and_orders WHERE order_id = :id) LIMIT 1", nativeQuery = true)
+    Optional<String> getOrderTrackingNumber(@Param("id") String id);
 }

@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS asks (
 CREATE TABLE IF NOT EXISTS bids (
     id VARCHAR(36) PRIMARY KEY,
     shipping_option_id VARCHAR(36) NOT NULL,
-    operational_fee INTEGER NOT NULL,
+    operational_fee DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id) REFERENCES posts(id) ON DELETE CASCADE,
     FOREIGN KEY (shipping_option_id) REFERENCES shipping_options(id) ON DELETE CASCADE
 );

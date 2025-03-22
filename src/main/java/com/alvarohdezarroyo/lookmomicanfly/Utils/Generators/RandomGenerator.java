@@ -17,7 +17,11 @@ public class RandomGenerator {
         return generateRandomNumberBetweenARange(0,10);
     }
 
-    public static char generateRandomLetter(){
+    public static char generateRandomUpperCaseLetter(){
+        return (char) ('A'+ generateRandomNumberBetweenARange(0,26));
+    }
+
+    public static char generateRandomLowerCaseLetter(){
         return (char) ('A'+ generateRandomNumberBetweenARange(0,26));
     }
 

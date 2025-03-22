@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SaleDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.TrackingNumberAmountLimitReached;
@@ -59,10 +60,8 @@ public class SaleService {
         trackingNumberService.saveSaleTrackingNumber(saleId);
     }
 
-    public TransactionDTO getSaleDTO(String id) throws Exception {
-        final TransactionDTO sale= TransactionMapper.saleToDTO(getSaleById(id));
-        TransactionMapper.addTrackingToTransactionDTO(sale,trackingNumberService.getSaleTrackingNumber(id).getCode());
-        return sale;
+    public SaleDTO getSaleDTO(String id) throws Exception {
+        return TransactionMapper.toSaleDTO(getSaleById(id),trackingNumberService.getSaleTrackingNumber(id).getCode());
     }
 
 }

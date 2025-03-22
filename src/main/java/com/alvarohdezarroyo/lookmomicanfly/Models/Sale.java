@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Models;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,11 @@ public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(name = "reference", unique = true)
+    @NotNull
+    @NotBlank
+    private String reference;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

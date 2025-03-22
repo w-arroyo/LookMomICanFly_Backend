@@ -29,6 +29,10 @@ public class TrackingNumberService {
         );
     }
 
+    public String getOrderTrackingNumber(String orderId){
+        return trackingNumberRepository.getOrderTrackingNumber(orderId).orElse(null);
+    }
+
     @Transactional
     private TrackingNumber saveTrackingNumber(TrackingNumber trackingNumber){
         return trackingNumberRepository.save(trackingNumber);

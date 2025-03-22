@@ -100,7 +100,7 @@ public class PostService {
         if(!PostValidator.checkBidBeforeSavingIt(bid,ask))
             return Map.of("bid",postMapper.toBidDTO(bidService.saveBid(bid)));
         bid.setId(bidService.saveBid(bid).getId());
-        return Map.of("order",TransactionMapper.orderToDTO(completeTransaction(ask,bid).getOrder()));
+        return Map.of("order",TransactionMapper.orderToTransactionSummaryDTO(completeTransaction(ask,bid).getOrder()));
     }
 
     @Transactional
@@ -112,7 +112,7 @@ public class PostService {
         if(!PostValidator.checkAskBeforeSavingIt(ask,bid))
             return Map.of("ask",postMapper.toAskDTO(askService.saveAsk(ask)));
         ask.setId(askService.saveAsk(ask).getId());
-        return Map.of("sale",TransactionMapper.saleToDTO(completeTransaction(ask,bid).getSale()));
+        return Map.of("sale",TransactionMapper.saleToTransactionSummaryDTO(completeTransaction(ask,bid).getSale()));
     }
 
     private Bid getHighestBid(String productId, Size size){

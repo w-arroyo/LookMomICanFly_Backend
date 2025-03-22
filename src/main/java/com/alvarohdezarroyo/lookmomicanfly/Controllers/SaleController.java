@@ -1,6 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SaleDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SaleService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.TransactionStatusService;
@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -38,9 +40,9 @@ public class SaleController {
     }
 
     @GetMapping("/get-sale/")
-    public ResponseEntity<TransactionDTO> getSale(@RequestParam String saleId, @RequestParam String userId) throws Exception {
+    public ResponseEntity<Map<String,SaleDTO>> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
         basicValidations(saleId,userId);
-        return ResponseEntity.status(HttpStatus.OK).body(saleService.getSaleDTO(saleId));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("sale",saleService.getSaleDTO(saleId)));
     }
 
     private void basicValidations(String saleId, String userId){

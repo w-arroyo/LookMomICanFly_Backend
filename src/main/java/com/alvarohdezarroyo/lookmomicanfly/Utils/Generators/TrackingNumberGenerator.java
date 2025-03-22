@@ -8,7 +8,7 @@ public class TrackingNumberGenerator {
 
     private static void addCertainAmountOfLettersToStringBuilder(StringBuilder string, int range){
         for (int position=0; position<range; position++) {
-            string.append(RandomGenerator.generateRandomLetter());
+            string.append(RandomGenerator.generateRandomUpperCaseLetter());
         }
     }
 
@@ -21,7 +21,7 @@ public class TrackingNumberGenerator {
     public static String generateTrackingNumber(){
         final StringBuilder trackingNumber=new StringBuilder();
         trackingNumber.append(RandomGenerator.generateRandomSingleDigitNumber());
-        trackingNumber.append(RandomGenerator.generateRandomLetter());
+        trackingNumber.append(RandomGenerator.generateRandomUpperCaseLetter());
         addCertainAmountOfDigitsToStringBuilder(trackingNumber,3);
         addCertainAmountOfLettersToStringBuilder(trackingNumber,3);
         addCertainAmountOfDigitsToStringBuilder(trackingNumber,8);
