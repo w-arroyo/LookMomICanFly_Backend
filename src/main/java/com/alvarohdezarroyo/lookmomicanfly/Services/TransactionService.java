@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.TransactionRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
@@ -37,5 +38,11 @@ public class TransactionService {
     @Transactional
     public Sale createSale(Ask ask){
         return saleService.saveSale(TransactionMapper.createSale(ask));
+    }
+
+    public String getOrderIdFromTransaction(String saleId){
+        return transactionRepository.getOrderIdFromTransaction(saleId).orElseThrow(
+                ()-> new EntityNotFoundException("Sale ID does not exist.")
+        );
     }
 }

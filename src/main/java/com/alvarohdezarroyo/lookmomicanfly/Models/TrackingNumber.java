@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "tracking_numbers")
 @Getter
@@ -28,6 +30,10 @@ public class TrackingNumber {
     @Column(name = "used")
     @NotNull
     private Boolean used;
+
+    @Column(name = "date")
+    @NotNull
+    private LocalDateTime date= LocalDateTime.now();
 
     public TrackingNumber(String code, boolean used){
         this.code=code;

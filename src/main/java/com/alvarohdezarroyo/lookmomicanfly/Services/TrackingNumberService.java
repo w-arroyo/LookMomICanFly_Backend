@@ -23,6 +23,12 @@ public class TrackingNumberService {
             throw new EntityNotFoundException("Tracking number id does not exist.");
     }
 
+    public TrackingNumber getSaleTrackingNumber(String saleId){
+        return trackingNumberRepository.getSaleTrackingNumber(saleId).orElseThrow(
+                ()-> new EntityNotFoundException("Sale ID does not exist.")
+        );
+    }
+
     @Transactional
     private TrackingNumber saveTrackingNumber(TrackingNumber trackingNumber){
         return trackingNumberRepository.save(trackingNumber);
@@ -35,11 +41,17 @@ public class TrackingNumberService {
     @Transactional
     public void saveOrderTrackingNumber(String orderId){
         trackingNumberRepository.insertIntoOrdersTrackingTable(saveTrackingNumber(createTrackingNumber(true)).getId(),orderId);
+        // send email
     }
 
     @Transactional
     public void saveSaleTrackingNumber(String saleId){
         trackingNumberRepository.insertIntoSalesTrackingTable(saveTrackingNumber(createTrackingNumber(false)).getId(),saleId);
+        // send email
+    }
+
+    public int getSaleAmountOfTrackingNumbers(String saleId){
+        return trackingNumberRepository.getSaleAmountOfTrackingNumbers(saleId);
     }
 
 }

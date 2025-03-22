@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface TrackingNumberRepository extends JpaRepository<TrackingNumber,String> {
 
     @Modifying
@@ -24,4 +26,9 @@ public interface TrackingNumberRepository extends JpaRepository<TrackingNumber,S
     @Query(value = "INSERT INTO tracking_and_orders VALUES (':trackingId',':orderId')", nativeQuery = true)
     void insertIntoOrdersTrackingTable(@Param("trackingId") String trackingId, @Param("orderId") String orderId);
 
+    @Query(value = "SELECT * FROM tracking_numbers WHERE id IN (SELECT tracking_number_id FROM tracking_and_sales WHERE sale_id = :id) ORDER BY date DESC LIMIT 1", nativeQuery = true)
+    Optional<TrackingNumber> getSaleTrackingNumber(@Param("id") String id);
+
+    @Query(value = "SELECT count(id) from tracking_and_sales WHERE sale_id= :id", nativeQuery = true)
+    int getSaleAmountOfTrackingNumbers(@Param("id") String id);
 }

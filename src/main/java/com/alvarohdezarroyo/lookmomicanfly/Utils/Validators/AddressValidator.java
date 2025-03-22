@@ -1,4 +1,4 @@
-package com.alvarohdezarroyo.lookmomicanfly.Validators;
+package com.alvarohdezarroyo.lookmomicanfly.Utils.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;

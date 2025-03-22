@@ -9,12 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionDTO {
+public class TransactionStatusDTO {
 
-    private String size,trackingNumber;
-    private AddressDTO address;
-    private ProductSummaryDTO product;
-    private double amount;
-    private TransactionStatusDTO status;
+    private String status, description;
 
 }

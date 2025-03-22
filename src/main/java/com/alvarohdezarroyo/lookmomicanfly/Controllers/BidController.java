@@ -1,11 +1,10 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.PostValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
