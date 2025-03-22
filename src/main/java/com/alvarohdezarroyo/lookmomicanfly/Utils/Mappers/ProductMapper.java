@@ -5,7 +5,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.Format;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Material;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Season;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
 import org.mapstruct.Mapper;
 
 @Mapper

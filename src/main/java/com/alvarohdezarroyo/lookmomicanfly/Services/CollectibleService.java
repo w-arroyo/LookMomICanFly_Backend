@@ -6,7 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Collectible;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.CollectibleRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.ProductValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

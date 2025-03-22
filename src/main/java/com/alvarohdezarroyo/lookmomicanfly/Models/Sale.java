@@ -22,6 +22,9 @@ public class Sale {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(name = "reference", unique = true, nullable = false, updatable = false)
+    private String reference;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @NotNull

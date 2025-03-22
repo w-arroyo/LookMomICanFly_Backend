@@ -1,10 +1,12 @@
 package com.alvarohdezarroyo.lookmomicanfly.Enums;
 
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import lombok.Getter;
 
+@Getter
 public enum OrderStatus {
 
     WAITING("Seller hasn't shipped the product yet."),
+    CANCELLED("Seller did not ship the product in time."),
     ON_THE_WAY_TO_US("Product is on the way to us."),
     AUTHENTICATING("We are verifying if the product is authentic."),
     AUTHENTICATED("Good news! The product is original and will be shipped to you very soon."),
@@ -16,15 +18,6 @@ public enum OrderStatus {
 
     OrderStatus(String value){
         this.value=value;
-    }
-
-    public static OrderStatus checkStatus(String check){
-        for(OrderStatus status: OrderStatus.values()){
-            if(status.name().equalsIgnoreCase(check))
-                return status;
-        }
-        throw new EntityNotFoundException("Order status does not exist.");
-
     }
 
 }

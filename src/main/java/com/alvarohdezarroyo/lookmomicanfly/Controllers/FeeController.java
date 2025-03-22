@@ -3,7 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SellingFeeDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SellingFeeService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.SellingFeeMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
