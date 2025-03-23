@@ -61,30 +61,14 @@ public class PostValidator {
             throw new RejectedPostException("You are not allowed to create this transaction because it matches your own offer.");
     }
 
-    public static boolean checkAskBeforeSavingIt(Ask ask, Bid bid){
-        if(bid==null)
-            return false;
-        if(bid.getAmount()>ask.getAmount())
-            throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
-        else if(bid.getAmount()<ask.getAmount())
-            return false;
-        else{
-            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),bid.getUser().getId());
-            return true;
-        }
+    public static void checkIfBidIsHigherThanLowestAsk(int bid, int lowestAsk){
+        if(bid>lowestAsk)
+            throw new IllegalArgumentException("Bid amount can not surpass lowest ask amount.");
     }
 
-    public static boolean checkBidBeforeSavingIt(Bid bid, Ask ask){
-        if(ask==null)
-            return false;
-        if(ask.getAmount()< bid.getAmount())
-            throw new IllegalArgumentException("Bid amount can not surpass lowest ask amount.");
-        else if(ask.getAmount()> bid.getAmount())
-            return false;
-        else{
-            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),bid.getUser().getId());
-            return true;
-        }
+    public static void checkIfAskIsLowerThanHighestBid(int ask, int highestBid){
+        if(ask<highestBid)
+            throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
     }
 
 }

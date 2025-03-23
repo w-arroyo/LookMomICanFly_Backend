@@ -9,6 +9,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +86,9 @@ public class PostService {
     public Object saveBidFromRequest(Bid bid){
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
+        final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());
+        PostValidator.checkIfBidIsHigherThanLowestAsk(bid.getAmount(),lowestAsk.getAmount());
         final Bid savedBid= bidService.saveBid(bid);
-        final Ask lowestAsk=askService.getLowestAsk(savedBid.getProduct().getId(),savedBid.getSize());
         if(!MatchingPostsService.checkForMatchingAsk(savedBid,lowestAsk)){
             return savedBid;
         }
@@ -100,8 +102,9 @@ public class PostService {
     public Object saveAskFromRequest(Ask ask){
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
         AddressValidator.checkIfAddressBelongsToAUser(ask.getUser().getId(), ask.getAddress());
+        final Bid highestBid=bidService.getHighestBid(ask.getProduct().getId(),ask.getSize());
+        PostValidator.checkIfAskIsLowerThanHighestBid(ask.getAmount(),highestBid.getAmount());
         final Ask savedAsk=askService.saveAsk(ask);
-        final Bid highestBid=bidService.getHighestBid(savedAsk.getProduct().getId(),savedAsk.getSize());
         if(!MatchingPostsService.checkForMatchingBid(savedAsk,highestBid)){
             return savedAsk;
         }

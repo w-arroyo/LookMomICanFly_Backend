@@ -11,8 +11,6 @@ public class MatchingPostsService {
     public static boolean checkForMatchingAsk(Bid savedBid,Ask lowestAsk){
         if(lowestAsk==null)
             return false;
-        if(lowestAsk.getAmount()< savedBid.getAmount())
-            throw new IllegalArgumentException("Bid amount can not surpass lowest ask amount.");
         else if(lowestAsk.getAmount()> savedBid.getAmount())
             return false;
         else{
@@ -24,8 +22,6 @@ public class MatchingPostsService {
     public static boolean checkForMatchingBid(Ask savedAsk, Bid highestBid){
         if(highestBid==null)
             return false;
-        if(highestBid.getAmount()>savedAsk.getAmount())
-            throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
         else if(savedAsk.getAmount()> highestBid.getAmount())
             return false;
         else{
