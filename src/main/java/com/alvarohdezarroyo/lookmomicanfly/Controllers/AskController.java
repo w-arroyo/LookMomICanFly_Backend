@@ -46,7 +46,9 @@ public class AskController {
         PostValidator.checkIfPostFieldsAreEmpty(askRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
         authService.checkFraudulentRequest(askRequest.getUserId());
-        askOrSale=postService.saveAskFromRequest(postMapper.toAsk(askRequest));
+        askOrSale=postService.saveAsk(
+                postMapper.toAsk(askRequest)
+        );
         if(askOrSale instanceof Ask){
             response=Map.of("ask",postMapper.toAskDTO((Ask) askOrSale));
         }

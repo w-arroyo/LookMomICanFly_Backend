@@ -45,7 +45,9 @@ public class BidController {
         PostValidator.checkIfPostFieldsAreEmpty(bidRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(bidRequest.getAmount(), 1);
         authService.checkFraudulentRequest(bidRequest.getUserId());
-        bidOrOrder=postService.saveBidFromRequest(postMapper.toBid(bidRequest));
+        bidOrOrder=postService.saveBid(
+                postMapper.toBid(bidRequest)
+        );
         if(bidOrOrder instanceof Bid){
             response=Map.of("bid",postMapper.toBidDTO((Bid) bidOrOrder));
         }

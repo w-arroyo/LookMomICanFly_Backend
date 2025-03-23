@@ -25,16 +25,14 @@ public class PostService {
     private final PostMapper postMapper;
     private final AskService askService;
     private final BidService bidService;
+    private final MatchingPostsService matchingPostsService;
 
-
-    private final TransactionService transactionService;
-
-    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService, TransactionService transactionService) {
+    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService, MatchingPostsService matchingPostsService) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.askService = askService;
         this.bidService = bidService;
-        this.transactionService = transactionService;
+        this.matchingPostsService = matchingPostsService;
     }
 
     @Transactional
@@ -83,35 +81,41 @@ public class PostService {
     }
 
     @Transactional
-    public Object saveBidFromRequest(Bid bid){
+    public Object saveBid(Bid bid){
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
         final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());
-        PostValidator.checkIfBidIsHigherThanLowestAsk(bid.getAmount(),lowestAsk.getAmount());
+        PostValidator.checkBidBeforeSavingIt(bid,lowestAsk);
         final Bid savedBid= bidService.saveBid(bid);
-        if(!MatchingPostsService.checkForMatchingAsk(savedBid,lowestAsk)){
-            return savedBid;
-        }
-        completeMatchingPosts(lowestAsk,savedBid);
-        return transactionService
-                .createOrderSaleAndTransaction(lowestAsk,savedBid)
-                .getOrder();
+        return checkMatchingAsk(savedBid,lowestAsk);
     }
 
     @Transactional
-    public Object saveAskFromRequest(Ask ask){
+    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk){
+        if(lowestAsk==null || lowestAsk.getAmount()> savedBid.getAmount()){
+            return savedBid;
+        }
+        completeMatchingPosts(lowestAsk,savedBid);
+        return matchingPostsService.saveTransactionAndGetOrder(savedBid,lowestAsk);
+    }
+
+    @Transactional
+    public Object saveAsk(Ask ask){
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
         AddressValidator.checkIfAddressBelongsToAUser(ask.getUser().getId(), ask.getAddress());
         final Bid highestBid=bidService.getHighestBid(ask.getProduct().getId(),ask.getSize());
-        PostValidator.checkIfAskIsLowerThanHighestBid(ask.getAmount(),highestBid.getAmount());
+        PostValidator.checkAskBeforeSavingIt(ask,highestBid);
         final Ask savedAsk=askService.saveAsk(ask);
-        if(!MatchingPostsService.checkForMatchingBid(savedAsk,highestBid)){
+        return checkForMatchingBid(savedAsk,highestBid);
+    }
+
+    @Transactional
+    private Object checkForMatchingBid(Ask savedAsk, Bid highestBid){
+        if(highestBid==null || savedAsk.getAmount()> highestBid.getAmount()){
             return savedAsk;
         }
         completeMatchingPosts(savedAsk,highestBid);
-        return transactionService
-                .createOrderSaleAndTransaction(savedAsk,highestBid)
-                .getSale();
+        return matchingPostsService.saveTransactionAndGetSale(savedAsk,highestBid);
     }
 
     @Transactional

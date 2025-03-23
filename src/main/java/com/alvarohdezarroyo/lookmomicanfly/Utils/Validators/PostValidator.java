@@ -2,6 +2,8 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.GetPostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
@@ -59,14 +61,22 @@ public class PostValidator {
             throw new RejectedPostException("You are not allowed to create this transaction because it matches your own offer.");
     }
 
-    public static void checkIfBidIsHigherThanLowestAsk(int bid, int lowestAsk){
-        if(bid>lowestAsk)
+    public static void checkBidBeforeSavingIt(Bid bid, Ask lowestAsk){
+        if(lowestAsk==null)
+            return;
+        else if(bid.getAmount()>lowestAsk.getAmount())
             throw new IllegalArgumentException("Bid amount can not surpass lowest ask amount.");
+        if(bid.getAmount()==lowestAsk.getAmount())
+            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(bid.getUser().getId(),lowestAsk.getUser().getId());
     }
 
-    public static void checkIfAskIsLowerThanHighestBid(int ask, int highestBid){
-        if(ask<highestBid)
+    public static void checkAskBeforeSavingIt(Ask ask, Bid highestBid){
+        if(highestBid==null)
+            return;
+        else if(ask.getAmount()<highestBid.getAmount())
             throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
+        else if(ask.getAmount()==highestBid.getAmount())
+            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),highestBid.getUser().getId());
     }
 
 }
