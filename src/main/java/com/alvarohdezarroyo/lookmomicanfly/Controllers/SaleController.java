@@ -1,10 +1,13 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SaleDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SaleService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.TransactionStatusService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +23,13 @@ public class SaleController {
     private final TransactionStatusService transactionStatusService;
     private final AuthService authService;
     private final SaleService saleService;
+    private final TransactionMapper transactionMapper;
 
-    public SaleController(TransactionStatusService transactionStatusService, AuthService authService, SaleService saleService) {
+    public SaleController(TransactionStatusService transactionStatusService, AuthService authService, SaleService saleService, TransactionMapper transactionMapper) {
         this.transactionStatusService = transactionStatusService;
         this.authService = authService;
         this.saleService = saleService;
+        this.transactionMapper = transactionMapper;
     }
 
     @PutMapping("/update")
@@ -42,7 +47,10 @@ public class SaleController {
     @GetMapping("/get-sale/")
     public ResponseEntity<Map<String,SaleDTO>> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
         basicValidations(saleId,userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("sale",saleService.getSaleDTO(saleId)));
+        final Sale sale=saleService.getSaleById(saleId);
+        PostValidator.checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(userId,sale.getAsk().getUser().getId());
+        final String tracking=saleService.getSaleCurrentTrackingNumberCode(sale.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("sale",transactionMapper.toSaleDTO(sale,tracking)));
     }
 
     private void basicValidations(String saleId, String userId){

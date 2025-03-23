@@ -1,9 +1,12 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.OrderDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Order;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.OrderService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +21,12 @@ public class OrderController {
     @Autowired
     private final OrderService orderService;
     private final AuthService authService;
+    private final TransactionMapper transactionMapper;
 
-    public OrderController(OrderService orderService, AuthService authService) {
+    public OrderController(OrderService orderService, AuthService authService, TransactionMapper transactionMapper) {
         this.orderService = orderService;
         this.authService = authService;
+        this.transactionMapper = transactionMapper;
     }
 
     @PutMapping("/update")
@@ -33,7 +38,10 @@ public class OrderController {
     public ResponseEntity<Map<String,OrderDTO>> getOrderDTO(@RequestParam String orderId, @RequestParam String userId) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(orderId,userId);
         authService.checkFraudulentRequest(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("order",orderService.getOrder(orderId)));
+        final Order order=orderService.getOrderById(orderId);
+        PostValidator.checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(order.getBid().getUser().getId(),userId);
+        final String tracking=orderService.getOrderTrackingNumber(order.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("order",transactionMapper.toOrderDTO(order,tracking)));
     }
 
 }

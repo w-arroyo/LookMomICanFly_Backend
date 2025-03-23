@@ -1,13 +1,10 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.SaleDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.TrackingNumberAmountLimitReached;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.SaleRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,8 +57,8 @@ public class SaleService {
         trackingNumberService.saveSaleTrackingNumber(saleId);
     }
 
-    public SaleDTO getSaleDTO(String id) throws Exception {
-        return TransactionMapper.toSaleDTO(getSaleById(id),trackingNumberService.getSaleTrackingNumber(id).getCode());
+    public String getSaleCurrentTrackingNumberCode(String saleId){
+        return trackingNumberService.getSaleTrackingNumber(saleId).getCode();
     }
 
 }
