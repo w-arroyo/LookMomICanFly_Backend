@@ -3,9 +3,9 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangeUserFieldsRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.LoginRequest;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangeUserFieldsRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.LoginRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -46,10 +46,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,Object>> loginAuthentication(@RequestBody LoginRequest loginRequest, HttpSession session) throws Exception {
-        GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequest.getEmail(), loginRequest.getPassword());
+    public ResponseEntity<Map<String,Object>> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) throws Exception {
+        GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
         final Authentication authentication= authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PutMapping("/changeEmail")
-    public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequest request){
+    public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequest request){
+    public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
         authService.checkFraudulentRequest(request.getId());

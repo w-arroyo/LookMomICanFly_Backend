@@ -6,6 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Services.AccessoryService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/products/accessories")
 public class AccessoryController {
 
+    @Autowired
     private final AccessoryService accessoryService;
     private final AuthService authService;
 

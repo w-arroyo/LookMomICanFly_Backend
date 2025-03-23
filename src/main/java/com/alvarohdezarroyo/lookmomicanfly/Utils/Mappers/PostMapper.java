@@ -5,8 +5,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SellingFeeService;
@@ -31,23 +31,25 @@ public class PostMapper {
     private final AddressService addressService;
     private final SellingFeeService sellingFeeService;
     private final ShippingOptionService shippingOptionService;
+    private final ProductMapper productMapper;
 
-    public PostMapper(ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService) {
+    public PostMapper(ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService, ProductMapper productMapper) {
         this.productService = productService;
         this.userValidator = userValidator;
         this.addressService = addressService;
         this.sellingFeeService = sellingFeeService;
         this.shippingOptionService = shippingOptionService;
+        this.productMapper = productMapper;
     }
 
-    private void fillPostFields(PostRequest postRequest, Post post){
+    private void fillPostFields(PostRequestDTO postRequestDto, Post post){
         post.setActive(true);
         post.setFinalized(false);
-        post.setUser(userValidator.returnUserById(postRequest.getUserId()));
-        post.setProduct(productService.findProductById(postRequest.getProductId()));
-        post.setAddress(addressService.getAddressById(postRequest.getAddressId()));
-        post.setAmount(postRequest.getAmount());
-        post.setSize(ProductValidator.checkIfASizeExists(postRequest.getSize()));
+        post.setUser(userValidator.returnUserById(postRequestDto.getUserId()));
+        post.setProduct(productService.findProductById(postRequestDto.getProductId()));
+        post.setAddress(addressService.getAddressById(postRequestDto.getAddressId()));
+        post.setAmount(postRequestDto.getAmount());
+        post.setSize(ProductValidator.checkIfASizeExists(postRequestDto.getSize()));
     }
 
     public PostSummaryDTO toSummaryDTO(Post post){
@@ -59,10 +61,10 @@ public class PostMapper {
         postDTO.setSize(post.getSize().getValue());
         postDTO.setAmount(post.getAmount());
         postDTO.setAddressDTO(AddressMapper.toDTO(post.getAddress()));
-        postDTO.setProductSummaryDTO(ProductMapper.toSummary(post.getProduct()));
+        postDTO.setProductSummaryDTO(productMapper.toSummary(post.getProduct()));
     }
 
-    public Ask toAsk(PostRequest askRequest){
+    public Ask toAsk(PostRequestDTO askRequest){
         final Ask ask=new Ask();
         fillPostFields(askRequest,ask);
         ask.setShippingFee(sellingShippingFee);
@@ -70,7 +72,7 @@ public class PostMapper {
         return ask;
     }
 
-    public Bid toBid(BidRequest bidRequest){
+    public Bid toBid(BidRequestDTO bidRequest){
         final Bid bid=new Bid();
         fillPostFields(bidRequest,bid);
         bid.setOperationalFee(operationalFee);

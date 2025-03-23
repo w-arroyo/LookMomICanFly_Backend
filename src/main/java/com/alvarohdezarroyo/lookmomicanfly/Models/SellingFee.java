@@ -32,7 +32,7 @@ public class SellingFee {
     @NotNull
     private Boolean byDefault=false;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, unique = true)
     @NotBlank
     private String description;
 

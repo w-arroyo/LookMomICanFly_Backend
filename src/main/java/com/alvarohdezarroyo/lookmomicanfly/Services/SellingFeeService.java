@@ -8,6 +8,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Repositories.SellingFeeRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.SellingFeeMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,13 @@ public class SellingFeeService {
     @Autowired
     private final SellingFeeRepository sellingFeeRepository;
     private final SaleService saleService;
+
+    @Value("${app.levelTwoSales}")
+    private Integer levelTwoSales;
+    @Value("${app.levelThreeSales}")
+    private Integer levelThreeSales;
+    @Value("${app.levelFourSales}")
+    private Integer levelFourSales;
 
     public SellingFeeService(SellingFeeRepository sellingFeeRepository, SaleService saleService) {
         this.sellingFeeRepository = sellingFeeRepository;
@@ -32,12 +40,6 @@ public class SellingFeeService {
         sellingFeeRepository.deactivateCurrentSellingFeeOffers();
     }
 
-    public SellingFee getSellingFeeById(String id){
-        return sellingFeeRepository.findById(id).orElseThrow(
-                ()->   new EntityNotFoundException("Fee description does not exist.")
-        );
-    }
-
     public SellingFee getSellingFeeByDescription(String description){
         return sellingFeeRepository.findByDescription(description).orElseThrow(
                 ()->   new EntityNotFoundException("Fee description does not exist.")
@@ -52,11 +54,11 @@ public class SellingFeeService {
 
     public SellingFee selectFeeByNumberSales(String userId){
         final int sales=saleService.getUserNumberSalesDuringLastThreeMonths(userId);
-        if(sales<3)
+        if(sales<levelTwoSales)
             return getSellingFeeByDescription(UserLevel.LEVEL_1.name());
-        else if(sales<10)
+        else if(sales<levelThreeSales)
             return getSellingFeeByDescription(UserLevel.LEVEL_2.name());
-        else if(sales<50)
+        else if(sales<levelFourSales)
             return getSellingFeeByDescription(UserLevel.LEVEL_3.name());
         else return getSellingFeeByDescription(UserLevel.LEVEL_4.name());
     }

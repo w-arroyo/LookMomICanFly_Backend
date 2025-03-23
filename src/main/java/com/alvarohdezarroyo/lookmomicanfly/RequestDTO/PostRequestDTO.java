@@ -1,4 +1,4 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.RequestDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequest {
+public class PostRequestDTO {
 
     private String userId, productId, size, addressId;
     private Integer amount;

@@ -2,11 +2,12 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Color;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ColorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ColorService {
@@ -25,9 +26,9 @@ public class ColorService {
     }
 
     @Transactional
-    public void saveProductColors(Product product){
-        product.getColors().forEach(
-                color -> colorRepository.insertProductColors(product.getId(),color.getId())
+    public void saveProductColors(List<Color> colors, String productId){
+        colors.forEach(
+                color -> colorRepository.insertProductColors(productId,color.getId())
         );
     }
 

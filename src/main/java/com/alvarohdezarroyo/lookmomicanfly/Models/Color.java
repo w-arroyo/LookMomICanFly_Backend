@@ -19,7 +19,7 @@ public class Color {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 10, max = 220, message = "Name length is invalid.")
     private String name;
 
