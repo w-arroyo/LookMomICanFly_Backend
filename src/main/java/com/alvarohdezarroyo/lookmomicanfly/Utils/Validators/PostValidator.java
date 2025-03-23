@@ -2,8 +2,6 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.GetPostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
