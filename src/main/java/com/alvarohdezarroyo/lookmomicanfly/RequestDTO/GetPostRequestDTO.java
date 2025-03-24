@@ -1,11 +1,11 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.RequestDTO;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class GetPostRequest {
+public class GetPostRequestDTO {
 
     private String productId, entity, category;
 

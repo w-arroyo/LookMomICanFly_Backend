@@ -6,14 +6,22 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ReferenceGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TransactionMapper {
 
-    public static TransactionSummaryDTO saleToTransactionSummaryDTO(Sale sale) throws Exception {
+    @Autowired
+    private final ProductMapper productMapper;
+
+    public TransactionMapper(ProductMapper productMapper) {
+        this.productMapper = productMapper;
+    }
+
+    public TransactionSummaryDTO saleToTransactionSummaryDTO(Sale sale) throws Exception {
         final TransactionSummaryDTO transaction=new TransactionSummaryDTO();
-        transaction.setProduct(ProductMapper.toSummary(sale.getAsk().getProduct()));
+        transaction.setProduct(productMapper.toSummary(sale.getAsk().getProduct()));
         transaction.setReference(sale.getReference());
         transaction.setSize(sale.getAsk().getSize().getValue());
         transaction.setAddress(AddressMapper.toDTO(sale.getAsk().getAddress()));
@@ -21,27 +29,27 @@ public class TransactionMapper {
         return transaction;
     }
 
-    public static TransactionSummaryDTO orderToTransactionSummaryDTO(Order order) throws Exception {
+    public TransactionSummaryDTO orderToTransactionSummaryDTO(Order order) throws Exception {
         final TransactionSummaryDTO transaction=new TransactionSummaryDTO();
         transaction.setReference(order.getReference());
         transaction.setSize(order.getBid().getSize().getValue());
-        transaction.setProduct(ProductMapper.toSummary(order.getBid().getProduct()));
+        transaction.setProduct(productMapper.toSummary(order.getBid().getProduct()));
         transaction.setAddress(AddressMapper.toDTO(order.getBid().getAddress()));
         transaction.setAmount(AmountCalculator.getBidTotal(order.getBid()));
         return transaction;
     }
 
-    private static void fillTransactionDTOFields(TransactionDTO transaction, String reference, String tracking, Address address, int amount, String size, Product product, TransactionStatusDTO status) throws Exception {
+    private void fillTransactionDTOFields(TransactionDTO transaction, String reference, String tracking, Address address, int amount, String size, Product product, TransactionStatusDTO status) throws Exception {
         transaction.setReference(reference);
         transaction.setAddress(AddressMapper.toDTO(address));
         transaction.setAmount(amount);
         transaction.setSize(size);
         transaction.setTrackingNumber(tracking);
-        transaction.setProduct(ProductMapper.toSummary(product));
+        transaction.setProduct(productMapper.toSummary(product));
         transaction.setStatus(status);
     }
 
-    public static SaleDTO toSaleDTO(Sale sale, String tracking) throws Exception {
+    public SaleDTO toSaleDTO(Sale sale, String tracking) throws Exception {
         final SaleDTO saleDTO=new SaleDTO();
         fillTransactionDTOFields(saleDTO, sale.getReference(),tracking,sale.getAsk().getAddress(),sale.getAsk().getAmount(),sale.getAsk().getSize().getValue(),sale.getAsk().getProduct(), new TransactionStatusDTO(sale.getStatus().name().replace("_"," "),sale.getStatus().getValue()));
         saleDTO.setShippingFee(sale.getAsk().getShippingFee());
@@ -49,7 +57,7 @@ public class TransactionMapper {
         return saleDTO;
     }
 
-    public static OrderDTO toOrderDTO(Order order, String tracking) throws Exception {
+    public OrderDTO toOrderDTO(Order order, String tracking) throws Exception {
         final OrderDTO orderDTO=new OrderDTO();
         fillTransactionDTOFields(orderDTO,order.getReference(),tracking,order.getBid().getAddress(),order.getBid().getAmount(),order.getBid().getSize().getValue(),order.getBid().getProduct(),new TransactionStatusDTO(order.getStatus().name().replace("_"," "),order.getStatus().getValue()));
         orderDTO.setOperationalFee(order.getBid().getOperationalFee());

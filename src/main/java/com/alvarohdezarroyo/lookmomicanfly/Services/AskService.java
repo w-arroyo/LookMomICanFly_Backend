@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.AskRepository;
 import jakarta.transaction.Transactional;
@@ -20,6 +21,12 @@ public class AskService {
     @Transactional
     public Ask saveAsk(Ask ask){
         return askRepository.save(ask);
+    }
+
+    public Ask findAskById(String id){
+        return askRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("Ask ID does not exist.")
+        );
     }
 
     public Ask getLowestAsk(String productId, Size size){

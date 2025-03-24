@@ -25,19 +25,27 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction saveTransaction(Order order, Sale sale){
+    private Transaction saveTransaction(Order order, Sale sale){
         trackingNumberService.saveSaleTrackingNumber(sale.getId());
-        return transactionRepository.save(TransactionMapper.createTransaction(order,sale));
+        final Transaction transaction=TransactionMapper.createTransaction(order,sale);
+        return transactionRepository.save(transaction);
     }
 
     @Transactional
-    public Order createOrder(Bid bid){
-        return orderService.saveOrder(TransactionMapper.createOrder(bid));
+    public Transaction createOrderSaleAndTransaction(Ask ask, Bid bid){
+        return saveTransaction(createOrder(bid),createSale(ask));
     }
 
     @Transactional
-    public Sale createSale(Ask ask){
-        return saleService.saveSale(TransactionMapper.createSale(ask));
+    private Order createOrder(Bid bid){
+        final Order order=TransactionMapper.createOrder(bid);
+        return orderService.saveOrder(order);
+    }
+
+    @Transactional
+    private Sale createSale(Ask ask){
+        final Sale sale=TransactionMapper.createSale(ask);
+        return saleService.saveSale(sale);
     }
 
     public String getOrderIdFromTransaction(String saleId){

@@ -1,11 +1,11 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.RequestDTO;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class BidRequest extends PostRequest {
+public class BidRequestDTO extends PostRequestDTO {
 
     private String shippingOptionId;
     private String userId, productId, size, addressId;

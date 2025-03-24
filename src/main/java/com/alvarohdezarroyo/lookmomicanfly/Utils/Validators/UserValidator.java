@@ -6,7 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class UserValidator {
             throw new SameValuesException("New email can not be the same as the current one.");
     }
 
-    public static void emptyChangePasswordFieldsValidator(ChangePasswordRequest request){
+    public static void emptyChangePasswordFieldsValidator(ChangePasswordRequestDTO request){
         final List<String> errorsList=new ArrayList<>();
         if(request.getId()==null || request.getId().isBlank())
             errorsList.add("id");

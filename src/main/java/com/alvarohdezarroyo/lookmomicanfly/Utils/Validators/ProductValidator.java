@@ -59,11 +59,6 @@ public class ProductValidator {
         throw new EntityNotFoundException("Product category does not exist.");
     }
 
-    public static void checkSubcategoriesByCategory(String category){
-        if(ProductSubcategory.getSubcategoriesByCategory(category).isEmpty())
-            throw new EntityNotFoundException("Product category does not have any subcategories.");
-    }
-
     public static void checkIfSubcategoryBelongsToACategory(ProductCategory productCategory,ProductSubcategory productSubcategory){
         if(!ProductSubcategory.checkIfSubcategoryBelongsToACategory(productCategory,productSubcategory))
             throw new IllegalArgumentException("Subcategory does not belong to that category.");
@@ -76,7 +71,7 @@ public class ProductValidator {
         if(productDTO.getCategory()==null || productDTO.getCategory().trim().isEmpty())
             emptyFields.add("category");
         if(productDTO.getSubcategory()==null || productDTO.getSubcategory().trim().isEmpty())
-            emptyFields.add("category");
+            emptyFields.add("subcategory");
         try {
             GlobalValidator.checkIfANumberFieldIsValid(productDTO.getReleaseYear());
         }

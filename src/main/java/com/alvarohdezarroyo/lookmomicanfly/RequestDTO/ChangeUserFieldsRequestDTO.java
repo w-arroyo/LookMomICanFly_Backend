@@ -1,10 +1,10 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.RequestDTO;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ChangeUserFieldsRequest {
+public class ChangeUserFieldsRequestDTO {
     private String userId, newField;
 }

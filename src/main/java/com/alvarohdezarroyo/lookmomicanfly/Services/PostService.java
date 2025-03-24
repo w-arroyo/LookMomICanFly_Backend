@@ -5,15 +5,9 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Transaction;
+import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.BidRequest;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.PostRequest;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
@@ -22,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class PostService {
@@ -32,14 +25,14 @@ public class PostService {
     private final PostMapper postMapper;
     private final AskService askService;
     private final BidService bidService;
-    private final TransactionService transactionService;
+    private final MatchingPostsService matchingPostsService;
 
-    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService, TransactionService transactionService) {
+    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService, MatchingPostsService matchingPostsService) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.askService = askService;
         this.bidService = bidService;
-        this.transactionService = transactionService;
+        this.matchingPostsService = matchingPostsService;
     }
 
     @Transactional
@@ -50,7 +43,7 @@ public class PostService {
     }
 
     @Transactional
-    public void completePost(String id){
+    private void completePost(String id){
         if(postRepository.completePost(id)<1)
             throw new RuntimeException("Server error.");
     }
@@ -87,48 +80,67 @@ public class PostService {
         return bidService.getHighestBid(id,size).getAmount();
     }
 
-    private Ask getLowestAsk(String productId, Size size){
-        return askService.getLowestAsk(productId, size);
-    }
-
     @Transactional
-    public Map<String,Object> saveBidFromRequest(BidRequest bidRequest) throws Exception {
-        final Bid bid= postMapper.toBid(bidRequest);
-        AddressValidator.checkIfAddressBelongsToAUser(bidRequest.getUserId(), bid.getAddress());
+    public Object saveBid(Bid bid){
+        PostValidator.checkBidAmountIsPositive(bid);
+        AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
-        final Ask ask=getLowestAsk(bid.getProduct().getId(),bid.getSize());
-        if(!PostValidator.checkBidBeforeSavingIt(bid,ask))
-            return Map.of("bid",postMapper.toBidDTO(bidService.saveBid(bid)));
-        bid.setId(bidService.saveBid(bid).getId());
-        return Map.of("order",TransactionMapper.orderToTransactionSummaryDTO(completeTransaction(ask,bid).getOrder()));
+        final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());
+        PostValidator.checkBidBeforeSavingIt(bid,lowestAsk);
+        final Bid savedBid= bidService.saveBid(bid);
+        return checkMatchingAsk(savedBid,lowestAsk);
     }
 
     @Transactional
-    public Map<String,Object> saveAskFromRequest(PostRequest askRequest) throws Exception {
-        final Ask ask= postMapper.toAsk(askRequest);
+    public Object updateBid(String bidId, Integer amount, String userId){
+        final Bid foundBid= bidService.findBidById(bidId);
+        foundBid.setAmount(amount);
+        PostValidator.checkIfPostBelongToUser(userId,foundBid.getUser().getId());
+        return saveBid(foundBid);
+    }
+
+    @Transactional
+    public Object updateAsk(String askId, Integer amount, String userId){
+        final Ask foundAsk=askService.findAskById(askId);
+        foundAsk.setAmount(amount);
+        PostValidator.checkIfPostBelongToUser(userId,foundAsk.getUser().getId());
+        return saveAsk(foundAsk);
+    }
+
+    @Transactional
+    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk){
+        if(lowestAsk==null || lowestAsk.getAmount()> savedBid.getAmount()){
+            return savedBid;
+        }
+        completeMatchingPosts(lowestAsk,savedBid);
+        return matchingPostsService.saveTransactionAndGetOrder(savedBid,lowestAsk);
+    }
+
+    @Transactional
+    public Object saveAsk(Ask ask){
+        PostValidator.checkAskAmountIsPositive(ask);
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
-        AddressValidator.checkIfAddressBelongsToAUser(askRequest.getUserId(), ask.getAddress());
-        final Bid bid=getHighestBid(ask.getProduct().getId(),ask.getSize());
-        if(!PostValidator.checkAskBeforeSavingIt(ask,bid))
-            return Map.of("ask",postMapper.toAskDTO(askService.saveAsk(ask)));
-        ask.setId(askService.saveAsk(ask).getId());
-        return Map.of("sale",TransactionMapper.saleToTransactionSummaryDTO(completeTransaction(ask,bid).getSale()));
-    }
-
-    private Bid getHighestBid(String productId, Size size){
-        return bidService.getHighestBid(productId, size);
+        AddressValidator.checkIfAddressBelongsToAUser(ask.getUser().getId(), ask.getAddress());
+        final Bid highestBid=bidService.getHighestBid(ask.getProduct().getId(),ask.getSize());
+        PostValidator.checkAskBeforeSavingIt(ask,highestBid);
+        final Ask savedAsk=askService.saveAsk(ask);
+        return checkForMatchingBid(savedAsk,highestBid);
     }
 
     @Transactional
-    private Transaction completeTransaction(Ask ask, Bid bid){
-        completeBidAndAsk(bid.getId(),ask.getId());
-        return transactionService.saveTransaction(transactionService.createOrder(bid),transactionService.createSale(ask));
+    private Object checkForMatchingBid(Ask savedAsk, Bid highestBid){
+        if(highestBid==null || savedAsk.getAmount()> highestBid.getAmount()){
+            return savedAsk;
+        }
+        completeMatchingPosts(savedAsk,highestBid);
+        return matchingPostsService.saveTransactionAndGetSale(savedAsk,highestBid);
     }
 
     @Transactional
-    private void completeBidAndAsk(String bidId, String askId){
-        completePost(askId);
-        completePost(bidId);
+    private void completeMatchingPosts(Ask ask, Bid bid){
+        completePost(ask.getId());
+        completePost(bid.getId());
     }
+
 
 }

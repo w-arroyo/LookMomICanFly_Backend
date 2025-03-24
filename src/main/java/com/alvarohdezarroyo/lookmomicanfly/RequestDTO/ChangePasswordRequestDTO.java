@@ -1,4 +1,4 @@
-package com.alvarohdezarroyo.lookmomicanfly.Requests;
+package com.alvarohdezarroyo.lookmomicanfly.RequestDTO;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class ChangePasswordRequest {
+public class ChangePasswordRequestDTO {
     private String id, oldPassword, newPassword;
 }

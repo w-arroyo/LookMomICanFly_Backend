@@ -1,7 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.DeactivateAddressRequest;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.DeactivateAddressRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
@@ -35,7 +35,7 @@ public class AddressController {
     }
 
     @PutMapping("/deactivate")
-    public ResponseEntity<String> deactivateAddress(@RequestBody DeactivateAddressRequest request){
+    public ResponseEntity<String> deactivateAddress(@RequestBody DeactivateAddressRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getId(), request.getUserId());
         authService.checkFraudulentRequest(request.getUserId());

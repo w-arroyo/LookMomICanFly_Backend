@@ -9,7 +9,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.SameValuesException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Requests.ChangePasswordRequest;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
@@ -87,7 +87,7 @@ public class UserService {
         }
     }
 
-    public void changeUserPassword(ChangePasswordRequest request){
+    public void changeUserPassword(ChangePasswordRequestDTO request){
         try {
             final User user=userValidator.returnUserById(request.getId());
             if(!PasswordUtils.checkPassword(request.getOldPassword(),user.getPassword()))
