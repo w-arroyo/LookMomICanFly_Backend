@@ -4,7 +4,6 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,9 +44,14 @@ public class AddressMapper {
         return address;
     }
 
-    @SneakyThrows
-    public static AddressDTO[] addressListToAddressDTOArray(List<Address> addresses) throws Exception{
-        return addresses.stream().map(AddressMapper::toDTO).toArray(size-> new AddressDTO[addresses.size()]);
+    public static AddressDTO[] addressListToAddressDTOArray(List<Address> addresses){
+        return addresses.stream().map(address -> {
+            try {
+                return toDTO(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).toArray(size-> new AddressDTO[addresses.size()]);
     }
 
 }
