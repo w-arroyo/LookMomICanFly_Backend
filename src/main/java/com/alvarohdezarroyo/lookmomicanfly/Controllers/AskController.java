@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AskService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
@@ -40,22 +41,25 @@ public class AskController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody PostRequestDTO askRequest) throws Exception {
-        Map<String,Object> response;
-        final Object askOrSale;
         GlobalValidator.checkIfRequestBodyIsEmpty(askRequest);
         PostValidator.checkIfPostFieldsAreEmpty(askRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
         authService.checkFraudulentRequest(askRequest.getUserId());
-        askOrSale=postService.saveAsk(
+        final Object askOrSale=postService.saveAsk(
                 postMapper.toAsk(askRequest)
         );
-        if(askOrSale instanceof Ask){
-            response=Map.of("ask",postMapper.toAskDTO((Ask) askOrSale));
-        }
-        else{
-            response=Map.of("sale",transactionMapper.saleToTransactionSummaryDTO((Sale) askOrSale));
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(returnAskOrSale(askOrSale));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Map<String,Object>> updateAsk(@RequestBody UpdatePostRequestDTO askToUpdate) throws Exception {
+        GlobalValidator.checkIfRequestBodyIsEmpty(askToUpdate);
+        PostValidator.checkPostToUpdateFields(askToUpdate);
+        authService.checkFraudulentRequest(askToUpdate.getUserId());
+        final Object updatedAskOrSale=postService.updateAsk(askToUpdate.getPostId(),askToUpdate.getAmount(), askToUpdate.getUserId());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(returnAskOrSale(updatedAskOrSale));
     }
 
     @GetMapping("/lowest-ask/")
@@ -63,6 +67,17 @@ public class AskController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(askService.getLowestAskAmount(productId, ProductValidator.checkIfASizeExists(size)));
+    }
+
+    private Map<String,Object> returnAskOrSale(Object askOrSale) throws Exception {
+        Map<String,Object> response;
+        if(askOrSale instanceof Ask){
+            response=Map.of("ask",postMapper.toAskDTO((Ask) askOrSale));
+        }
+        else{
+            response=Map.of("sale",transactionMapper.saleToTransactionSummaryDTO((Sale) askOrSale));
+        }
+        return response;
     }
 
 }

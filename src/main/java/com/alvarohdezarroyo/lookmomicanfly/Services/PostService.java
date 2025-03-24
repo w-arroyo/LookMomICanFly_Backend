@@ -82,12 +82,29 @@ public class PostService {
 
     @Transactional
     public Object saveBid(Bid bid){
+        PostValidator.checkBidAmountIsPositive(bid);
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
         final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());
         PostValidator.checkBidBeforeSavingIt(bid,lowestAsk);
         final Bid savedBid= bidService.saveBid(bid);
         return checkMatchingAsk(savedBid,lowestAsk);
+    }
+
+    @Transactional
+    public Object updateBid(String bidId, Integer amount, String userId){
+        final Bid foundBid= bidService.findBidById(bidId);
+        foundBid.setAmount(amount);
+        PostValidator.checkIfPostBelongToUser(userId,foundBid.getUser().getId());
+        return saveBid(foundBid);
+    }
+
+    @Transactional
+    public Object updateAsk(String askId, Integer amount, String userId){
+        final Ask foundAsk=askService.findAskById(askId);
+        foundAsk.setAmount(amount);
+        PostValidator.checkIfPostBelongToUser(userId,foundAsk.getUser().getId());
+        return saveAsk(foundAsk);
     }
 
     @Transactional
@@ -101,6 +118,7 @@ public class PostService {
 
     @Transactional
     public Object saveAsk(Ask ask){
+        PostValidator.checkAskAmountIsPositive(ask);
         ProductValidator.checkIfSizeBelongsToACategory(ask.getSize(),ask.getProduct().getCategory());
         AddressValidator.checkIfAddressBelongsToAUser(ask.getUser().getId(), ask.getAddress());
         final Bid highestBid=bidService.getHighestBid(ask.getProduct().getId(),ask.getSize());

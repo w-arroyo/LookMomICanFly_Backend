@@ -1,12 +1,16 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.GetPostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -61,6 +65,16 @@ public class PostValidator {
             throw new RejectedPostException("You are not allowed to create this transaction because it matches your own offer.");
     }
 
+    public static void checkAskAmountIsPositive(Ask ask){
+        if(AmountCalculator.getAskPayout(ask)<1)
+            throw new IllegalArgumentException("Ask payout must be of at least 1€.");
+    }
+
+    public static void checkBidAmountIsPositive(Bid bid){
+        if(bid.getAmount()<1)
+            throw new IllegalArgumentException("Bid amount must be of at least 1€.");
+    }
+
     public static void checkBidBeforeSavingIt(Bid bid, Ask lowestAsk){
         if(lowestAsk==null)
             return;
@@ -77,6 +91,27 @@ public class PostValidator {
             throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
         else if(ask.getAmount()==highestBid.getAmount())
             checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),highestBid.getUser().getId());
+    }
+
+    public static void checkPostToUpdateFields(UpdatePostRequestDTO request){
+        final List<String> emptyFields=new ArrayList<>();
+        if(request.getPostId()==null || request.getPostId().trim().isEmpty())
+            emptyFields.add("post id");
+        if(request.getUserId()==null || request.getUserId().trim().isEmpty())
+            emptyFields.add("user id");
+        try{
+            GlobalValidator.checkIfANumberFieldIsValid(request.getAmount());
+        }
+        catch (IllegalArgumentException e){
+            emptyFields.add("amount");
+        }
+        if(!emptyFields.isEmpty())
+            throw new EmptyFieldsException(emptyFields);
+    }
+
+    public static void checkIfPostBelongToUser(String requestUserId, String existingPostUserId){
+        if(!requestUserId.equals(existingPostUserId))
+            throw new FraudulentRequestException("You can not update someone else's post.");
     }
 
 }

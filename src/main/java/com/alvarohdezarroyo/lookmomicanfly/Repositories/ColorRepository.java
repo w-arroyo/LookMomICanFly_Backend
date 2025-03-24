@@ -15,7 +15,7 @@ public interface ColorRepository extends JpaRepository<Color,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO colors_products VALUES (:productId,:colorId)", nativeQuery = true)
+    @Query(value = "INSERT IGNORE INTO colors_products VALUES (:productId,:colorId)", nativeQuery = true)
     void insertProductColors(@Param("productId") String productId, @Param("colorId") String colorId);
 
 }

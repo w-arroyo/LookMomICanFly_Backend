@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Order;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.BidService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
@@ -39,22 +40,15 @@ public class BidController {
 
     @PostMapping("/save")
     public ResponseEntity<Map<String,Object>> saveBid(@RequestBody BidRequestDTO bidRequest) throws Exception {
-        Map<String,Object> response;
-        final Object bidOrOrder;
         GlobalValidator.checkIfRequestBodyIsEmpty(bidRequest);
         PostValidator.checkIfPostFieldsAreEmpty(bidRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(bidRequest.getAmount(), 1);
         authService.checkFraudulentRequest(bidRequest.getUserId());
-        bidOrOrder=postService.saveBid(
+        final Object bidOrOrder=postService.saveBid(
                 postMapper.toBid(bidRequest)
         );
-        if(bidOrOrder instanceof Bid){
-            response=Map.of("bid",postMapper.toBidDTO((Bid) bidOrOrder));
-        }
-        else{
-            response=Map.of("order", transactionMapper.orderToTransactionSummaryDTO((Order) bidOrOrder));
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(returnOrderOrBid(bidOrOrder));
     }
 
     @GetMapping("/highest-bid/")
@@ -62,6 +56,27 @@ public class BidController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(bidService.getHighestBidAmount(productId, ProductValidator.checkIfASizeExists(size)));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Map<String,Object>> updateBidAmount(@RequestBody UpdatePostRequestDTO bidToUpdate) throws Exception {
+        GlobalValidator.checkIfRequestBodyIsEmpty(bidToUpdate);
+        PostValidator.checkPostToUpdateFields(bidToUpdate);
+        authService.checkFraudulentRequest(bidToUpdate.getUserId());
+        final Object updatedBidOrOrder=postService.updateBid(bidToUpdate.getPostId(),bidToUpdate.getAmount(), bidToUpdate.getUserId());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(returnOrderOrBid(updatedBidOrOrder));
+    }
+
+    private Map<String,Object> returnOrderOrBid(Object bidOrOrder) throws Exception {
+        Map<String,Object> response;
+        if(bidOrOrder instanceof Bid){
+            response=Map.of("bid",postMapper.toBidDTO((Bid) bidOrOrder));
+        }
+        else{
+            response=Map.of("order", transactionMapper.orderToTransactionSummaryDTO((Order) bidOrOrder));
+        }
+        return response;
     }
 
 }
