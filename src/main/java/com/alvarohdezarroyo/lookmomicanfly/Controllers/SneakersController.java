@@ -37,7 +37,8 @@ public class SneakersController {
     public ResponseEntity<Map<String,SneakersDTO>> getSneakersById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("sneakers",productMapper.toSneakersDTO(sneakersService.getSneakersById(id))));
+                .body(Map.of("sneakers",
+                        productMapper.toSneakersDTO(sneakersService.getSneakersById(id))));
     }
 
     @PostMapping("/save")
@@ -48,7 +49,8 @@ public class SneakersController {
         Sneakers sneakers= productMapper.toSneakers(sneakersDTO);
         ProductValidator.checkIfCategoryIsCorrect(sneakers.getCategory(), ProductCategory.SNEAKERS);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",saveSneakers(productMapper.toSneakers(sneakersDTO))));
+                .body(Map.of("success",
+                        saveSneakers(productMapper.toSneakers(sneakersDTO))));
     }
 
     private Sneakers saveSneakers(Sneakers sneakers){

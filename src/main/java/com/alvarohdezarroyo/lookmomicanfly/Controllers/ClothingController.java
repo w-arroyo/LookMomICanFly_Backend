@@ -36,7 +36,9 @@ public class ClothingController {
     @GetMapping("/get/")
     public ResponseEntity<Map<String,ClothingDTO>> getClothingDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("clothing",productMapper.toClothingDTO(clothingService.getClothingById(id))));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("clothing",
+                        productMapper.toClothingDTO(clothingService.getClothingById(id))));
     }
 
     @PostMapping("/save")

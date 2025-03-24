@@ -34,7 +34,8 @@ public class PostController {
     public ResponseEntity<String> deactivatePost(@RequestBody ChangeUserFieldsRequestDTO request){
         checkIfBodyIsEmpty(request);
         authService.checkFraudulentRequest(request.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.deactivatePost(request.getNewField(), request.getUserId()));
+        postService.deactivatePost(request.getNewField(), request.getUserId());
+        return ResponseEntity.status(HttpStatus.OK).body("success");
     }
 
     @PostMapping("/get-all-summary")
@@ -42,13 +43,17 @@ public class PostController {
         checkIfBodyIsEmpty(request);
         PostValidator.checkIfEntityExists(request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("posts", postService.getAllUserActivePosts(request.getUserId(), request.getNewField())));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("posts",
+                        postService.getAllUserActivePosts(request.getUserId(), request.getNewField())));
     }
 
     @PostMapping("/sizes")
     public ResponseEntity<Map<String, HighestLowestPostDTO[]>> getAllSizesPosts(@RequestBody GetPostRequestDTO getRequest){
         checkIfGetPostBodyIsEmpty(getRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("posts",postService.getAllHighestLowestPost(getRequest.getProductId(),ProductValidator.checkIfProductCategoryExists(getRequest.getCategory()), getRequest.getEntity())));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("posts",
+                        postService.getAllHighestLowestPost(getRequest.getProductId(),ProductValidator.checkIfProductCategoryExists(getRequest.getCategory()), getRequest.getEntity())));
     }
 
     @PostMapping("/size")
@@ -57,7 +62,9 @@ public class PostController {
         GlobalValidator.checkIfAFieldIsEmpty(size);
         final Size sizeAsEnum=ProductValidator.checkIfASizeExists(size);
         ProductValidator.checkIfSizeBelongsToACategory(sizeAsEnum,ProductValidator.checkIfProductCategoryExists(request.getCategory()));
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("post", postService.getASizeBestPost(request.getProductId(),request.getEntity(), sizeAsEnum)));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("post",
+                        postService.getASizeBestPost(request.getProductId(),request.getEntity(), sizeAsEnum)));
     }
 
     private void checkIfBodyIsEmpty(ChangeUserFieldsRequestDTO request){

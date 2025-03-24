@@ -23,15 +23,19 @@ public class FeeController {
     }
 
     @GetMapping("/level/")
-    public ResponseEntity<SellingFeeDTO> getUserLevelSellingFee(@RequestParam String userId){
+    public ResponseEntity<Map<String,SellingFeeDTO>> getUserLevelSellingFee(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(SellingFeeMapper.toDTO(sellingFeeService.selectFeeByNumberSales(userId)));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("fee",
+                        SellingFeeMapper.toDTO(sellingFeeService.selectFeeByNumberSales(userId))));
     }
 
     @GetMapping("/default/")
-    public ResponseEntity<SellingFeeDTO> getCurrentSellingFee(@RequestParam String userId){
+    public ResponseEntity<Map<String,SellingFeeDTO>> getCurrentSellingFee(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(SellingFeeMapper.toDTO(sellingFeeService.checkIfThereIsADefaultFee(userId)));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("fee",
+                        SellingFeeMapper.toDTO(sellingFeeService.checkIfThereIsADefaultFee(userId))));
     }
 
     @PutMapping("/remove-default")
@@ -45,7 +49,9 @@ public class FeeController {
         GlobalValidator.checkIfRequestBodyIsEmpty(sellingFeeDTO);
         GlobalValidator.checkIfAFieldIsEmpty(sellingFeeDTO.getDescription());
         GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage());
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("success",sellingFeeService.saveSellingFeeOffer(sellingFeeDTO)));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("success",
+                        sellingFeeService.saveSellingFeeOffer(sellingFeeDTO)));
     }
 
 }

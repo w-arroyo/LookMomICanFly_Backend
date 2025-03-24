@@ -22,4 +22,7 @@ public interface SaleRepository extends JpaRepository<Sale,String> {
     @Query("SELECT s FROM Sale s WHERE s.status NOT IN ('FAILED','COMPLETED','CANCELLED')")
     List<Sale> getAllOngoingSales();
 
+    @Query("SELECT sale FROM Sale sale WHERE sale.ask.id IN(SELECT post.id FROM Post post WHERE post.user.id= :id)")
+    List<Sale> getAllUserSales(@Param("id") String id);
+
 }

@@ -55,5 +55,4 @@ public class Post {
     @NotNull
     private Boolean finalized=false;
 
-
 }

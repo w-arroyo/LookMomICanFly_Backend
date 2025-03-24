@@ -37,16 +37,18 @@ public class CollectibleController {
     public ResponseEntity<Map<String,CollectibleDTO>> getCollectibleDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("collectible",productMapper.toCollectibleDTO(collectibleService.getCollectibleById(id))));
+                .body(Map.of("collectible",
+                        productMapper.toCollectibleDTO(collectibleService.getCollectibleById(id))));
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String, Collectible>> saveCollectibleFromRequest(@RequestBody CollectibleDTO collectibleDTO){
+    public ResponseEntity<Map<String,Collectible>> saveCollectibleFromRequest(@RequestBody CollectibleDTO collectibleDTO){
         authService.checkIfAUserIsAdmin();
         GlobalValidator.checkIfRequestBodyIsEmpty(collectibleDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(collectibleDTO,collectibleDTO.getCollectionName(),"collection_name");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",saveCollectible(productMapper.toCollectible(collectibleDTO))));
+                .body(Map.of("success",
+                        saveCollectible(productMapper.toCollectible(collectibleDTO))));
     }
 
     private Collectible saveCollectible(Collectible collectible){

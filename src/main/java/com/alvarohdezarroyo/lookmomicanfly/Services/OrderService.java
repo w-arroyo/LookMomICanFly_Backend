@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderService {
 
@@ -26,6 +28,7 @@ public class OrderService {
         );
     }
 
+    @Transactional
     public String completeShippedOrders(){
         return orderRepository.completeShippedOrders()+" orders were completed.";
     }
@@ -51,6 +54,10 @@ public class OrderService {
 
     public String getOrderTrackingNumber(String orderId){
         return trackingNumberService.getOrderTrackingNumber(orderId);
+    }
+
+    public List<Order> getAllUserOrders(String userId){
+        return orderRepository.getAUserOrders(userId);
     }
 
 }

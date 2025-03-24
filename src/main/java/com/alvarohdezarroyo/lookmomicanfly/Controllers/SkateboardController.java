@@ -35,7 +35,8 @@ public class SkateboardController {
     public ResponseEntity<Map<String,SkateboardDTO>> getSkateboardDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("skateboard",productMapper.toSkateboardDTO(skateboardService.findSkateboardById(id))));
+                .body(Map.of("skateboard",
+                        productMapper.toSkateboardDTO(skateboardService.findSkateboardById(id))));
     }
 
     @PostMapping("/save")
@@ -44,7 +45,8 @@ public class SkateboardController {
         GlobalValidator.checkIfRequestBodyIsEmpty(skateboardDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(skateboardDTO,skateboardDTO.getLength(),"length");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",saveSkateboard(productMapper.toSkateboard(skateboardDTO))));
+                .body(Map.of("success",
+                        saveSkateboard(productMapper.toSkateboard(skateboardDTO))));
     }
 
     private Skateboard saveSkateboard(Skateboard skateboard){

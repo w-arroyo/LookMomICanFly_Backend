@@ -34,10 +34,11 @@ public class MusicController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<MusicDTO> getMusicDTOById(@RequestParam String id){
+    public ResponseEntity<Map<String,MusicDTO>> getMusicDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(productMapper.toMusicDTO(musicService.getMusicById(id)));
+                .body(Map.of("music",
+                        productMapper.toMusicDTO(musicService.getMusicById(id))));
     }
 
     @PostMapping("/save")
@@ -46,7 +47,8 @@ public class MusicController {
         GlobalValidator.checkIfRequestBodyIsEmpty(musicDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(musicDTO,musicDTO.getFormat(),"format");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",saveMusic(productMapper.toMusic(musicDTO))));
+                .body(Map.of("success",
+                        saveMusic(productMapper.toMusic(musicDTO))));
     }
 
     private Music saveMusic(Music music){

@@ -36,10 +36,9 @@ public class PostService {
     }
 
     @Transactional
-    public String deactivatePost(String id, String userId){
+    public void deactivatePost(String id, String userId){
         if(postRepository.deactivatePost(id,userId)<1)
             throw new FraudulentRequestException("Forbidden request. You can't manipulate other user's data.");
-        return "success";
     }
 
     @Transactional
