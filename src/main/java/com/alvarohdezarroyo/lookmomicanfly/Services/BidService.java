@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BidService {
 
@@ -21,6 +23,10 @@ public class BidService {
     @Transactional
     public Bid saveBid(Bid bid){
         return bidRepository.save(bid);
+    }
+
+    public List<Bid> getAllUserBids(String userId){
+        return bidRepository.getAllUserBids(userId);
     }
 
     public Bid findBidById(String id){

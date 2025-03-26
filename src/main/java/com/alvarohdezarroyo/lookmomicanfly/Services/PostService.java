@@ -1,13 +1,9 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.HighestLowestPostDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
@@ -15,21 +11,17 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class PostService {
 
     @Autowired
     private final PostRepository postRepository;
-    private final PostMapper postMapper;
     private final AskService askService;
     private final BidService bidService;
     private final MatchingPostsService matchingPostsService;
 
-    public PostService(PostRepository postRepository, PostMapper postMapper, AskService askService, BidService bidService, MatchingPostsService matchingPostsService) {
+    public PostService(PostRepository postRepository, AskService askService, BidService bidService, MatchingPostsService matchingPostsService) {
         this.postRepository = postRepository;
-        this.postMapper = postMapper;
         this.askService = askService;
         this.bidService = bidService;
         this.matchingPostsService = matchingPostsService;
@@ -45,32 +37,6 @@ public class PostService {
     private void completePost(String id){
         if(postRepository.completePost(id)<1)
             throw new RuntimeException("Server error.");
-    }
-
-    public PostSummaryDTO[] getAllUserActivePosts(String userId, String table){
-        List<Post> posts;
-        if(table.equals("Bid"))
-            posts=postRepository.getAllUserActiveBids(userId);
-        else posts=postRepository.getAllUserActiveAsks(userId);
-        if(posts.isEmpty())
-            return new PostSummaryDTO[0];
-        final PostSummaryDTO[] summary=new PostSummaryDTO[posts.size()];
-        for (int post = 0; post < summary.length; post++) {
-            summary[post]=postMapper.toSummaryDTO(posts.get(post));
-        }
-        return summary;
-    }
-
-    public HighestLowestPostDTO[] getAllHighestLowestPost(String productId, ProductCategory category, String table){
-        final List<Size> sizes= ProductValidator.getSizesByCategory(category);
-        final HighestLowestPostDTO[] lowestHighest= new HighestLowestPostDTO[sizes.size()];
-        int position=0;
-        for(Size size: sizes){
-            if(table.equalsIgnoreCase("bid"))
-                lowestHighest[position]=postMapper.toHighestLowestPostDTO(bidService.getHighestBid(productId,size),size);
-            else lowestHighest[position]=postMapper.toHighestLowestPostDTO(askService.getLowestAsk(productId,size),size);
-        }
-        return lowestHighest;
     }
 
     public Integer getASizeBestPost(String id, String entity, Size size){

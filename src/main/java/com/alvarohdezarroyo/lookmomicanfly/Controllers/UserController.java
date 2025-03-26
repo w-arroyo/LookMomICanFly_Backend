@@ -80,7 +80,7 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
-    @PutMapping("/deactivate")
+    @PutMapping("/deactivate/")
     public ResponseEntity <Map<String,String>> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
@@ -88,7 +88,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 
-    @GetMapping("/addresses")
+    @GetMapping("/addresses/")
     public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId) throws Exception {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);

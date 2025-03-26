@@ -41,9 +41,10 @@ public class ProductController {
     }
 
     @GetMapping("/get/all-summary")
-    public ResponseEntity<List<ProductSummaryDTO>> getAllProductsSummary(){
+    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getAllProductsSummary(){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(productMapper.toSummaryList(productService.findAllProducts()));
+                .body(Map.of("products",
+                        productMapper.toSummaryList(productService.findAllProducts())));
     }
 
     @GetMapping("/get/all-summary-by-category/")

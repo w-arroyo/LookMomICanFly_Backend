@@ -42,7 +42,7 @@ public class OrderController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(orderId,userId);
         authService.checkFraudulentRequest(userId);
         final Order order=orderService.getOrderById(orderId);
-        PostValidator.checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(order.getBid().getUser().getId(),userId);
+        GlobalValidator.checkIfDataBelongToRequestingUser(userId,order.getBid().getUser().getId());
         final String tracking=orderService.getOrderTrackingNumber(order.getId());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("order",

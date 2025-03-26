@@ -50,7 +50,7 @@ public class SaleController {
     public ResponseEntity<Map<String,SaleDTO>> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
         basicValidations(saleId,userId);
         final Sale sale=saleService.getSaleById(saleId);
-        PostValidator.checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(userId,sale.getAsk().getUser().getId());
+        GlobalValidator.checkIfDataBelongToRequestingUser(userId,sale.getAsk().getUser().getId());
         final String tracking=saleService.getSaleCurrentTrackingNumberCode(sale.getId());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("sale",

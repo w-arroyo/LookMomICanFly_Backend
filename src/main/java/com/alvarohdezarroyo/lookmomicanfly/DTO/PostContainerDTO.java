@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HighestLowestPostDTO {
+public class PostContainerDTO {
 
-    private String size, amount;
+    private String size;
+    private Integer amount;
 
 }

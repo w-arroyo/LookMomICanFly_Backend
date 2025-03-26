@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BidRepository extends JpaRepository<Bid,String> {
@@ -15,5 +16,8 @@ public interface BidRepository extends JpaRepository<Bid,String> {
 
     @Query(value = "SELECT amount from bids WHERE size= :size AND product_id= :id AND active=true ORDER BY amount DESC limit 1",nativeQuery = true)
     Integer getHighestBidAmount(@Param("id") String id, @Param("size") String size);
+
+    @Query("SELECT bid FROM Bid bid WHERE bid.id IN(SELECT post.id FROM Post post WHERE post.user.id= :id AND post.active=true)")
+    List<Bid> getAllUserBids(@Param("id") String id);
 
 }
