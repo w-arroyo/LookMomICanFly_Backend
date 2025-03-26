@@ -36,7 +36,9 @@ public class AccessoryController {
     @GetMapping("/get/")
     public ResponseEntity<Map<String,AccessoryDTO>> getAccessoryDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("accessory",productMapper.toAccessoryDTO(accessoryService.getAccessoryById(id))));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("accessory",
+                        productMapper.toAccessoryDTO(accessoryService.getAccessoryById(id))));
     }
 
     @PostMapping("/save")
@@ -45,7 +47,8 @@ public class AccessoryController {
         GlobalValidator.checkIfRequestBodyIsEmpty(accessoryDTO);
         ProductValidator.checkIfProductFieldsAreEmpty(accessoryDTO,accessoryDTO.getMaterial(),"material");
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",saveAccessory(productMapper.toAccessory(accessoryDTO))));
+                .body(Map.of("success",
+                        saveAccessory(productMapper.toAccessory(accessoryDTO))));
     }
 
     private Accessory saveAccessory(Accessory accessory){

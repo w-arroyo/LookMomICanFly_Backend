@@ -61,4 +61,8 @@ public class SaleService {
         return trackingNumberService.getSaleTrackingNumber(saleId).getCode();
     }
 
+    public List<Sale> getAllUserSales(String userId){
+        return saleRepository.getAllUserSales(userId);
+    }
+
 }

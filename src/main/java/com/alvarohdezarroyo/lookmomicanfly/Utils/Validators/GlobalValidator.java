@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Validators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 
 public class GlobalValidator {
 
@@ -30,6 +31,11 @@ public class GlobalValidator {
     public static void checkIfANumberIsGreaterThan(int numberOne, int comparison){
         if(numberOne<comparison)
             throw new IllegalArgumentException("Number must be grater than "+comparison+".");
+    }
+
+    public static void checkIfDataBelongToRequestingUser(String requestingUserId, String dataOwnerId){
+        if(!requestingUserId.equals(dataOwnerId))
+            throw new FraudulentRequestException("You are not allowed to get someone else's data.");
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/tracking")
 public class TrackingNumberController {
@@ -19,9 +21,11 @@ public class TrackingNumberController {
     }
 
     @GetMapping("/sale-tracking-amount/")
-    public ResponseEntity<Integer> getSaleAmountOfTrackingNumbers(@RequestParam String saleId){
+    public ResponseEntity<Map<String,Integer>> getSaleAmountOfTrackingNumbers(@RequestParam String saleId){
         GlobalValidator.checkIfAFieldIsEmpty(saleId);
-        return ResponseEntity.status(HttpStatus.OK).body(trackingNumberService.getSaleAmountOfTrackingNumbers(saleId));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("number",
+                        trackingNumberService.getSaleAmountOfTrackingNumbers(saleId)));
     }
 
 }

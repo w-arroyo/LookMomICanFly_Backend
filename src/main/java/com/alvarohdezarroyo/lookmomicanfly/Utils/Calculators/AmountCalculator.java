@@ -9,7 +9,8 @@ public class AmountCalculator {
 
     public static int getAskPayout(Ask ask){
         int amount=ask.getAmount();
-        amount-=amount*(ask.getSellingFee().getPercentage()/100);
+        final double percentage= (double) ask.getSellingFee().getPercentage() /100;
+        amount-= (int) (amount*percentage);
         amount-=ask.getShippingFee();
         return amount;
     }

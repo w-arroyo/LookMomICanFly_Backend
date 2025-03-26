@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SaleDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionOverviewDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SaleService;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,13 +46,26 @@ public class SaleController {
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
-    @GetMapping("/get-sale/")
+    @GetMapping("/get/")
     public ResponseEntity<Map<String,SaleDTO>> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
         basicValidations(saleId,userId);
         final Sale sale=saleService.getSaleById(saleId);
-        PostValidator.checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(userId,sale.getAsk().getUser().getId());
+        GlobalValidator.checkIfDataBelongToRequestingUser(userId,sale.getAsk().getUser().getId());
         final String tracking=saleService.getSaleCurrentTrackingNumberCode(sale.getId());
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("sale",transactionMapper.toSaleDTO(sale,tracking)));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("sale",
+                        transactionMapper.toSaleDTO(sale,tracking)));
+    }
+
+    @GetMapping("/get-all/")
+    public ResponseEntity<Map<String,List<TransactionOverviewDTO>>> getAllUserSales(@RequestParam String userId){
+        GlobalValidator.checkIfAFieldIsEmpty(userId);
+        authService.checkFraudulentRequest(userId);
+        final List<Sale> sales=saleService.getAllUserSales(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+          Map.of("sales",
+                  transactionMapper.salesToOverview(sales))
+        );
     }
 
     private void basicValidations(String saleId, String userId){

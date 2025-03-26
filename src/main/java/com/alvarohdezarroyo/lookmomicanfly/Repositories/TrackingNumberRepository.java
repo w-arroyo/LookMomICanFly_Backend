@@ -23,7 +23,7 @@ public interface TrackingNumberRepository extends JpaRepository<TrackingNumber,S
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO tracking_and_orders VALUES (:trackingId,:orderId)", nativeQuery = true)
+    @Query(value = "INSERT IGNORE INTO tracking_and_orders VALUES (:trackingId,:orderId)", nativeQuery = true)
     void insertIntoOrdersTrackingTable(@Param("trackingId") String trackingId, @Param("orderId") String orderId);
 
     @Query(value = "SELECT * FROM tracking_numbers WHERE id IN (SELECT tracking_number_id FROM tracking_and_sales WHERE sale_id = :id) ORDER BY date DESC LIMIT 1", nativeQuery = true)

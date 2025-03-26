@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AskService {
 
@@ -21,6 +23,10 @@ public class AskService {
     @Transactional
     public Ask saveAsk(Ask ask){
         return askRepository.save(ask);
+    }
+
+    public List<Ask> getAllUserAsks(String userId){
+        return askRepository.findAllUserAsks(userId);
     }
 
     public Ask findAskById(String id){

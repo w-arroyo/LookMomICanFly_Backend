@@ -36,6 +36,7 @@ public class SellingFeeService {
         return sellingFeeRepository.save(SellingFeeMapper.toSellingFee(sellingFeeDTO));
     }
 
+    @Transactional
     public void deactivateCurrentSellingFeeOffers(){
         sellingFeeRepository.deactivateCurrentSellingFeeOffers();
     }

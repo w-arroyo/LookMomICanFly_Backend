@@ -1,9 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Enums;
 
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import lombok.Getter;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +32,10 @@ public enum Size {
     Size(String value, Set<ProductCategory> categories) {
         this.value = value;
         this.categories=categories;
+    }
+
+    public static List<Size> getSizesByCategory(ProductCategory category){
+        return Arrays.stream(Size.values()).filter(size -> size.getCategories().contains(category)).toList();
     }
 
 }

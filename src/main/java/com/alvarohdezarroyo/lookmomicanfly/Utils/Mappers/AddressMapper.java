@@ -2,14 +2,23 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
-import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
 public class AddressMapper {
+
+    @Autowired
+    private final UserValidator userValidator;
+
+    public AddressMapper(UserValidator userValidator) {
+        this.userValidator = userValidator;
+    }
 
     public static AddressDTO toDTO(Address address) throws Exception {
         final AddressDTO addressDTO=new AddressDTO();
@@ -23,9 +32,9 @@ public class AddressMapper {
         return addressDTO;
     }
 
-    public static Address toEntity(AddressDTO addressDTO, User user) throws Exception {
+    public Address toEntity(AddressDTO addressDTO) throws Exception {
         final Address address=new Address();
-        address.setUserId(user);
+        address.setUserId(userValidator.returnUserById(addressDTO.getUserId()));
         address.setActive(true);
         address.setFullName(AESEncryptionUtil.encrypt(addressDTO.getFullName()).getBytes());
         address.setStreet(AESEncryptionUtil.encrypt(addressDTO.getStreet()).getBytes());
@@ -34,4 +43,15 @@ public class AddressMapper {
         address.setCountry(AESEncryptionUtil.encrypt(addressDTO.getCountry()).getBytes());
         return address;
     }
+
+    public static AddressDTO[] addressListToAddressDTOArray(List<Address> addresses){
+        return addresses.stream().map(address -> {
+            try {
+                return toDTO(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).toArray(size-> new AddressDTO[addresses.size()]);
+    }
+
 }

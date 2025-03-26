@@ -1,7 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
@@ -16,6 +15,10 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class PostMapper {
@@ -52,8 +55,16 @@ public class PostMapper {
         post.setSize(ProductValidator.checkIfASizeExists(postRequestDto.getSize()));
     }
 
-    public PostSummaryDTO toSummaryDTO(Post post){
+    private PostSummaryDTO toSummaryDTO(Post post){
         return new PostSummaryDTO(post.getId(),productService.findProductById(post.getProduct().getId()).getName(),post.getSize().getValue(),post.getAmount());
+    }
+
+    public PostSummaryDTO[] askListToSummaryDTO(List<Ask> asks){
+        return asks.stream().map(this::toSummaryDTO).toArray(size -> new PostSummaryDTO[asks.size()]);
+    }
+
+    public PostSummaryDTO[] bidListToSummaryDTO(List<Bid> bids){
+        return bids.stream().map(this::toSummaryDTO).toArray(size -> new PostSummaryDTO[bids.size()]);
     }
 
     private void fillPostDTOFields(PostDTO postDTO, Post post) throws Exception {
@@ -96,13 +107,25 @@ public class PostMapper {
         return bidDTO;
     }
 
-    public HighestLowestPostDTO toHighestLowestPostDTO(Post post, Size size){
-        final HighestLowestPostDTO lowestPostDTO=new HighestLowestPostDTO();
-        lowestPostDTO.setSize(size.getValue());
-        if(post==null)
-            lowestPostDTO.setAmount("-");
-        else lowestPostDTO.setAmount(post.getAmount()+"");
-        return lowestPostDTO;
+    private PostContainerDTO toContainer(String size, Post post){
+        if(post!=null){
+            return new PostContainerDTO(size, post.getAmount());
+        }
+        return new PostContainerDTO(size,null);
+    }
+
+    public List<PostContainerDTO> askListToContainer(Map<String,Ask> asks){
+      final List<PostContainerDTO> containers=new ArrayList<>();
+      for(String size: asks.keySet())
+          containers.add(toContainer(size,asks.get(size)));
+      return containers;
+    }
+
+    public List<PostContainerDTO> bidListToContainer(Map<String,Bid> bids){
+        final List<PostContainerDTO> bidsContainer=new ArrayList<>();
+        for(String size: bids.keySet())
+            bidsContainer.add(toContainer(size,bids.get(size)));
+        return bidsContainer;
     }
 
 }

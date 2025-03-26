@@ -1,12 +1,18 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.DTO.AskDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AskService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
+import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -17,6 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,14 +38,60 @@ public class AskController {
     private final TransactionMapper transactionMapper;
     private final PostMapper postMapper;
     private final AskService askService;
+    private final ProductService productService;
 
 
-    public AskController(AuthService authService, PostService postService, TransactionMapper transactionMapper, PostMapper postMapper, AskService askService) {
+    public AskController(AuthService authService, PostService postService, TransactionMapper transactionMapper, PostMapper postMapper, AskService askService, ProductService productService) {
         this.authService = authService;
         this.postService = postService;
         this.transactionMapper = transactionMapper;
         this.postMapper = postMapper;
         this.askService = askService;
+        this.productService = productService;
+    }
+
+    @GetMapping("/get/")
+    public ResponseEntity<Map<String, AskDTO>> getAskById(@RequestParam String userId, @RequestParam String askId) throws Exception {
+        GlobalValidator.checkIfTwoFieldsAreEmpty(userId,askId);
+        authService.checkFraudulentRequest(userId);
+        final Ask foundAsk=askService.findAskById(askId);
+        GlobalValidator.checkIfDataBelongToRequestingUser(userId,foundAsk.getUser().getId());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("ask",
+                        postMapper.toAskDTO(foundAsk)));
+    }
+
+    @GetMapping("/get-all/")
+    public ResponseEntity<Map<String,PostSummaryDTO[]>> getAllUserAsks(@RequestParam String userId){
+        GlobalValidator.checkIfAFieldIsEmpty(userId);
+        authService.checkFraudulentRequest(userId);
+        final List<Ask> userAsks=askService.getAllUserAsks(userId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("asks",
+                        postMapper.askListToSummaryDTO(userAsks)));
+    }
+
+    @GetMapping("/get/product/")
+    public ResponseEntity<Map<String,List<PostContainerDTO>>> getAllProductAsks(@RequestParam String productId){
+        GlobalValidator.checkIfAFieldIsEmpty(productId);
+        final Product product=productService.findProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("asks",
+                        postMapper.askListToContainer(
+                                findAllProductAsks(product)
+                        ))
+        );
+    }
+
+    private Map<String,Ask> findAllProductAsks(Product product){
+        Map<String,Ask> asks=new HashMap<>();
+        Size.getSizesByCategory(product.getCategory()).forEach(
+                currentSize -> {
+                    asks.put(currentSize.getValue(),
+                            askService.getLowestAsk(product.getId(),currentSize));
+                }
+        );
+        return asks;
     }
 
     @PostMapping("/save")
@@ -63,10 +118,12 @@ public class AskController {
     }
 
     @GetMapping("/lowest-ask/")
-    public ResponseEntity<Integer> getLowestAskAmount(@RequestParam String productId, @RequestParam String size){
+    public ResponseEntity<Map<String,Integer>> getLowestAskAmount(@RequestParam String productId, @RequestParam String size){
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
+        final Size sizeToCheck=ProductValidator.checkIfASizeExists(size);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(askService.getLowestAskAmount(productId, ProductValidator.checkIfASizeExists(size)));
+                .body(Map.of("amount",
+                        askService.getLowestAskAmount(productId, sizeToCheck)));
     }
 
     private Map<String,Object> returnAskOrSale(Object askOrSale) throws Exception {

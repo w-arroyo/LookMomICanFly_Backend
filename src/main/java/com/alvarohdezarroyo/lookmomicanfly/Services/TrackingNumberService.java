@@ -18,6 +18,7 @@ public class TrackingNumberService {
         this.trackingNumberRepository = trackingNumberRepository;
     }
 
+    @Transactional
     public void useTrackingNumber(String id){
         if(trackingNumberRepository.useTrackingNumber(id)<1)
             throw new EntityNotFoundException("Tracking number id does not exist.");

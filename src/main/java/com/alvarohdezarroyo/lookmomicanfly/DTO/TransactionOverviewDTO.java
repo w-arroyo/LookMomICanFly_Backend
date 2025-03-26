@@ -7,10 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class HighestLowestPostDTO {
+@NoArgsConstructor
+public class TransactionOverviewDTO {
 
-    private String size, amount;
+    private String id,productName, size, status;
+    private Integer amount;
 
 }

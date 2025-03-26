@@ -1,7 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
@@ -11,8 +9,6 @@ import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,28 +28,9 @@ public class UserService {
         this.userRepository=userRepository;
     }
 
-    public String returnUserIdByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(
-                ()-> new EntityNotFoundException("User email not found.")
-        ).getId();
-    }
-
-    public UserDTO returnUserDTOByUserId(String id) throws Exception {
-        return UserMapper.toDTO(userRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("User id not found.")
-        ));
-    }
-
     @Transactional
-    public User saveUser(UserDTO user) {
-        try {
-            if(userValidator.checkUserByEmail(user.getEmail()))
-                throw new EmailAlreadyInUseException("Email is already in use");
-            return userRepository.save(UserMapper.toUser(user));
-        }
-        catch (Exception ex){
-            throw new RuntimeException(ex.getMessage());
-        }
+    public User saveUser(User user){
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -101,17 +78,9 @@ public class UserService {
         }
     }
 
-    public AddressDTO[] getUserAddresses(String id) throws Exception {
-        final List<Address> addresses = userRepository.findById(id).orElseThrow(
+    public List<Address> getUserAddresses(String id){
+        return userRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException("Id is not associated with any user account in the DB.")
         ).getAddresses();
-        addresses.removeIf(address -> !address.getActive());
-        if(addresses.isEmpty())
-            return new AddressDTO[0];
-        final AddressDTO [] dtoAddresses = new AddressDTO[addresses.size()];
-        for (int address = 0; address < addresses.size(); address++) {
-            dtoAddresses[address]= AddressMapper.toDTO(addresses.get(address));
-        }
-        return dtoAddresses;
     }
 }

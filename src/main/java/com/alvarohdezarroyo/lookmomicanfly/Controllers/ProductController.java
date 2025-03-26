@@ -41,17 +41,18 @@ public class ProductController {
     }
 
     @GetMapping("/get/all-summary")
-    public ResponseEntity<List<ProductSummaryDTO>> getAllProductsSummary(){
+    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getAllProductsSummary(){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(productMapper.toSummaryList(productService.findAllProducts()));
+                .body(Map.of("products",
+                        productMapper.toSummaryList(productService.findAllProducts())));
     }
 
     @GetMapping("/get/all-summary-by-category/")
-    public ResponseEntity<List<ProductSummaryDTO>> getCategorySummary(@RequestParam String category){
+    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getCategorySummary(@RequestParam String category){
         GlobalValidator.checkIfAFieldIsEmpty(category);
         List<Product> productList = productService.findAllProductsByCategory(ProductValidator.checkIfProductCategoryExists(category));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(productMapper.toSummaryList(productList));
+                .body(Map.of("products",productMapper.toSummaryList(productList)));
     }
 
 }

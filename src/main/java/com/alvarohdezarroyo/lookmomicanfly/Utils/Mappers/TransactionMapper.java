@@ -9,6 +9,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ReferenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class TransactionMapper {
 
@@ -86,6 +88,32 @@ public class TransactionMapper {
         sale.setAsk(ask);
         sale.setStatus(SaleStatus.PENDING);
         return sale;
+    }
+
+    private TransactionOverviewDTO toTransactionOverviewDTO(String id,String product,String status,String size,int amount){
+        return new TransactionOverviewDTO(
+            id,product,size,status,amount
+        );
+    }
+
+    public List<TransactionOverviewDTO> salesToOverview(List<Sale> sales){
+        return sales.stream().map(sale -> toTransactionOverviewDTO(
+                sale.getId(),
+                sale.getAsk().getProduct().getName(),
+                sale.getStatus().name().replace("_"," "),
+                sale.getAsk().getSize().getValue(),
+                AmountCalculator.getAskPayout(sale.getAsk())
+        )).toList();
+    }
+
+    public List<TransactionOverviewDTO> ordersToOverview(List<Order> orders){
+        return orders.stream().map(order -> toTransactionOverviewDTO(
+                order.getId(),
+                order.getBid().getProduct().getName(),
+                order.getStatus().name().replace("_"," "),
+                order.getBid().getSize().getValue(),
+                (int)(AmountCalculator.getBidTotal(order.getBid()))
+        )).toList();
     }
 
 }
