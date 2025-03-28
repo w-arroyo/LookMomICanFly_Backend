@@ -11,7 +11,7 @@ public class BankAccountMapper {
     public static BankAccount toBankAccount(BankAccountDTO bankAccountDTO, User user){
         final BankAccount bankAccount=new BankAccount();
         bankAccount.setActive(true);
-        bankAccount.setNumber(bankAccount.getNumber());
+        bankAccount.setNumber(bankAccountDTO.getNumber());
         bankAccount.setUser(user);
         return bankAccount;
     }

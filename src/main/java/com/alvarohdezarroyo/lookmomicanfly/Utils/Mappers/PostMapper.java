@@ -82,7 +82,7 @@ public class PostMapper {
         ask.setShippingFee(sellingShippingFee);
         ask.setSellingFee(sellingFeeService.checkIfThereIsADefaultFee(askRequest.getUserId()));
         final BankAccount bankAccount= bankAccountService.findById(askRequest.getBankAccountId());
-        PostValidator.checkIfBankAccountBelongsToUser(askRequest.getUserId(),bankAccount.getId());
+        PostValidator.checkIfBankAccountBelongsToUser(askRequest.getUserId(),bankAccount.getUser().getId());
         ask.setBankAccount(bankAccount);
         return ask;
     }

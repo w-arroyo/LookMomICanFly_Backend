@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/bank_accounts")
+@RequestMapping("/api/bank-accounts")
 public class BankAccountController {
 
     @Autowired

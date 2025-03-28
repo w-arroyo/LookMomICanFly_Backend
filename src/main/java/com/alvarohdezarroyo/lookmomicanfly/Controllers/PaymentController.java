@@ -52,11 +52,12 @@ public class PaymentController {
     public ResponseEntity<Map<String,Object>> handlePayment(@RequestBody String payload, @RequestHeader("Stripe-Signature") String signature) throws SignatureVerificationException {
         final Event event= Webhook.constructEvent(payload,signature,stripeSecretKey); // method throws SignatureVerificationException exception
         final PaymentIntent paymentIntent = getPaymentIntent(event);
+        System.out.println(paymentIntent.getStatus());
         final Payment updatedPayment=paymentService.updatePayment(paymentIntent);
+        System.out.println(updatedPayment.getStatus());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "ID: "+updatedPayment.getId()+". Status: "+updatedPayment.getStatus()));
-
     }
 
     private PaymentIntent getPaymentIntent(Event event) {

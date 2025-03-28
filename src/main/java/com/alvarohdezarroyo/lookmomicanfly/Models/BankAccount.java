@@ -31,7 +31,7 @@ public class BankAccount {
     @NotNull
     private Boolean active=true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
