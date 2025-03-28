@@ -12,6 +12,16 @@ CREATE TABLE IF NOT EXISTS posts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS payments (
+    id VARCHAR(36) PRIMARY KEY,
+    payment_intent_id VARCHAR(255) NOT NULL UNIQUE,
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(10) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 CREATE TABLE IF NOT EXISTS shipping_companies (
   id VARCHAR(36) PRIMARY KEY,
   name VARCHAR(255) NOT NULL
@@ -37,16 +47,20 @@ CREATE TABLE IF NOT EXISTS shipping_options (
 CREATE TABLE IF NOT EXISTS asks (
     id VARCHAR(36) PRIMARY KEY,
     fee_id VARCHAR(36) NOT NULL,
+    bank_account_id VARCHAR(36) NOT NULL,
     shipping_fee DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (bank_account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (fee_id) REFERENCES selling_fees(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS bids (
     id VARCHAR(36) PRIMARY KEY,
     shipping_option_id VARCHAR(36) NOT NULL,
+    payment_id VARCHAR(36) NOT NULL,
     operational_fee DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE CASCADE,
     FOREIGN KEY (shipping_option_id) REFERENCES shipping_options(id) ON DELETE CASCADE
 );
 

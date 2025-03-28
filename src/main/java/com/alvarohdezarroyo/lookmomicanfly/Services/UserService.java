@@ -22,10 +22,12 @@ public class UserService {
     @Autowired
     private final UserValidator userValidator;
     private final UserRepository userRepository;
+    private final PostService postService;
 
-    UserService(UserValidator userValidator, UserRepository userRepository){
+    UserService(UserValidator userValidator, UserRepository userRepository, PostService postService){
         this.userValidator = userValidator;
         this.userRepository=userRepository;
+        this.postService = postService;
     }
 
     @Transactional
@@ -40,6 +42,7 @@ public class UserService {
                 throw new EntityNotFoundException("ID does not belong to any user account.");
             if(userRepository.deactivateUserAccount(id)<1)
                throw new EntityNotFoundException("Server error. Try again later.");
+            postService.deactivateAllUserPosts(id);
         } catch (Exception ex){
             throw new RuntimeException(ex.getMessage());
         }

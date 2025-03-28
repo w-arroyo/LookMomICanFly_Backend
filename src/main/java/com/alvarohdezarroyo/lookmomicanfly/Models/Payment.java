@@ -42,10 +42,4 @@ public class Payment {
     @NotNull
     private LocalDateTime date=LocalDateTime.now();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @NotNull
-    private User user;
-
-
 }

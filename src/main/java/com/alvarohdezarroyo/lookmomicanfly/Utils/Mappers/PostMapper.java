@@ -1,15 +1,12 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
+import com.alvarohdezarroyo.lookmomicanfly.Models.*;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.AskRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.SellingFeeService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ShippingOptionService;
+import com.alvarohdezarroyo.lookmomicanfly.Services.*;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +32,18 @@ public class PostMapper {
     private final SellingFeeService sellingFeeService;
     private final ShippingOptionService shippingOptionService;
     private final ProductMapper productMapper;
+    private final BankAccountService bankAccountService;
+    private final PaymentService paymentService;
 
-    public PostMapper(ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService, ProductMapper productMapper) {
+    public PostMapper(ProductService productService, UserValidator userValidator, AddressService addressService, SellingFeeService sellingFeeService, ShippingOptionService shippingOptionService, ProductMapper productMapper, BankAccountService bankAccountService, PaymentService paymentService) {
         this.productService = productService;
         this.userValidator = userValidator;
         this.addressService = addressService;
         this.sellingFeeService = sellingFeeService;
         this.shippingOptionService = shippingOptionService;
         this.productMapper = productMapper;
+        this.bankAccountService = bankAccountService;
+        this.paymentService = paymentService;
     }
 
     private void fillPostFields(PostRequestDTO postRequestDto, Post post){
@@ -75,11 +76,14 @@ public class PostMapper {
         postDTO.setProductSummaryDTO(productMapper.toSummary(post.getProduct()));
     }
 
-    public Ask toAsk(PostRequestDTO askRequest){
+    public Ask toAsk(AskRequestDTO askRequest){
         final Ask ask=new Ask();
         fillPostFields(askRequest,ask);
         ask.setShippingFee(sellingShippingFee);
         ask.setSellingFee(sellingFeeService.checkIfThereIsADefaultFee(askRequest.getUserId()));
+        final BankAccount bankAccount= bankAccountService.findById(askRequest.getBankAccountId());
+        PostValidator.checkIfBankAccountBelongsToUser(askRequest.getUserId(),bankAccount.getId());
+        ask.setBankAccount(bankAccount);
         return ask;
     }
 
@@ -88,6 +92,8 @@ public class PostMapper {
         fillPostFields(bidRequest,bid);
         bid.setOperationalFee(operationalFee);
         bid.setShippingOption(shippingOptionService.getShippingOptionById(bidRequest.getShippingOptionId()));
+        final Payment payment=paymentService.findPaymentByPaymentIntentId(bidRequest.getPaymentIntentId());
+        bid.setPayment(payment);
         return bid;
     }
 

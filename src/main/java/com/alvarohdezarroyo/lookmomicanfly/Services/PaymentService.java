@@ -3,7 +3,9 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Payment;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PaymentRepository;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class PaymentService {
         );
     }
 
-    private Payment findPaymentByPaymentIntentId(String id){
+    public Payment findPaymentByPaymentIntentId(String id){
         return paymentRepository.findByPaymentIntentId(id).orElseThrow(
                 ()-> new EntityNotFoundException("Payment Intent ID does not exist.")
         );
@@ -37,6 +39,14 @@ public class PaymentService {
         final Payment payment= findPaymentByPaymentIntentId(intent.getId());
         payment.setStatus(intent.getStatus());
         return savePayment(payment);
+    }
+
+    @Transactional
+    public boolean takePayment(String paymentIntentId) throws StripeException {
+        final Payment payment= findPaymentByPaymentIntentId(paymentIntentId);
+        final PaymentIntent paymentIntent=PaymentIntent.retrieve(payment.getPaymentIntentId())
+                .capture(); // takes the money
+        return paymentIntent.getStatus().equals("succeeded");
     }
 
 }

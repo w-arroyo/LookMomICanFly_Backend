@@ -7,8 +7,6 @@ import lombok.Setter;
 @Setter
 public class BidRequestDTO extends PostRequestDTO {
 
-    private String shippingOptionId;
-    private String userId, productId, size, addressId;
-    private Integer amount;
+    private String shippingOptionId, paymentIntentId;
 
 }

@@ -2,6 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.ExceptionHandlers;
 
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
 import com.stripe.exception.SignatureVerificationException;
+import com.stripe.exception.StripeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -83,8 +84,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(SignatureVerificationException.class)
-    public ResponseEntity<Map<String,String>> stripeSignatureVerficationExceptionHandler(SignatureVerificationException ex){
+    public ResponseEntity<Map<String,String>> stripeSignatureVerificationExceptionHandler(SignatureVerificationException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",ex.getMessage()));
+    }
+
+    @ExceptionHandler(StripeException.class)
+    public ResponseEntity<Map<String,String>> stripeExceptionHandler(StripeException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error",ex.getMessage()));
+    }
+
+    @ExceptionHandler(PaymentChargeUnsuccessfulException.class)
+    public ResponseEntity<Map<String,String>> paymentChargeUnsuccessfulExceptionHandler(PaymentChargeUnsuccessfulException ex){
+        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(Map.of("error",ex.getMessage()));
     }
 
 }

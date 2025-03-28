@@ -2,7 +2,6 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PaymentDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Payment;
-import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -11,32 +10,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentMapper {
 
-    private static PaymentIntentCreateParams toPaymentIntentParams(Long amount, String userId){
+    private static PaymentIntentCreateParams toPaymentIntentParams(String userId){
         try{
-            Long.parseLong(amount+"");
-            if(amount<0)
-                throw new RuntimeException();
             return PaymentIntentCreateParams.builder()
-                    .setAmount(amount)
+                    .setAmount(0L) // requires a Long type
+                    .setCaptureMethod(PaymentIntentCreateParams.CaptureMethod.MANUAL) // money will be taken later
                     .setCurrency("eur")
+                    .putMetadata("userId",userId)
                     .build();
         }
         catch (Exception e){
-            throw new IllegalArgumentException("Invalid amount.");
+            throw new RuntimeException(e.getMessage());
         }
     }
 
-    public static PaymentIntent toPaymentIntent(Long amount, String userId) throws StripeException {
-        final PaymentIntentCreateParams params=toPaymentIntentParams(amount,userId);
+    public static PaymentIntent toPaymentIntent(String userId) throws StripeException {
+        final PaymentIntentCreateParams params=toPaymentIntentParams(userId);
         return PaymentIntent.create(params);
     }
 
-    public static Payment toPayment(PaymentIntent intent, User user) throws StripeException {
+    public static Payment toPayment(PaymentIntent intent){
         final Payment payment=new Payment();
         payment.setCurrency(intent.getCurrency());
         payment.setPaymentIntentId(intent.getId());
         payment.setStatus(intent.getStatus());
-        payment.setUser(user);
         return payment;
     }
 

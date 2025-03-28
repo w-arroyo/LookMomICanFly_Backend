@@ -19,4 +19,9 @@ public interface PostRepository extends JpaRepository<Post,String> {
     @Query(value = "UPDATE posts SET active=false, finalized=true WHERE id= :id", nativeQuery = true)
     int completePost(@Param("id") String id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE posts SET active=false WHERE user_id= :id", nativeQuery = true)
+    void deactivateAllUserPosts(@Param("id") String id);
+
 }

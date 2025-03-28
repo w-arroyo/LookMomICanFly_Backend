@@ -2,11 +2,13 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PaymentChargeUnsuccessfulException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
+import com.stripe.exception.StripeException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,18 +21,25 @@ public class PostService {
     private final AskService askService;
     private final BidService bidService;
     private final MatchingPostsService matchingPostsService;
+    private final PaymentService paymentService;
 
-    public PostService(PostRepository postRepository, AskService askService, BidService bidService, MatchingPostsService matchingPostsService) {
+    public PostService(PostRepository postRepository, AskService askService, BidService bidService, MatchingPostsService matchingPostsService, PaymentService paymentService) {
         this.postRepository = postRepository;
         this.askService = askService;
         this.bidService = bidService;
         this.matchingPostsService = matchingPostsService;
+        this.paymentService = paymentService;
     }
 
     @Transactional
     public void deactivatePost(String id, String userId){
         if(postRepository.deactivatePost(id,userId)<1)
             throw new FraudulentRequestException("Forbidden request. You can't manipulate other user's data.");
+    }
+
+    @Transactional
+    public void deactivateAllUserPosts(String userId){
+        postRepository.deactivateAllUserPosts(userId);
     }
 
     @Transactional
@@ -46,7 +55,7 @@ public class PostService {
     }
 
     @Transactional
-    public Object saveBid(Bid bid){
+    public Object saveBid(Bid bid) throws StripeException {
         PostValidator.checkBidAmountIsPositive(bid);
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
@@ -57,7 +66,7 @@ public class PostService {
     }
 
     @Transactional
-    public Object updateBid(String bidId, Integer amount, String userId){
+    public Object updateBid(String bidId, Integer amount, String userId) throws StripeException {
         final Bid foundBid= bidService.findBidById(bidId);
         foundBid.setAmount(amount);
         PostValidator.checkIfPostBelongToUser(userId,foundBid.getUser().getId());
@@ -73,10 +82,11 @@ public class PostService {
     }
 
     @Transactional
-    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk){
+    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk) throws StripeException {
         if(lowestAsk==null || lowestAsk.getAmount()> savedBid.getAmount()){
             return savedBid;
         }
+        chargeBidAmount(savedBid);
         completeMatchingPosts(lowestAsk,savedBid);
         return matchingPostsService.saveTransactionAndGetOrder(savedBid,lowestAsk);
     }
@@ -97,6 +107,12 @@ public class PostService {
         if(highestBid==null || savedAsk.getAmount()> highestBid.getAmount()){
             return savedAsk;
         }
+        try {
+            chargeBidAmount(highestBid);
+        }
+        catch (Exception e){
+            return savedAsk;
+        }
         completeMatchingPosts(savedAsk,highestBid);
         return matchingPostsService.saveTransactionAndGetSale(savedAsk,highestBid);
     }
@@ -105,6 +121,14 @@ public class PostService {
     private void completeMatchingPosts(Ask ask, Bid bid){
         completePost(ask.getId());
         completePost(bid.getId());
+    }
+
+    @Transactional
+    private void chargeBidAmount(Bid bid) throws StripeException {
+        if(!paymentService.takePayment(bid.getPayment().getPaymentIntentId())) {
+            deactivatePost(bid.getId(),bid.getUser().getId());
+            throw new PaymentChargeUnsuccessfulException("Payment was unsuccessful.");
+        }
     }
 
 

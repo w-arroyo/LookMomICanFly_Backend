@@ -25,4 +25,10 @@ public class Ask extends Post {
     @NotNull
     private Double shippingFee;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bank_account_id")
+    @NotNull
+    private BankAccount bankAccount;
+
+
 }

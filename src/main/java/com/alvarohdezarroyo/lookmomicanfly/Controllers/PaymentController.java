@@ -2,12 +2,10 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PaymentDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Payment;
-import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Services.PaymentService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PaymentMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
-import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.UserValidator;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -30,23 +28,20 @@ public class PaymentController {
     private String stripeSecretKey;
 
     @Autowired
-    private final UserValidator userValidator;
     private final PaymentService paymentService;
     private final AuthService authService;
 
-    public PaymentController(UserValidator userValidator, PaymentService paymentService, AuthService authService) {
-        this.userValidator=userValidator;
+    public PaymentController(PaymentService paymentService, AuthService authService) {
         this.paymentService = paymentService;
         this.authService = authService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, PaymentDTO>> createPayment(@RequestParam String userId, @RequestParam Long amount) throws StripeException {
-        GlobalValidator.checkIfTwoFieldsAreEmpty(userId,amount+"");
+    public ResponseEntity<Map<String, PaymentDTO>> createPayment(@RequestParam String userId) throws StripeException {
+        GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
-        final User user=userValidator.returnUserById(userId);
-        final PaymentIntent intent= PaymentMapper.toPaymentIntent(amount,userId);
-        Payment payment=PaymentMapper.toPayment(intent,user);
+        final PaymentIntent intent= PaymentMapper.toPaymentIntent(userId);
+        Payment payment=PaymentMapper.toPayment(intent);
         payment=paymentService.savePayment(payment);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("payment",
@@ -67,7 +62,7 @@ public class PaymentController {
     private PaymentIntent getPaymentIntent(Event event) {
         final EventDataObjectDeserializer deserializer= event.getDataObjectDeserializer();
         final PaymentIntent paymentIntent= (PaymentIntent) deserializer.getObject().orElse(null); // getObject() returns StripeObject so you got to cast it
-        // you can not make a static class to map the event because not all the events Stripe sends are the same so they don't always have the same attributes
+        // you can not create a class to map the event because not all the events Stripe sends are the same so they don't always have the same attributes
         if(paymentIntent==null)
             throw new RuntimeException("Unable to deserialize Payment Intent.");
         return paymentIntent;

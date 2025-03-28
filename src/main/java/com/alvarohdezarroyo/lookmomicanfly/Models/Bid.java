@@ -22,4 +22,8 @@ public class Bid extends Post{
     @NotNull
     private Double operationalFee;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @NotNull
+    private Payment payment;
+
 }
