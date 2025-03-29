@@ -32,20 +32,22 @@ public class BankAccountController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> saveBankAccount(@RequestBody BankAccountDTO bankAccountDTO){
+    public ResponseEntity<Map<String,BankAccountDTO>> saveBankAccount(@RequestBody BankAccountDTO bankAccountDTO) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(bankAccountDTO.getNumber(), bankAccountDTO.getUserId());
         authService.checkFraudulentRequest(bankAccountDTO.getUserId());
         BankAccountValidator.checkBankAccountFormat(bankAccountDTO.getNumber());
         final User user= userValidator.returnUserById(bankAccountDTO.getUserId());
         bankAccountService.deactivateAllUserBankAccounts(user.getId());
-        bankAccountService.saveBankAccount(
+        final BankAccount bankAccount= bankAccountService.saveBankAccount(
                 BankAccountMapper.toBankAccount(bankAccountDTO,user)
         );
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("success",
+                        BankAccountMapper.toDTO(bankAccount)));
     }
 
     @GetMapping("/user/")
-    public ResponseEntity<Map<String,BankAccountDTO>> getUserBankAccount(@RequestParam String userId){
+    public ResponseEntity<Map<String,BankAccountDTO>> getUserBankAccount(@RequestParam String userId) throws Exception {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final BankAccount bankAccount=bankAccountService.findUserActiveAccount(userId);

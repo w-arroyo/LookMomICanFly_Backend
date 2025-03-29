@@ -22,10 +22,8 @@ public class BankAccount {
     private String id;
 
     @Column(name = "number")
-    @Size(min = 24, max = 24)
     @NotNull
-    @NotBlank
-    private String number;
+    private byte[] number;
 
     @Column(name = "active")
     @NotNull

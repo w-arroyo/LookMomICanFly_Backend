@@ -19,22 +19,18 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    public Payment findPaymentById(String id){
-        return paymentRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("Payment ID does not exist.")
-        );
-    }
-
     public Payment findPaymentByPaymentIntentId(String id){
         return paymentRepository.findByPaymentIntentId(id).orElseThrow(
                 ()-> new EntityNotFoundException("Payment Intent ID does not exist.")
         );
     }
 
+    @Transactional
     public Payment savePayment(Payment payment){
         return paymentRepository.save(payment);
     }
 
+    @Transactional
     public Payment updatePayment(PaymentIntent intent){
         final Payment payment= findPaymentByPaymentIntentId(intent.getId());
         payment.setStatus(intent.getStatus());
@@ -46,6 +42,7 @@ public class PaymentService {
         final Payment payment= findPaymentByPaymentIntentId(paymentIntentId);
         final PaymentIntent paymentIntent=PaymentIntent.retrieve(payment.getPaymentIntentId())
                 .capture(); // takes the money
+        updatePayment(paymentIntent);
         return paymentIntent.getStatus().equals("succeeded");
     }
 

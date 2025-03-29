@@ -50,6 +50,8 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/products/clothing/get/**").permitAll();
                     auth.requestMatchers("/api/products/get-all-summary").permitAll();
                     auth.requestMatchers("/api/products/get-all-summary-by-category/**").permitAll();
+                    auth.requestMatchers("/api/products/categories/").permitAll();
+                    auth.requestMatchers("/api/products/subcategories/**").permitAll();
                     auth.requestMatchers("/api/payments/update").permitAll();
                     auth.requestMatchers("/api/sales/update").permitAll();
                     auth.requestMatchers("/api/orders/update").permitAll();
