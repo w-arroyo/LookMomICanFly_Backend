@@ -22,22 +22,18 @@ public class PhoneNumber {
 
     @Column(name = "prefix")
     @NotNull
-    @NotBlank
     private String prefix;
 
     @Column(name = "number")
     @NotNull
-    @NotBlank
     private String number;
 
     @Column(name = "active")
     @NotNull
-    @NotBlank
     private Boolean active=true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @NotNull
     private User user;
 
 }
