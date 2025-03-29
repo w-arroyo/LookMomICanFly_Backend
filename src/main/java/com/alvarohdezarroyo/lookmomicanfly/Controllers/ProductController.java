@@ -1,7 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -27,17 +25,6 @@ public class ProductController {
     public ProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
-    }
-
-    @GetMapping("/get/")
-    public Mono<ResponseEntity<Map<String,Object>>> findProductById(@RequestParam String id){
-        GlobalValidator.checkIfAFieldIsEmpty(id);
-        final ProductCategory productCategory=productService.getProductCategoryById(id);
-        return productService.sendRequestToGetProductDTOByCategory(id, productCategory.name(), productService.returnProductClass(productCategory))
-                .flatMap(productDto -> {
-                    return Mono.just(ResponseEntity.status(HttpStatus.OK)
-                            .body(Map.of(productCategory.name().toLowerCase(), productDto)));
-                });
     }
 
     @GetMapping("/get/all-summary")

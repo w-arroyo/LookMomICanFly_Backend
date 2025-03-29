@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
@@ -39,8 +40,9 @@ public class UserController {
     private final PostService postService;
     private final AddressService addressService;
     private final BankAccountService bankAccountService;
+    private final PhoneNumberService phoneNumberService;
 
-    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService){
+    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService, PhoneNumberService phoneNumberService){
         this.userService=userService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
@@ -48,15 +50,19 @@ public class UserController {
         this.postService = postService;
         this.addressService = addressService;
         this.bankAccountService = bankAccountService;
+        this.phoneNumberService = phoneNumberService;
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user) throws Exception {
+    public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user, HttpSession session) throws Exception {
         UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD);
+        if(userValidator.checkUserByEmail(user.getEmail()))
+            throw new EmailAlreadyInUseException("Email is already in use. Use a new one.");
         final User savedUser=userService.saveUser(
                 UserMapper.toUser(user)
         );
+        userLogin(user.getEmail(),user.getPassword(),session);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("success:",
                         UserMapper.toDTO(savedUser)
@@ -66,12 +72,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String,Object>> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+        /*
         final Authentication authentication= authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
         session.setAttribute("userId", authentication.getName());
+        */
+        userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword(),session);
         final User user=userValidator.returnUserById(authService.getAuthenticatedUserId());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
@@ -93,6 +102,7 @@ public class UserController {
         postService.deactivateAllUserPosts(userId);
         addressService.deactivateAllUserAddresses(userId);
         bankAccountService.deactivateAllUserBankAccounts(userId);
+        phoneNumberService.deactivateAllUserPhoneNumbers(userId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 
@@ -128,6 +138,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "Password modification completed. User ID: '"+request.getId()+"'."));
+    }
+
+    private void userLogin(String userEmail, String password, HttpSession session){
+        final Authentication authentication= authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userEmail, password));
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
+        session.setAttribute("userId", authentication.getName());
     }
 
 }

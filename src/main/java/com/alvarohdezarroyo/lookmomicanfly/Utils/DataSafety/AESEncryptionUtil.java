@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -8,7 +9,9 @@ import java.util.Base64;
 
 @Component
 public class AESEncryptionUtil {
-    private static final String mySecreKey= "123456789012345678901234";
+
+    @Value("${app.aesSecretKey}")
+    private static String mySecreKey;
 
     public static String encrypt(String data) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");

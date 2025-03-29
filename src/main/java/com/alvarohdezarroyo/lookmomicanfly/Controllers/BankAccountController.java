@@ -56,4 +56,12 @@ public class BankAccountController {
                         BankAccountMapper.toDTO(bankAccount)));
     }
 
+    @PutMapping("/deactivate/")
+    public ResponseEntity<String> deactivateUserBankAccounts(@RequestParam String user){
+        GlobalValidator.checkIfAFieldIsEmpty(user);
+        authService.checkFraudulentRequest(user);
+        bankAccountService.deactivateAllUserBankAccounts(user);
+        return ResponseEntity.status(HttpStatus.OK).body("success");
+    }
+
 }

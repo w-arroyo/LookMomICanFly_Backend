@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductSummaryDTO {
+public class PhoneNumberDTO {
 
-    private String id, name, manufacturer, category;
-    private Integer year;
+    private String id,prefix, number;
 
 }

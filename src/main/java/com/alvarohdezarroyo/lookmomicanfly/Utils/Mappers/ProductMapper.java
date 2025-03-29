@@ -57,6 +57,7 @@ public class ProductMapper {
         productSummaryDTO.setName(product.getName());
         productSummaryDTO.setYear(product.getReleaseYear());
         productSummaryDTO.setManufacturer(product.getManufacturer().getName());
+        productSummaryDTO.setCategory(product.getCategory().name());
         return productSummaryDTO;
     }
 
