@@ -72,14 +72,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String,Object>> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO, HttpSession session) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
-        /*
-        final Authentication authentication= authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
-        final SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session
-        session.setAttribute("userId", authentication.getName());
-        */
         userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword(),session);
         final User user=userValidator.returnUserById(authService.getAuthenticatedUserId());
         return ResponseEntity.status(HttpStatus.OK)

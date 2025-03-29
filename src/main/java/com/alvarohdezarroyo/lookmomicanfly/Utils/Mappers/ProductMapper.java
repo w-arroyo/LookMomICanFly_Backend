@@ -146,6 +146,8 @@ public class ProductMapper {
     }
 
     public List<ProductSummaryDTO> toSummaryList(List<Product> productList) {
+        if(productList==null)
+            return new ArrayList<>();
         return productList.stream().map(this::toSummary).toList();
     }
 
