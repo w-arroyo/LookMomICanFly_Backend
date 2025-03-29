@@ -28,6 +28,15 @@ CREATE TABLE IF NOT EXISTS bank_accounts (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS phone_numbers (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    active BOOLEAN DEFAULT TRUE NOT NULL,
+    prefix VARCHAR(6) NOT NULL,
+    number VARCHAR(20) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 INSERT INTO users (id, email, password, name, active, registration_date, user_type) VALUES
 (UUID(), 'admin_montoya@lookmomicanfly.com', '$2a$10$roKxmra2SwWEYe2uDmjk4eRvR0AdAgSabWq6NRonSQRO6SE6/rDdq',
 FROM_BASE64('RVhFTGw3SExXdy9MeVU2WC9xdUN0K2VGVjFwTVFQQnhmTjJoQlMydldXYz0='), 1, NOW(), 'ADMIN');
