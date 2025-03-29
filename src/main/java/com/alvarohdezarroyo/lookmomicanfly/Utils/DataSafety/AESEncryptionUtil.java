@@ -9,7 +9,7 @@ import java.util.Base64;
 @Component
 public class AESEncryptionUtil {
 
-    private static final String myKey = "123456789012345678901234";
+    private static final String myKey = "192837465508123574960289";
 
     public static String encrypt(String data) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
