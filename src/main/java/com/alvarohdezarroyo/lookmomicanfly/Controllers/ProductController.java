@@ -71,7 +71,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
-    @PutMapping("/favorites/like/")
+    @PutMapping("/favorites/unlike/")
     public ResponseEntity<String> unlikeProduct(@RequestParam String userId, @RequestParam String productId){
         checkLikingProducts(userId,productId);
         if(productService.checkIfUserLikesAProduct(userId,productId))

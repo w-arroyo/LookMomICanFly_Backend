@@ -56,4 +56,7 @@ public class Product {
     )
     private List<Color> colors;
 
+    @ManyToMany(mappedBy = "favoriteProducts", fetch = FetchType.LAZY)
+    private List<User> users;
+
 }
