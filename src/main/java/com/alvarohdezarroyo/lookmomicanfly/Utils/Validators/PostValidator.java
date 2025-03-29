@@ -6,10 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
-import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.GetPostRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import org.springframework.stereotype.Component;
 
@@ -37,16 +34,24 @@ public class PostValidator {
                 emptyFields.add("amount");
             }
         }
-        if(postRequestDto instanceof BidRequestDTO)
-            checkIfBidFieldsAreEmpty(emptyFields,(BidRequestDTO) postRequestDto);
         if(postRequestDto.getProductId()==null || postRequestDto.getProductId().trim().isEmpty())
             emptyFields.add("product");
+        if(postRequestDto instanceof BidRequestDTO)
+            checkIfBidFieldsAreEmpty(emptyFields,(BidRequestDTO) postRequestDto);
+        else checkIfAskFieldsAreEmpty(emptyFields, (AskRequestDTO) postRequestDto);
         if(!emptyFields.isEmpty())
             throw new EmptyFieldsException(emptyFields);
     }
 
     public static void checkIfBidFieldsAreEmpty(List<String> emptyFields, BidRequestDTO bid){
         if(bid.getShippingOptionId()==null || bid.getShippingOptionId().trim().isEmpty())
+            emptyFields.add("shipping option id");
+        if(bid.getPaymentIntentId()==null ||bid.getPaymentIntentId().trim().isEmpty())
+            emptyFields.add("payment intent id");
+    }
+
+    public static void checkIfAskFieldsAreEmpty(List<String> emptyFields, AskRequestDTO ask){
+        if(ask.getBankAccountId()==null || ask.getBankAccountId().trim().isEmpty())
             emptyFields.add("shipping option id");
     }
 
@@ -112,6 +117,11 @@ public class PostValidator {
     public static void checkIfPostBelongToUser(String requestUserId, String existingPostUserId){
         if(!requestUserId.equals(existingPostUserId))
             throw new FraudulentRequestException("You can not update someone else's post.");
+    }
+
+    public static void checkIfBankAccountBelongsToUser(String userId, String bankAccountId){
+        if(!bankAccountId.equals(userId))
+            throw new FraudulentRequestException("Bank account does not belong to the owner of the platform account.");
     }
 
 }

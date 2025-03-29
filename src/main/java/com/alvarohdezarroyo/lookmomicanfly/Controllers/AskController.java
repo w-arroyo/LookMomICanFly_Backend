@@ -5,14 +5,12 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
+import com.alvarohdezarroyo.lookmomicanfly.Models.BankAccount;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
-import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.PostRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.AskRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Services.AskService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.PostService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.ProductService;
+import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -23,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +92,7 @@ public class AskController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody PostRequestDTO askRequest) throws Exception {
+    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody AskRequestDTO askRequest) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(askRequest);
         PostValidator.checkIfPostFieldsAreEmpty(askRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
@@ -136,5 +133,7 @@ public class AskController {
         }
         return response;
     }
+
+
 
 }

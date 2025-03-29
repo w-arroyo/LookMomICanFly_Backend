@@ -25,6 +25,11 @@ public class AddressService {
     }
 
     @Transactional
+    public void deactivateAllUserAddresses(String id){
+        addressRepository.deactivateAllUserAddresses(id);
+    }
+
+    @Transactional
     public void deactivateAddress(String id, String userId){
         try{
             authService.checkFraudulentRequest(addressRepository.findById(id).orElseThrow(

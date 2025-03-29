@@ -8,8 +8,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangeUserFieldsRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.LoginRequestDTO;
-import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
-import com.alvarohdezarroyo.lookmomicanfly.Services.UserService;
+import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -37,12 +36,18 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final AuthService authService;
     private final UserValidator userValidator;
+    private final PostService postService;
+    private final AddressService addressService;
+    private final BankAccountService bankAccountService;
 
-    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator){
+    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService){
         this.userService=userService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
         this.userValidator = userValidator;
+        this.postService = postService;
+        this.addressService = addressService;
+        this.bankAccountService = bankAccountService;
     }
 
     @PostMapping ("/register")
@@ -85,6 +90,9 @@ public class UserController {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         userService.deactivateAccount(userId);
+        postService.deactivateAllUserPosts(userId);
+        addressService.deactivateAllUserAddresses(userId);
+        bankAccountService.deactivateAllUserBankAccounts(userId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 

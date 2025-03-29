@@ -14,4 +14,8 @@ public interface AddressRepository extends JpaRepository <Address, String> {
     @Query(value = "UPDATE addresses SET active=false WHERE id= :id",nativeQuery = true)
     int deactivateAddress(@Param("id") String id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE addresses SET active=false WHERE user_id= :id", nativeQuery = true)
+    void deactivateAllUserAddresses(@Param("id") String id);
 }
