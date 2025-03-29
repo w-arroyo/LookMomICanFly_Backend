@@ -19,6 +19,14 @@ CREATE TABLE IF NOT EXISTS products (
   FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS users_favorite_products (
+  product_id VARCHAR(36) NOT NULL,
+  user_id VARCHAR(36) NOT NULL,
+  PRIMARY KEY (product_id, user_id),
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS sneakers (
   id VARCHAR(36) PRIMARY KEY,
   sku VARCHAR(100) NOT NULL,

@@ -2,7 +2,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Exceptions.TrackingNumberAmountLimitReached;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.TrackingNumberAmountLimitReachedException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.SaleRepository;
 import jakarta.transaction.Transactional;
@@ -53,7 +53,7 @@ public class SaleService {
     @Transactional
     public void generateNewSaleTrackingNumber(String saleId){
         if(trackingNumberService.getSaleAmountOfTrackingNumbers(getSaleById(saleId).getId())>2)
-            throw new TrackingNumberAmountLimitReached("You can only generate 3 tracking numbers for a sale.");
+            throw new TrackingNumberAmountLimitReachedException("You can only generate 3 tracking numbers for a sale.");
         trackingNumberService.saveSaleTrackingNumber(saleId);
     }
 
