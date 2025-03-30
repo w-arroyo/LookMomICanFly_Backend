@@ -84,6 +84,7 @@ public class PostService {
     @Transactional
     private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk) throws StripeException {
         if(lowestAsk==null || lowestAsk.getAmount()> savedBid.getAmount()){
+            // send email
             return savedBid;
         }
         chargeBidAmount(savedBid);
@@ -105,12 +106,14 @@ public class PostService {
     @Transactional
     private Object checkForMatchingBid(Ask savedAsk, Bid highestBid){
         if(highestBid==null || savedAsk.getAmount()> highestBid.getAmount()){
+            // send email
             return savedAsk;
         }
         try {
             chargeBidAmount(highestBid);
         }
         catch (Exception e){
+            //send ask email
             return savedAsk;
         }
         completeMatchingPosts(savedAsk,highestBid);
@@ -127,6 +130,7 @@ public class PostService {
     private void chargeBidAmount(Bid bid) throws StripeException {
         if(!paymentService.takePayment(bid.getPayment().getPaymentIntentId())) {
             deactivatePost(bid.getId(),bid.getUser().getId());
+            // send email
             throw new PaymentChargeUnsuccessfulException("Payment was unsuccessful.");
         }
     }

@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.ExceptionHandlers;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -60,11 +61,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String,String>> runTimeExceptionHandler(RuntimeException ex){
-        /*
+
         Arrays.stream(ex.getStackTrace()).toList().forEach(
                 System.out::println
         );
-        */
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error",ex.getMessage()));
     }
 
@@ -111,6 +112,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProductAlreadyLikedException.class)
     public ResponseEntity<Map<String,String>> productAlreadyLikedExceptionHandler(ProductAlreadyLikedException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error",ex.getMessage()));
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<Map<String,String>> messagingExceptionHandler(MessagingException ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error",ex.getMessage()));
     }
 
 }

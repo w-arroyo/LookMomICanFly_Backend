@@ -42,6 +42,7 @@ public class OrderService {
     public void changeOrderStatus(String orderId, OrderStatus status){
         if(orderRepository.changeOrderStatus(orderId,status.name())<1)
             throw new RuntimeException("Server error. Unable to update order status.");
+        checkIfOrderNeedsEmail(orderId);
         if(status.equals(OrderStatus.SHIPPED))
             saveOrderTrackingNumber(orderId);
     }
@@ -58,6 +59,24 @@ public class OrderService {
 
     public List<Order> getAllUserOrders(String userId){
         return orderRepository.getAUserOrders(userId);
+    }
+
+    private void checkIfOrderNeedsEmail(String orderId){
+        final Order order=getOrderById(orderId);
+        // USE SWITCH OH MY GOD
+        if(order.getStatus().equals(OrderStatus.CANCELLED))
+            //send email
+            System.out.println("nop");
+        else if(order.getStatus().equals(OrderStatus.AUTHENTICATED))
+            // send email
+            System.out.println("yes");
+        else if(order.getStatus().equals(OrderStatus.FAKE_PRODUCT))
+            // send email
+            System.out.println("no");
+        else if(order.getStatus().equals(OrderStatus.SHIPPED)){
+            saveOrderTrackingNumber(order.getId());
+            // send email
+        }
     }
 
 }

@@ -26,7 +26,8 @@ public class TransactionService {
 
     @Transactional
     private Transaction saveTransaction(Order order, Sale sale){
-        trackingNumberService.saveSaleTrackingNumber(sale.getId());
+        final TrackingNumber trackingNumber=trackingNumberService.saveSaleTrackingNumber(sale.getId());
+        // send emails
         final Transaction transaction=TransactionMapper.createTransaction(order,sale);
         return transactionRepository.save(transaction);
     }

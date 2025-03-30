@@ -10,15 +10,24 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Getter
 public class AppConfig {
 
-    private static String aesKey;
+    private static String aesKey, emailAddress;
 
     @Value("${app.aesKey}")
     public void setAesKey(String value) {
         aesKey= value;
     }
 
+    @Value("${app.emailAddress}")
+    public void setEmailAddress(String value){
+        emailAddress=value;
+    }
+
     public static String getKey(){
         return aesKey;
+    }
+
+    public static String getEmail(){
+        return emailAddress;
     }
 
     @Bean

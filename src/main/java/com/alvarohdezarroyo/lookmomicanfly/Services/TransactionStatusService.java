@@ -30,6 +30,7 @@ public class TransactionStatusService {
         saleService.getAllOngoingSales().forEach(
                 sale -> {
                     saleService.changeSaleStatus(sale.getId(),switchSaleStatus(sale.getStatus(),sale));
+                    checkIfSaleNeedsEmail(sale);
                     updatedSales.incrementAndGet();
                 }
         );
@@ -71,6 +72,19 @@ public class TransactionStatusService {
             case PENDING -> OrderStatus.WAITING;
         };
         orderService.changeOrderStatus(transactionService.getOrderIdFromTransaction(saleId), orderStatus);
+    }
+
+    private void checkIfSaleNeedsEmail(Sale sale){
+        // USE SWITCH OH MY GOD
+            if(sale.getStatus().equals(SaleStatus.FAILED))
+                // send email
+                System.out.println("yep");
+            else if (sale.getStatus().equals(SaleStatus.AUTHENTICATED))
+                // send email
+                System.out.println("yes");
+            else if(sale.getStatus().equals(SaleStatus.CANCELLED))
+                // send email
+                System.out.println("no");
     }
 
     private boolean generateRandomNumberComparison(){
