@@ -46,6 +46,16 @@ public class EmailParamsGenerator {
                 null);
     }
 
+    public static EmailDetailsDTO generateNewEmailParams(String email){
+        return new EmailDetailsDTO(email,"This is you new email","NewEmail",AppConfig.getEmail(),
+                null);
+    }
+
+    public static EmailDetailsDTO generateNewPasswordParams(String email){
+        return new EmailDetailsDTO(email,"Your password was changed","NewPassword",AppConfig.getEmail(),
+                null);
+    }
+
     public static EmailDetailsDTO generateFailedPaymentParams(Bid bid){
         return new EmailDetailsDTO(bid.getUser().getEmail(),"Your payment was declined","FailedPayment",AppConfig.getEmail(),
                 Map.of("product",bid.getProduct()));
@@ -83,6 +93,12 @@ public class EmailParamsGenerator {
         return new EmailDetailsDTO(sale.getAsk().getUser().getEmail(),"Your sale was cancelled","CancelledSale",AppConfig.getEmail(),
                 Map.of("sale",sale
                 ));
+    }
+
+    public static EmailDetailsDTO generateOrderCompletedParams(Order order, TrackingNumber trackingNumber){
+        return new EmailDetailsDTO(order.getBid().getUser().getEmail(),"Your order was completed","CompletedOrder",AppConfig.getEmail(),
+                Map.of("order",order,
+                        "tracking",trackingNumber));
     }
 
 }

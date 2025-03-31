@@ -67,7 +67,7 @@ public class UserController {
         );
         userLogin(user.getEmail(),user.getPassword(),session);
         final UserDTO userDTO=UserMapper.toDTO(savedUser);
-        emailSenderService.sendEmail(
+        emailSenderService.sendEmailWithNoAttachment(
                 EmailParamsGenerator.generateRegistrationParams(userDTO)
         );
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -97,17 +97,18 @@ public class UserController {
     public ResponseEntity <Map<String,String>> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
+        final User user=userValidator.returnUserById(userId);
         userService.deactivateAccount(userId);
         postService.deactivateAllUserPosts(userId);
         addressService.deactivateAllUserAddresses(userId);
         bankAccountService.deactivateAllUserBankAccounts(userId);
         phoneNumberService.deactivateAllUserPhoneNumbers(userId);
-        // send email
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateDeactivatedAccountParams(user.getEmail()));
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 
     @GetMapping("/addresses/")
-    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId) throws Exception {
+    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Address> addresses=userService.getUserAddresses(userId);
@@ -123,6 +124,7 @@ public class UserController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
         userService.changeEmail(request.getUserId(), request.getNewField());
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewEmailParams(request.getNewField()));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "Email modification completed. User ID: '"+request.getUserId()+
@@ -134,7 +136,9 @@ public class UserController {
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
         authService.checkFraudulentRequest(request.getId());
+        final User foundUser=userValidator.returnUserById(request.getId());
         userService.changeUserPassword(request);
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewPasswordParams(foundUser.getEmail()));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "Password modification completed. User ID: '"+request.getId()+"'."));

@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.OrderStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.RandomGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ public class TransactionStatusService {
     private final OrderService orderService;
     private final SaleService saleService;
     private final TransactionService transactionService;
+    private final EmailSenderService emailSenderService;
 
-    public TransactionStatusService(OrderService orderService, SaleService saleService, TransactionService transactionService) {
+    public TransactionStatusService(OrderService orderService, SaleService saleService, TransactionService transactionService, EmailSenderService emailSenderService) {
         this.orderService = orderService;
         this.saleService = saleService;
         this.transactionService = transactionService;
+        this.emailSenderService = emailSenderService;
     }
 
     @Transactional
@@ -29,8 +32,8 @@ public class TransactionStatusService {
         AtomicInteger updatedSales=new AtomicInteger(0);
         saleService.getAllOngoingSales().forEach(
                 sale -> {
-                    saleService.changeSaleStatus(sale.getId(),switchSaleStatus(sale.getStatus(),sale));
-                    checkIfSaleNeedsEmail(sale);
+                        saleService.changeSaleStatus(sale.getId(),switchSaleStatus(sale.getStatus(),sale));
+                        checkIfSaleNeedsEmail(sale);
                     updatedSales.incrementAndGet();
                 }
         );
@@ -56,7 +59,8 @@ public class TransactionStatusService {
             case AUTHENTICATED -> newStatus=SaleStatus.COMPLETED;
             default -> newStatus=null;
         }
-        changeOrderStatus(newStatus,sale.getId());
+        if(newStatus!=null)
+            changeOrderStatus(newStatus,sale.getId());
         return newStatus;
     }
 
@@ -75,16 +79,11 @@ public class TransactionStatusService {
     }
 
     private void checkIfSaleNeedsEmail(Sale sale){
-        // USE SWITCH OH MY GOD
-            if(sale.getStatus().equals(SaleStatus.FAILED))
-                // send email
-                System.out.println("yep");
-            else if (sale.getStatus().equals(SaleStatus.AUTHENTICATED))
-                // send email
-                System.out.println("yes");
-            else if(sale.getStatus().equals(SaleStatus.CANCELLED))
-                // send email
-                System.out.println("no");
+        switch (sale.getStatus()){
+            case FAILED -> emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateFakeProductParams(sale));
+            case AUTHENTICATED -> emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateProductAuthenticatedParams(sale));
+            case CANCELLED -> emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateCancelledSaleParams(sale));
+        }
     }
 
     private boolean generateRandomNumberComparison(){
