@@ -5,6 +5,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PaymentChargeUnsuccessfulException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.AddressValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
@@ -22,13 +23,15 @@ public class PostService {
     private final BidService bidService;
     private final MatchingPostsService matchingPostsService;
     private final PaymentService paymentService;
+    private final EmailSenderService emailSenderService;
 
-    public PostService(PostRepository postRepository, AskService askService, BidService bidService, MatchingPostsService matchingPostsService, PaymentService paymentService) {
+    public PostService(PostRepository postRepository, AskService askService, BidService bidService, MatchingPostsService matchingPostsService, PaymentService paymentService, EmailSenderService emailSenderService) {
         this.postRepository = postRepository;
         this.askService = askService;
         this.bidService = bidService;
         this.matchingPostsService = matchingPostsService;
         this.paymentService = paymentService;
+        this.emailSenderService = emailSenderService;
     }
 
     @Transactional
@@ -55,7 +58,7 @@ public class PostService {
     }
 
     @Transactional
-    public Object saveBid(Bid bid) throws StripeException {
+    public Object saveBid(Bid bid) throws StripeException{
         PostValidator.checkBidAmountIsPositive(bid);
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
@@ -66,7 +69,7 @@ public class PostService {
     }
 
     @Transactional
-    public Object updateBid(String bidId, Integer amount, String userId) throws StripeException {
+    public Object updateBid(String bidId, Integer amount, String userId) throws StripeException{
         final Bid foundBid= bidService.findBidById(bidId);
         foundBid.setAmount(amount);
         PostValidator.checkIfPostBelongToUser(userId,foundBid.getUser().getId());
@@ -82,8 +85,9 @@ public class PostService {
     }
 
     @Transactional
-    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk) throws StripeException {
+    private Object checkMatchingAsk(Bid savedBid, Ask lowestAsk) throws StripeException{
         if(lowestAsk==null || lowestAsk.getAmount()> savedBid.getAmount()){
+            emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateSavedBidParams(savedBid));
             return savedBid;
         }
         chargeBidAmount(savedBid);
@@ -105,12 +109,14 @@ public class PostService {
     @Transactional
     private Object checkForMatchingBid(Ask savedAsk, Bid highestBid){
         if(highestBid==null || savedAsk.getAmount()> highestBid.getAmount()){
+            emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateSavedAskParams(savedAsk));
             return savedAsk;
         }
         try {
             chargeBidAmount(highestBid);
         }
         catch (Exception e){
+            emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateSavedAskParams(savedAsk));
             return savedAsk;
         }
         completeMatchingPosts(savedAsk,highestBid);
@@ -124,9 +130,10 @@ public class PostService {
     }
 
     @Transactional
-    private void chargeBidAmount(Bid bid) throws StripeException {
+    private void chargeBidAmount(Bid bid) throws StripeException{
         if(!paymentService.takePayment(bid.getPayment().getPaymentIntentId())) {
             deactivatePost(bid.getId(),bid.getUser().getId());
+            emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateFailedPaymentParams(bid));
             throw new PaymentChargeUnsuccessfulException("Payment was unsuccessful.");
         }
     }

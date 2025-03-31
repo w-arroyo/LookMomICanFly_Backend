@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.TransactionRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +17,21 @@ public class TransactionService {
     private final OrderService orderService;
     private final SaleService saleService;
     private final TrackingNumberService trackingNumberService;
+    private final EmailSenderService emailSenderService;
 
-    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService) {
+    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService) {
         this.transactionRepository = transactionRepository;
         this.orderService = orderService;
         this.saleService=saleService;
         this.trackingNumberService = trackingNumberService;
+        this.emailSenderService = emailSenderService;
     }
 
     @Transactional
     private Transaction saveTransaction(Order order, Sale sale){
-        trackingNumberService.saveSaleTrackingNumber(sale.getId());
+        final TrackingNumber trackingNumber=trackingNumberService.saveSaleTrackingNumber(sale.getId());
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateOrderParams(order));
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateSaleParams(sale,trackingNumber));
         final Transaction transaction=TransactionMapper.createTransaction(order,sale);
         return transactionRepository.save(transaction);
     }

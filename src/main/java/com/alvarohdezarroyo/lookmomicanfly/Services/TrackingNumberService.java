@@ -44,15 +44,17 @@ public class TrackingNumberService {
     }
 
     @Transactional
-    public void saveOrderTrackingNumber(String orderId){
-        trackingNumberRepository.insertIntoOrdersTrackingTable(saveTrackingNumber(createTrackingNumber(true)).getId(),orderId);
-        // send email
+    public TrackingNumber saveOrderTrackingNumber(String orderId){
+        final TrackingNumber trackingNumber=saveTrackingNumber(createTrackingNumber(true));
+        trackingNumberRepository.insertIntoOrdersTrackingTable(trackingNumber.getId(),orderId);
+        return trackingNumber;
     }
 
     @Transactional
-    public void saveSaleTrackingNumber(String saleId){
-        trackingNumberRepository.insertIntoSalesTrackingTable(saveTrackingNumber(createTrackingNumber(false)).getId(),saleId);
-        // send email
+    public TrackingNumber saveSaleTrackingNumber(String saleId){
+        final TrackingNumber trackingNumber=saveTrackingNumber(createTrackingNumber(false));
+        trackingNumberRepository.insertIntoSalesTrackingTable(trackingNumber.getId(),saleId);
+        return trackingNumber;
     }
 
     public int getSaleAmountOfTrackingNumbers(String saleId){

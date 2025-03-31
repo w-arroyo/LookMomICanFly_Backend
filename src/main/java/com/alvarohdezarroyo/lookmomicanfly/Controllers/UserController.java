@@ -10,6 +10,7 @@ import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangePasswordRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangeUserFieldsRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.LoginRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -41,8 +42,9 @@ public class UserController {
     private final AddressService addressService;
     private final BankAccountService bankAccountService;
     private final PhoneNumberService phoneNumberService;
+    private final EmailSenderService emailSenderService;
 
-    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService, PhoneNumberService phoneNumberService){
+    UserController(UserService userService, AuthenticationManager authenticationManager, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService, PhoneNumberService phoneNumberService, EmailSenderService emailSenderService){
         this.userService=userService;
         this.authenticationManager = authenticationManager;
         this.authService = authService;
@@ -51,10 +53,11 @@ public class UserController {
         this.addressService = addressService;
         this.bankAccountService = bankAccountService;
         this.phoneNumberService = phoneNumberService;
+        this.emailSenderService = emailSenderService;
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<Map<String,Object>> createUser(@RequestBody UserDTO user, HttpSession session) throws Exception {
+    public ResponseEntity<Map<String,UserDTO>> createUser(@RequestBody UserDTO user, HttpSession session) throws Exception {
         UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD);
         if(userValidator.checkUserByEmail(user.getEmail()))
@@ -63,10 +66,14 @@ public class UserController {
                 UserMapper.toUser(user)
         );
         userLogin(user.getEmail(),user.getPassword(),session);
+        final UserDTO userDTO=UserMapper.toDTO(savedUser);
+        emailSenderService.sendEmailWithNoAttachment(
+                EmailParamsGenerator.generateRegistrationParams(userDTO)
+        );
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("success:",
-                        UserMapper.toDTO(savedUser)
-                ));
+                        userDTO)
+                );
     }
 
     @PostMapping("/login")
@@ -90,16 +97,18 @@ public class UserController {
     public ResponseEntity <Map<String,String>> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
+        final User user=userValidator.returnUserById(userId);
         userService.deactivateAccount(userId);
         postService.deactivateAllUserPosts(userId);
         addressService.deactivateAllUserAddresses(userId);
         bankAccountService.deactivateAllUserBankAccounts(userId);
         phoneNumberService.deactivateAllUserPhoneNumbers(userId);
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateDeactivatedAccountParams(user.getEmail()));
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
     }
 
     @GetMapping("/addresses/")
-    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId) throws Exception {
+    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Address> addresses=userService.getUserAddresses(userId);
@@ -115,6 +124,7 @@ public class UserController {
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
         userService.changeEmail(request.getUserId(), request.getNewField());
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewEmailParams(request.getNewField()));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "Email modification completed. User ID: '"+request.getUserId()+
@@ -126,7 +136,9 @@ public class UserController {
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
         authService.checkFraudulentRequest(request.getId());
+        final User foundUser=userValidator.returnUserById(request.getId());
         userService.changeUserPassword(request);
+        emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewPasswordParams(foundUser.getEmail()));
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("success",
                         "Password modification completed. User ID: '"+request.getId()+"'."));
