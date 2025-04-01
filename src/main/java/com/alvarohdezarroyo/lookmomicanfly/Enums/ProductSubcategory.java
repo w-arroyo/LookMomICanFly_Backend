@@ -33,6 +33,13 @@ public enum ProductSubcategory {
     SKATEBOARD(ProductCategory.SKATEBOARDS),
     SNOWBOARD(ProductCategory.SKATEBOARDS),
 
+    GAMING(ProductCategory.ELECTRONICS),
+    HARDWARE(ProductCategory.ELECTRONICS),
+    MULTIMEDIA(ProductCategory.ELECTRONICS),
+
+    JERSEYS(ProductCategory.FOOTBALL),
+    TRAINING(ProductCategory.FOOTBALL),
+
     CD(ProductCategory.MUSIC),
     VINYL(ProductCategory.MUSIC),
     TAPE(ProductCategory.MUSIC);

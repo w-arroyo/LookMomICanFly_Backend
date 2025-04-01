@@ -26,7 +26,6 @@ public class CollectibleService {
     @Transactional
     public Collectible saveCollectible(Collectible collectible){
         return collectibleRepository.save(collectible);
-
     }
 
 }

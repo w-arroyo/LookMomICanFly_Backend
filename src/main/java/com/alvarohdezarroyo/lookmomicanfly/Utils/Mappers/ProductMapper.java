@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.FootballCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Format;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Material;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Season;
@@ -143,6 +144,34 @@ public class ProductMapper {
         fillProductFields(music,musicDTO);
         music.setFormat(Format.getFormatByName(musicDTO.getFormat()));
         return music;
+    }
+
+    public Electronic toElectronic(ElectronicDTO electronicDTO){
+        final Electronic electronic=new Electronic();
+        fillProductFields(electronic,electronicDTO);
+        electronic.setCaution(electronicDTO.isCaution());
+        return electronic;
+    }
+
+    public ElectronicDTO toElectronicDTO(Electronic electronic){
+        final ElectronicDTO electronicDTO=new ElectronicDTO();
+        fillProductDTOFields(electronicDTO,electronic);
+        electronicDTO.setCaution(electronic.isCaution());
+        return electronicDTO;
+    }
+
+    public Football toFootball(FootballDTO footballDTO){
+        final Football football=new Football();
+        fillProductFields(football,footballDTO);
+        football.setScope(FootballCategory.getFootballCategoryByName(footballDTO.getScope()));
+        return football;
+    }
+
+    public FootballDTO toFootballDTO(Football football){
+        final FootballDTO footballDTO=new FootballDTO();
+        fillProductDTOFields(footballDTO,football);
+        footballDTO.setScope(football.getScope().name());
+        return footballDTO;
     }
 
     public List<ProductSummaryDTO> toSummaryList(List<Product> productList) {

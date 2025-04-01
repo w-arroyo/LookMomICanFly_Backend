@@ -9,6 +9,8 @@ public enum ProductCategory {
     ACCESSORIES,
     COLLECTIBLES,
     SKATEBOARDS,
+    ELECTRONICS,
+    FOOTBALL,
     MUSIC;
 
     public static String[] getProductCategories(){
