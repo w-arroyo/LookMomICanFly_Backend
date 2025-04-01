@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "collectibles")
+@Table(name = "football")
 @PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
