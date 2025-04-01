@@ -6,10 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.File;
+
 @Configuration
 @Getter
 public class AppConfig {
 
+    private final static String SHIPPING_LABELS_PATH = System.getProperty("user.dir")+ File.separator+"Shipping Labels"+File.separator;
     private static String aesKey, emailAddress;
 
     @Value("${app.aesKey}")
@@ -24,6 +27,10 @@ public class AppConfig {
 
     public static String getKey(){
         return aesKey;
+    }
+
+    public static String getShippingLabelsPath(){
+        return SHIPPING_LABELS_PATH;
     }
 
     public static String getEmail(){

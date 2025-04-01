@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/products/electronics")
+@RequestMapping("/api/products/football")
 public class FootballController {
 
     @Autowired

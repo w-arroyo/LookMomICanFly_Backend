@@ -14,6 +14,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PaymentValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.PostValidator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,16 @@ public class BidController {
     private final TransactionMapper transactionMapper;
     private final BidService bidService;
     private final ProductService productService;
+    private final PaymentValidator paymentValidator;
 
-    public BidController(AuthService authService, PostService postService, PostMapper postMapper, TransactionMapper transactionMapper, BidService bidService, ProductService productService) {
+    public BidController(AuthService authService, PostService postService, PostMapper postMapper, TransactionMapper transactionMapper, BidService bidService, ProductService productService, PaymentValidator paymentValidator) {
         this.authService = authService;
         this.postService = postService;
         this.postMapper = postMapper;
         this.transactionMapper = transactionMapper;
         this.bidService = bidService;
         this.productService = productService;
+        this.paymentValidator = paymentValidator;
     }
 
     @GetMapping("/get/")
@@ -94,6 +97,7 @@ public class BidController {
         PostValidator.checkIfPostFieldsAreEmpty(bidRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(bidRequest.getAmount(), 1);
         authService.checkFraudulentRequest(bidRequest.getUserId());
+        paymentValidator.checkIfPaymentIntentIdIsValid(bidRequest.getPaymentIntentId());
         final Object bidOrOrder=postService.saveBid(
                 postMapper.toBid(bidRequest)
         );

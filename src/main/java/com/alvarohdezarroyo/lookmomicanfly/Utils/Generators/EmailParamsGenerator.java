@@ -101,4 +101,11 @@ public class EmailParamsGenerator {
                         "tracking",trackingNumber));
     }
 
+    public static EmailDetailsDTO generateNewTrackingSaleParams(Sale sale, TrackingNumber trackingNumber){
+        return new EmailDetailsDTO(sale.getAsk().getUser().getEmail(),"Here's your new shipping label","NewLabel",AppConfig.getEmail(),
+                Map.of("sale",sale,
+                        "tracking",trackingNumber
+                ));
+    }
+
 }

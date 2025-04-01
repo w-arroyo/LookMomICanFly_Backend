@@ -4,7 +4,9 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.TrackingNumberAmountLimitReachedException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
+import com.alvarohdezarroyo.lookmomicanfly.Models.TrackingNumber;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.SaleRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,12 @@ public class SaleService {
     @Autowired
     private final SaleRepository saleRepository;
     private final TrackingNumberService trackingNumberService;
+    private final EmailSenderService emailSenderService;
 
-    public SaleService(SaleRepository saleRepository, TrackingNumberService trackingNumberService) {
+    public SaleService(SaleRepository saleRepository, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService) {
         this.saleRepository = saleRepository;
         this.trackingNumberService = trackingNumberService;
+        this.emailSenderService = emailSenderService;
     }
 
     public Sale getSaleById(String saleId){
@@ -54,7 +58,9 @@ public class SaleService {
     public void generateNewSaleTrackingNumber(String saleId){
         if(trackingNumberService.getSaleAmountOfTrackingNumbers(getSaleById(saleId).getId())>2)
             throw new TrackingNumberAmountLimitReachedException("You can only generate 3 tracking numbers for a sale.");
-        trackingNumberService.saveSaleTrackingNumber(saleId);
+        final Sale foundSale=getSaleById(saleId);
+        final TrackingNumber trackingNumber = trackingNumberService.saveSaleTrackingNumber(saleId);
+        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateNewTrackingSaleParams(foundSale,trackingNumber),trackingNumber.getCode());
     }
 
     public String getSaleCurrentTrackingNumberCode(String saleId){

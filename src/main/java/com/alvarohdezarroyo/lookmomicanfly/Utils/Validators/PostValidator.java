@@ -5,7 +5,6 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Post;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import org.springframework.stereotype.Component;

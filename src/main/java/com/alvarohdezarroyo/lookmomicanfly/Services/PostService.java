@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PaymentChargeUnsuccessfulException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.RejectedPostException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.PostRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
@@ -71,6 +72,8 @@ public class PostService {
     @Transactional
     public Object updateBid(String bidId, Integer amount, String userId) throws StripeException{
         final Bid foundBid= bidService.findBidById(bidId);
+        if(!foundBid.getActive() || foundBid.getFinalized())
+            throw new RejectedPostException("Bid is not active.");
         foundBid.setAmount(amount);
         PostValidator.checkIfPostBelongToUser(userId,foundBid.getUser().getId());
         return saveBid(foundBid);
@@ -79,6 +82,8 @@ public class PostService {
     @Transactional
     public Object updateAsk(String askId, Integer amount, String userId){
         final Ask foundAsk=askService.findAskById(askId);
+        if(!foundAsk.getActive() || foundAsk.getFinalized())
+            throw new RejectedPostException("Ask is not active.");
         foundAsk.setAmount(amount);
         PostValidator.checkIfPostBelongToUser(userId,foundAsk.getUser().getId());
         return saveAsk(foundAsk);
