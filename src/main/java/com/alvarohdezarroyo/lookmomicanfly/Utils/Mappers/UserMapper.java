@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
@@ -14,7 +15,7 @@ public class UserMapper {
     public static UserDTO toDTO(User user) throws Exception {
         final UserDTO userDTO=new UserDTO();
         userDTO.setEmail(user.getEmail());
-        userDTO.setUserType(user.getUserType());
+        userDTO.setUserType(user.getUserType().name());
         userDTO.setId(user.getId());
         userDTO.setName(AESEncryptionUtil.decrypt(new String(user.getName(), StandardCharsets.UTF_8)));
         return userDTO;
@@ -23,7 +24,7 @@ public class UserMapper {
         final User user=new User();
         user.setActive(true);
         user.setEmail(userDTO.getEmail());
-        user.setUserType(userDTO.getUserType());
+        user.setUserType(UserType.getUserType(userDTO.getUserType()));
         user.setPassword(PasswordUtils.hashPassword(userDTO.getPassword()));
         user.setName(AESEncryptionUtil.encrypt(userDTO.getName()).getBytes());
         return user;

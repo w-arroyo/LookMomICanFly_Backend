@@ -1,6 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.DTO;
 
-import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class UserDTO {
     private String id, name, email, password;
-    private UserType userType;
+    private String userType;
 }
