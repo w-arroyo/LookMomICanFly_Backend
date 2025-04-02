@@ -80,6 +80,15 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body("success");
     }
 
+    @GetMapping("/find/")
+    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> findProducts(@RequestParam String name){
+        GlobalValidator.checkIfAFieldIsEmpty(name);
+        final List<Product> products=productService.findProductsByName(name);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Map.of("products",
+                        productMapper.toSummaryList(products)));
+    }
+
     private void checkLikingProducts(String userId, String productId){
         GlobalValidator.checkIfTwoFieldsAreEmpty(userId,productId);
         authService.checkFraudulentRequest(userId);

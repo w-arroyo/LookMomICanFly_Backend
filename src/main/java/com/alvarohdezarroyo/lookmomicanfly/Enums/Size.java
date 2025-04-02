@@ -9,11 +9,11 @@ import java.util.Set;
 @Getter
 public enum Size {
 
-    NO_SIZE("ONE-SIZE", Set.of(ProductCategory.ACCESSORIES, ProductCategory.COLLECTIBLES, ProductCategory.SKATEBOARDS, ProductCategory.MUSIC)),
-    SMALL("S", Set.of(ProductCategory.CLOTHING)),
-    MEDIUM("M", Set.of(ProductCategory.CLOTHING)),
-    LARGE("L", Set.of(ProductCategory.CLOTHING)),
-    EXTRA_LARGE("XL", Set.of(ProductCategory.CLOTHING)),
+    NO_SIZE("ONE-SIZE", Set.of(ProductCategory.ACCESSORIES, ProductCategory.COLLECTIBLES, ProductCategory.SKATEBOARDS, ProductCategory.MUSIC, ProductCategory.ELECTRONICS)),
+    SMALL("S", Set.of(ProductCategory.CLOTHING, ProductCategory.FOOTBALL)),
+    MEDIUM("M", Set.of(ProductCategory.CLOTHING, ProductCategory.FOOTBALL)),
+    LARGE("L", Set.of(ProductCategory.CLOTHING, ProductCategory.FOOTBALL)),
+    EXTRA_LARGE("XL", Set.of(ProductCategory.CLOTHING, ProductCategory.FOOTBALL)),
     THIRTY_EIGHT("38", Set.of(ProductCategory.SNEAKERS)),
     THIRTY_NINE("39", Set.of(ProductCategory.SNEAKERS)),
     FORTY("40", Set.of(ProductCategory.SNEAKERS)),

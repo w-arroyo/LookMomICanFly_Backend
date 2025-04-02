@@ -3,9 +3,9 @@ package com.alvarohdezarroyo.lookmomicanfly.Enums;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 
 public enum Format {
-    Single,
-    Album,
-    Mixtape;
+    SINGLE,
+    ALBUM,
+    MIXTAPE;
 
     public static Format getFormatByName(String name){
         for (Format format: Format.values()){

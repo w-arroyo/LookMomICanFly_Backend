@@ -30,7 +30,10 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     @Query(value = "INSERT IGNORE INTO users_favorite_products VALUES ( :productId , :userId )", nativeQuery = true)
     void likeProduct(@Param("userId") String userId, @Param("productId") String productId);
 
-    @Query(value = "SELECT p FROM Product p JOIN p.users u WHERE u.id = :id", nativeQuery = false)
+    @Query(value = "SELECT p FROM Product p JOIN p.users u WHERE u.id = :id")
     List<Product> getUserLikedProducts(@Param("id") String id);
+
+    @Query(value = "SELECT product FROM Product product WHERE name ILIKE %:name%")
+    List<Product> findProductsByName(@Param("name") String name);
 
 }

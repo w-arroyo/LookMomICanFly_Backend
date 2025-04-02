@@ -42,6 +42,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
                     auth.requestMatchers("/api/users/login").permitAll();
                     auth.requestMatchers("/api/products/get/**").permitAll();
+                    auth.requestMatchers("/api/products/find/**").permitAll();
                     auth.requestMatchers("/api/products/sneakers/get/**").permitAll();
                     auth.requestMatchers("/api/products/collectibles/get/**").permitAll();
                     auth.requestMatchers("/api/products/accessories/get/**").permitAll();
