@@ -59,7 +59,7 @@ public class UserController {
     @PostMapping ("/register")
     public ResponseEntity<Map<String,UserDTO>> createUser(@RequestBody UserDTO user, HttpSession session) throws Exception {
         UserValidator.emptyUserDTOFieldsValidator(user);
-        user.setUserType(UserType.STANDARD);
+        user.setUserType(UserType.STANDARD.name());
         if(userValidator.checkUserByEmail(user.getEmail()))
             throw new EmailAlreadyInUseException("Email is already in use. Use a new one.");
         final User savedUser=userService.saveUser(
