@@ -37,12 +37,8 @@ public class UserValidator {
 
     public User returnUserById(String id){
         return userRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("Email does not belong to any user account")
+                ()-> new EntityNotFoundException("Id does not belong to any user account.")
         );
-    }
-
-    public boolean checkUserById(String id){
-        return userRepository.findById(id).isPresent();
     }
 
     public boolean checkUserByEmail(String email){

@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 public class AddressService {
     @Autowired
     private final AddressRepository addressRepository;
-    private final AuthService authService;
 
-    public AddressService(AddressRepository addressRepository, AuthService authService) {
+    public AddressService(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
-        this.authService = authService;
     }
 
     @Transactional
@@ -31,16 +29,10 @@ public class AddressService {
 
     @Transactional
     public void deactivateAddress(String id, String userId){
-        try{
-            authService.checkFraudulentRequest(addressRepository.findById(id).orElseThrow(
-                    ()->new EntityNotFoundException("Address id not found")).getUserId().getId());
-            if(addressRepository.deactivateAddress(id)<1)
-                throw new RuntimeException("Server error. Please Try again later.");
-        } catch (FraudulentRequestException e) {
-            throw new FraudulentRequestException(e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        if(!getAddressById(id).getUserId().getId().equals(userId))
+            throw new FraudulentRequestException("Address does not belong to you.");
+        if(addressRepository.deactivateAddress(id)<1)
+            throw new RuntimeException("Server error. Please Try again later.");
     }
 
     public Address getAddressById(String id){
