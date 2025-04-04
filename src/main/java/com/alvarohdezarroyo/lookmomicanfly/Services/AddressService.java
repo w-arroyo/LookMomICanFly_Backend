@@ -29,7 +29,8 @@ public class AddressService {
 
     @Transactional
     public void deactivateAddress(String id, String userId){
-        if(!getAddressById(id).getUserId().getId().equals(userId))
+        if(!getAddressById(id)
+                .getUserId().getId().equals(userId))
             throw new FraudulentRequestException("Address does not belong to you.");
         if(addressRepository.deactivateAddress(id)<1)
             throw new RuntimeException("Server error. Please Try again later.");
