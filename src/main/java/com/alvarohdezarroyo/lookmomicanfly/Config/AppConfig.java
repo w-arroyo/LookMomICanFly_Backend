@@ -7,15 +7,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import javax.crypto.SecretKey;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Configuration
 public class AppConfig {
 
     private final static String SHIPPING_LABELS_PATH = System.getProperty("user.dir")+ File.separator+"Shipping Labels"+File.separator;
-    private static String aesKey, emailAddress;
-    private static final Key tokenSigningKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static String aesKey, emailAddress,tokenSigningKey;
     private static int tokenLength;
 
     @Value("${app.aesKey}")
@@ -28,9 +29,14 @@ public class AppConfig {
         emailAddress=value;
     }
 
-    @Value("&{app.tokenLength}")
+    @Value("${app.tokenLength}")
     public void setTokenLength(String value){
         tokenLength=Integer.parseInt(value);
+    }
+
+    @Value("${app.tokenKey}")
+    public void setTokenKey(String value){
+        tokenSigningKey=value;
     }
 
     public static String getKey(){
@@ -49,8 +55,8 @@ public class AppConfig {
         return tokenLength;
     }
 
-    public static Key getTokenSigningSecretKey(){
-        return tokenSigningKey;
+    public static SecretKey getTokenSigningSecretKey(){
+        return Keys.hmacShaKeyFor(tokenSigningKey.getBytes(StandardCharsets.UTF_8));
     }
 
     @Bean

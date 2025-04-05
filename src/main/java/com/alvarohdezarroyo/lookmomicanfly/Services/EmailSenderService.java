@@ -87,7 +87,6 @@ public class EmailSenderService {
             System.out.println(ex.getMessage());
             return null;
         }
-
     }
 
 }

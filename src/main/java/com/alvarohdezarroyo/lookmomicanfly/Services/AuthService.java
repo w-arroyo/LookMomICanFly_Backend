@@ -28,7 +28,7 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Email does not belong to any user."));
 
         return new org.springframework.security.core.userdetails.User(

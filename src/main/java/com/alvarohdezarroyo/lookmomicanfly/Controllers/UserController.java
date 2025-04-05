@@ -11,6 +11,7 @@ import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.ChangeUserFieldsRequestDTO
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.LoginRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.EmailParamsGenerator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.TokenGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.AddressMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.UserMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -147,6 +148,7 @@ public class UserController {
     private void userLogin(String userEmail, String password, HttpSession session){
         final Authentication authentication= authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userEmail, password));
+        final String token= TokenGenerator.generateToken(authService.getAuthenticatedUserId());
         final SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext); // saves security context in the session

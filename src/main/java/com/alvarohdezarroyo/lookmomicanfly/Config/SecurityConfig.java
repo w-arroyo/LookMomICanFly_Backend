@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.JwtAuthenticationFilter;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Handlers.JwtLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -28,9 +31,11 @@ public class SecurityConfig {
 
     @Autowired
     private final AuthService authService;
+    private final JwtLogoutHandler logoutHandler;
 
-    public SecurityConfig(AuthService authService) {
+    public SecurityConfig(AuthService authService, JwtLogoutHandler logoutHandler) {
         this.authService = authService;
+        this.logoutHandler = logoutHandler;
     }
 
     @Bean
@@ -60,14 +65,16 @@ public class SecurityConfig {
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // handles sessions automatically
-                .securityContext(securityContext -> securityContext
-                        .securityContextRepository(new HttpSessionSecurityContextRepository())) // saves session context
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no sessions
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // filters token
                 .formLogin(AbstractHttpConfigurer::disable) // disables login via html form
-                .logout(logout -> logout.logoutUrl("/api/users/logout").logoutSuccessHandler((request, response, authentication) -> {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().write("Successful logout");
-                }));
+                .logout(logout -> logout
+                        .logoutUrl("/api/users/logout")
+                        .addLogoutHandler(logoutHandler) // handles the logout process (this class implements LogoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().write("Successful logout.");
+                        }));
         return http.build();
     }
 
@@ -80,6 +87,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // applies to all it's routes
         return source;
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
     }
 
     @Bean
