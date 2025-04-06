@@ -23,7 +23,7 @@ public class ShippingLabelGenerator {
             final BitMatrix bitMatrix= new MultiFormatWriter().encode(trackingNumber, BarcodeFormat.CODE_128,300,100);
             final String filePath= AppConfig.getShippingLabelsPath() + File.separator+trackingNumber+".png";
             final Path path= Paths.get(filePath);
-            MatrixToImageWriter.writeToPath(bitMatrix,"PNG",path); // converts the file to a matrix and saves it as a file
+            MatrixToImageWriter.writeToPath(bitMatrix,"PNG",path); // converts the barcode matrix to an image and saves it as a file
             return filePath;
         }
         catch(IOException | WriterException ex){

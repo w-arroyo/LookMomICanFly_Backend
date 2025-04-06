@@ -24,11 +24,10 @@ public class EmailTemplateService {
             context.setVariables(params);
             return templateEngine.process(template,context);
         }
-        catch (Exception ex){
+        catch (TemplateInputException ex){
             System.out.println("Email template not found.");
             return null;
         }
-
     }
 
 }

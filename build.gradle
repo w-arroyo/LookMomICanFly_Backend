@@ -38,6 +38,9 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core:10.20.1' // specific version
 	implementation 'org.flywaydb:flyway-mysql:10.20.1' // it won't work if you remove it
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'

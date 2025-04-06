@@ -1,20 +1,18 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.JwtAuthenticationFilter;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Handlers.JwtLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,16 +25,16 @@ import java.util.List;
 public class SecurityConfig {
 
     @Autowired
-    private final AuthService authService;
+    private final JwtLogoutHandler logoutHandler;
 
-    public SecurityConfig(AuthService authService) {
-        this.authService = authService;
+    public SecurityConfig(JwtLogoutHandler logoutHandler) {
+        this.logoutHandler = logoutHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // disables CSRF (useful for developing APIs REST)
+                .csrf(AbstractHttpConfigurer::disable) // disables CSRF (useful for developing)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // enables CORS
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/users/register").permitAll(); // allows access without authentication
@@ -60,14 +58,16 @@ public class SecurityConfig {
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // handles sessions automatically
-                .securityContext(securityContext -> securityContext
-                        .securityContextRepository(new HttpSessionSecurityContextRepository())) // saves session context
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no sessions
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // filters token
                 .formLogin(AbstractHttpConfigurer::disable) // disables login via html form
-                .logout(logout -> logout.logoutUrl("/api/users/logout").logoutSuccessHandler((request, response, authentication) -> {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().write("Successful logout");
-                }));
+                .logout(logout -> logout
+                        .logoutUrl("/api/users/logout")
+                        .addLogoutHandler(logoutHandler) // handles the logout process (this class implements LogoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().write("Successful logout.");
+                        }));
         return http.build();
     }
 
@@ -83,11 +83,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+/*
+    @Bean
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(authService);
+        provider.setUserDetailsService(authService); // auth service extends from userDetailsService
         provider.setPasswordEncoder(new BCryptPasswordEncoder());
         return new ProviderManager(provider);
     }
-
+    */
 }
