@@ -1,6 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 
 @Configuration
 public class AppConfig {
