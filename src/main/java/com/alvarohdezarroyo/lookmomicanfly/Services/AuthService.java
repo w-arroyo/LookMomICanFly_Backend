@@ -3,11 +3,17 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.FraudulentRequestException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.LoginUnsuccessfulException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UnauthorizedRequestException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,14 +27,16 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, @Lazy AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Email does not belong to any user."));
 
         return new org.springframework.security.core.userdetails.User(
@@ -36,6 +44,16 @@ public class AuthService implements UserDetailsService {
                 user.getPassword(),
                 Collections.emptyList() // handles roles
         );
+    }
+
+    public String authenticateUserAndGenerateToken(String email, String password){
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            return TokenGenerator.generateToken(authentication.getName());
+        } catch (AuthenticationException ex){
+            throw new LoginUnsuccessfulException("Wrong credentials.");
+        }
     }
 
     public String getAuthenticatedUserId() {
@@ -50,7 +68,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public void checkFraudulentRequest(String requestUserId){
-        if(!requestUserId.equalsIgnoreCase(getAuthenticatedUserId()))
+        if(!requestUserId.equals(getAuthenticatedUserId()))
             throw new FraudulentRequestException("User sending the request does not have permission.");
     }
 
