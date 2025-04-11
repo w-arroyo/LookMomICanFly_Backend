@@ -45,7 +45,7 @@ public class AskService {
 
     public Ask getLowestAskNoMatterTheSize(String productId){
         return askRepository.getLowestAskOfAProduct(productId)
-                .orElse(null);
+                .orElse(null); // updated
     }
 
 }

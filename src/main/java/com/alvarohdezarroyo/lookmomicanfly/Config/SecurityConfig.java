@@ -59,7 +59,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/asks/get/product/**").permitAll();
                     auth.requestMatchers("/api/bids/get/product/**").permitAll();
                     auth.requestMatchers("/api/bids/highest-bid/**").permitAll();
-                    auth.requestMatchers("/api/phone-numbers/formats").permitAll();
+                    auth.requestMatchers("/api/phone-numbers/formats").permitAll(); // updated
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })
