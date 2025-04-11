@@ -5,12 +5,12 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
-import com.alvarohdezarroyo.lookmomicanfly.Models.BankAccount;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.AskRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.PostMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.TransactionMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -121,6 +121,23 @@ public class AskController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Map.of("amount",
                         askService.getLowestAskAmount(productId, sizeToCheck)));
+    }
+
+    @GetMapping("/get/lowest-ask/")
+    public ResponseEntity<Map<String,Integer>> getLowestAsk(@RequestParam String productId){
+        GlobalValidator.checkIfAFieldIsEmpty(productId);
+        final Ask ask= askService.getLowestAskNoMatterTheSize(
+                productService.findProductById(productId)
+                        .getId()
+        );
+        Integer amount=0;
+        if(ask!=null){
+            amount=ask.getAmount();
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                    .body(Map.of("amount",
+                            amount));
+
     }
 
     private Map<String,Object> returnAskOrSale(Object askOrSale) throws Exception {

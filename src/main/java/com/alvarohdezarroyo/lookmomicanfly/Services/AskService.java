@@ -43,4 +43,9 @@ public class AskService {
         return askRepository.getLowestAskAmount(productId,size.getValue());
     }
 
+    public Ask getLowestAskNoMatterTheSize(String productId){
+        return askRepository.getLowestAskOfAProduct(productId)
+                .orElse(null);
+    }
+
 }
