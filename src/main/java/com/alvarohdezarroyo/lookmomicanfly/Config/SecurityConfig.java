@@ -91,13 +91,5 @@ public class SecurityConfig {
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
-/*
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(authService); // auth service extends from userDetailsService
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
-        return new ProviderManager(provider);
-    }
-    */
+
 }
