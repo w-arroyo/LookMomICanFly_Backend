@@ -135,7 +135,7 @@ public class AskController {
         }
         return ResponseEntity.status(HttpStatus.OK)
                     .body(Map.of("amount",
-                            amount)); // updated
+                            amount));
 
     }
 
