@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try{
@@ -30,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not allowed.");
         }
-
     }
 
     private String getToken(HttpServletRequest request){
