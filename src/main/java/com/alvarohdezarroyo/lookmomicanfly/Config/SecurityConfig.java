@@ -41,6 +41,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/users/login").permitAll();
                     auth.requestMatchers("/api/products/get/**").permitAll();
                     auth.requestMatchers("/api/products/find/**").permitAll();
+                    auth.requestMatchers("/api/products/best-sellers").permitAll();
                     auth.requestMatchers("/api/products/sneakers/get/**").permitAll();
                     auth.requestMatchers("/api/products/collectibles/get/**").permitAll();
                     auth.requestMatchers("/api/products/accessories/get/**").permitAll();
@@ -50,9 +51,11 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/products/get-all-summary").permitAll();
                     auth.requestMatchers("/api/products/get-all-summary-by-category/**").permitAll();
                     auth.requestMatchers("/api/products/categories/").permitAll();
+                    auth.requestMatchers("/api/products/categories/subcategories/**").permitAll();
                     auth.requestMatchers("/api/products/subcategories/**").permitAll();
                     auth.requestMatchers("/api/payments/update").permitAll();
                     auth.requestMatchers("/api/sales/update").permitAll();
+                    auth.requestMatchers("/api/sales/get/last/**").permitAll();
                     auth.requestMatchers("/api/orders/update").permitAll();
                     auth.requestMatchers("/api/asks/get/lowest-ask/**").permitAll();
                     auth.requestMatchers("/api/asks/lowest-ask/**").permitAll();

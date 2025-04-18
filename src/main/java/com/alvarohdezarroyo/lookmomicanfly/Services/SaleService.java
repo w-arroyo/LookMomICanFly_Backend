@@ -71,4 +71,9 @@ public class SaleService {
         return saleRepository.getAllUserSales(userId);
     }
 
+    public Integer getProductBySizeLastSaleAmount(String productId, String size){
+        return saleRepository.getLastSaleAmount(productId,size)
+                .orElse(null);
+    }
+
 }

@@ -63,4 +63,25 @@ public class ProductService {
     public void unlikeProduct(String userId, String productId){
         productRepository.unlikeProduct(userId,productId);
     }
+
+    public List<Product> get50BestSellingProductsDuringLastSixMonths(){
+        final List<String> ids=productRepository.findBestSellingProductIds();
+        return productRepository.findBest50SellingProducts(ids);
+    }
+
+    public Integer[] getAllDifferentProductReleaseYears(){
+        return productRepository.getDifferentProductYears()
+                .toArray(Integer[]::new);
+    }
+
+    public String[] getAllProductColors(){
+        return productRepository.getAllProductColors()
+                .toArray(String[]::new);
+    }
+
+    public String[] getAllProductManufacturers(){
+        return productRepository.getDifferentManufacturers()
+                .toArray(String[]::new);
+    }
+
 }

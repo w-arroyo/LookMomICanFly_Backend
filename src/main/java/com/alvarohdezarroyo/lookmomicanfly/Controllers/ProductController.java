@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ProductAlreadyLikedException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
@@ -31,27 +32,26 @@ public class ProductController {
     }
 
     @GetMapping("/get/all-summary")
-    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getAllProductsSummary(){
+    public ResponseEntity<List<ProductSummaryDTO>> getAllProductsSummary(){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("products",
-                        productMapper.toSummaryList(productService.findAllProducts())));
+                .body(productMapper.toSummaryList(productService.findAllProducts()));
     }
 
     @GetMapping("/get/all-summary-by-category/")
-    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getCategorySummary(@RequestParam String category){
+    public ResponseEntity<List<ProductSummaryDTO>> getCategorySummary(@RequestParam String category){
         GlobalValidator.checkIfAFieldIsEmpty(category);
         List<Product> productList = productService.findAllProductsByCategory(ProductValidator.checkIfProductCategoryExists(category));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("products",productMapper.toSummaryList(productList)));
+                .body(productMapper.toSummaryList(productList));
     }
 
     @GetMapping("/favorites/list/")
-    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> getUserLikedProducts(@RequestParam String userId){
+    public ResponseEntity<List<ProductSummaryDTO>> getUserLikedProducts(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Product> list= productService.findUserLikedProducts(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("products",productMapper.toSummaryList(list)));
+                .body(productMapper.toSummaryList(list));
     }
 
     @GetMapping("/favorites/check/")
@@ -81,12 +81,49 @@ public class ProductController {
     }
 
     @GetMapping("/find/")
-    public ResponseEntity<Map<String,List<ProductSummaryDTO>>> findProducts(@RequestParam String name){
+    public ResponseEntity <List<ProductSummaryDTO>> findProducts(@RequestParam String name){
         GlobalValidator.checkIfAFieldIsEmpty(name);
         final List<Product> products=productService.findProductsByName(name);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("products",
-                        productMapper.toSummaryList(products)));
+                .body(productMapper.toSummaryList(products));
+    }
+
+    @GetMapping("/best-sellers")
+    public ResponseEntity<List<ProductSummaryDTO>> findBestSellingProducts(){
+        final List<Product> products=productService.get50BestSellingProductsDuringLastSixMonths();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(productMapper.toSummaryList(products));
+    }
+
+    @GetMapping("/get/years")
+    public ResponseEntity<Integer[]> getDifferentYears(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.getAllDifferentProductReleaseYears()
+        );
+    }
+
+    @GetMapping("/get/colors")
+    public ResponseEntity<String[]> getDifferentColors(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.getAllProductColors()
+        );
+    }
+
+    @GetMapping("/get/manufacturers")
+    public ResponseEntity<String[]> getDifferentManufacturers(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.getAllProductManufacturers()
+        );
+    }
+
+    @GetMapping("/get/sizes/")
+    public ResponseEntity<List<String>> getProductSizeChart(@RequestParam String productId){
+        GlobalValidator.checkIfAFieldIsEmpty(productId);
+        final Product product=productService.findProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Size.getSizesByCategory(product.getCategory())
+                        .stream().map(Size::getValue).toList()
+        );
     }
 
     private void checkLikingProducts(String userId, String productId){

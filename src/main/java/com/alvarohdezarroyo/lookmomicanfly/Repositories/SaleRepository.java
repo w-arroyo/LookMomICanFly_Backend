@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SaleRepository extends JpaRepository<Sale,String> {
 
@@ -24,5 +25,8 @@ public interface SaleRepository extends JpaRepository<Sale,String> {
 
     @Query("SELECT sale FROM Sale sale WHERE sale.ask.id IN(SELECT post.id FROM Post post WHERE post.user.id= :id)")
     List<Sale> getAllUserSales(@Param("id") String id);
+
+    @Query(value = "SELECT p.amount FROM posts p WHERE p.id = (SELECT a.id FROM transactions t JOIN sales s ON t.sale_id = s.id JOIN asks a ON s.ask_id = a.id WHERE a.id IN (SELECT id FROM posts WHERE product_id = :productId AND size = :size) ORDER BY t.date DESC LIMIT 1);",nativeQuery = true)
+    Optional<Integer> getLastSaleAmount(@Param("productId") String productId, @Param("size") String size);
 
 }

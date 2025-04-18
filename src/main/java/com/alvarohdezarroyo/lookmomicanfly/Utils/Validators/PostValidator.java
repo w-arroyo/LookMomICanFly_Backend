@@ -123,4 +123,10 @@ public class PostValidator {
             throw new FraudulentRequestException("Bank account does not belong to the owner of the platform account.");
     }
 
+    public static String returnAmountAsString(Integer amount){
+        if(amount!=null)
+            return amount+"";
+        return null;
+    }
+
 }

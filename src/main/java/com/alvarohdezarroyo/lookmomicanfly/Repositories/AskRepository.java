@@ -14,8 +14,8 @@ public interface AskRepository extends JpaRepository<Ask,String> {
     @Query("SELECT a FROM Ask a WHERE a.product.id = :productId AND a.size = :size AND a.active=true ORDER BY a.amount ASC LIMIT 1")
     Optional<Ask> getLowestAskForASizeOfAProduct(@Param("productId") String id, @Param("size") Size size);
 
-    @Query(value = "SELECT amount from asks WHERE size= :size AND product_id= :id AND active=true ORDER BY amount ASC limit 1",nativeQuery = true)
-    Integer getLowestAskAmount(@Param("productId") String productId, @Param("size") String size);
+    @Query(value = "SELECT amount from posts WHERE size= :size AND product_id= :productId AND active=true AND id IN (SELECT id from asks) ORDER BY amount ASC limit 1",nativeQuery = true)
+    Optional<Integer> getLowestAskAmount(@Param("productId") String productId, @Param("size") String size);
 
     @Query(value = "SELECT ask from Ask ask WHERE ask.id IN (SELECT post.id from Post post WHERE post.user.id= :id AND post.active=true)")
     List<Ask> findAllUserAsks(@Param("id") String id);

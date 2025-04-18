@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.LoginSuccessDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<Map<String,String>> createUser(@RequestBody UserDTO user) throws Exception {
+    public ResponseEntity<LoginSuccessDTO> createUser(@RequestBody UserDTO user) throws Exception {
         UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD.name());
         if(userValidator.checkUserByEmail(user.getEmail()))
@@ -62,18 +63,17 @@ public class UserController {
                 EmailParamsGenerator.generateRegistrationParams(userDTO)
         );
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success:",
-                        token)
+                .body(new LoginSuccessDTO(token)
                 );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
+    public ResponseEntity<LoginSuccessDTO> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+        final String token=userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("success",
-                        userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword())
-                ));
+                .body(new LoginSuccessDTO(token)
+                );
     }
 
     @PostMapping("/logout")

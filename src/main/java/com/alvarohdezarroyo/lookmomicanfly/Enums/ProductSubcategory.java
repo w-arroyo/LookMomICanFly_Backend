@@ -44,8 +44,6 @@ public enum ProductSubcategory {
     VINYL(ProductCategory.MUSIC),
     TAPE(ProductCategory.MUSIC);
 
-
-
     private final ProductCategory productCategory;
 
     ProductSubcategory(ProductCategory category){

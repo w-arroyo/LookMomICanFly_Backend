@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AskDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Ask;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
@@ -68,14 +69,11 @@ public class AskController {
     }
 
     @GetMapping("/get/product/")
-    public ResponseEntity<Map<String,List<PostContainerDTO>>> getAllProductAsks(@RequestParam String productId){
+    public ResponseEntity<List<PostContainerDTO>> getAllProductAsks(@RequestParam String productId){
         GlobalValidator.checkIfAFieldIsEmpty(productId);
         final Product product=productService.findProductById(productId);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                Map.of("asks",
-                        postMapper.askListToContainer(
-                                findAllProductAsks(product)
-                        ))
+        return ResponseEntity.status(HttpStatus.OK).body(postMapper.askListToContainer(
+                                findAllProductAsks(product))
         );
     }
 
@@ -114,29 +112,28 @@ public class AskController {
     }
 
     @GetMapping("/lowest-ask/")
-    public ResponseEntity<Map<String,Integer>> getLowestAskAmount(@RequestParam String productId, @RequestParam String size){
+    public ResponseEntity<SuccessfulRequestDTO> getLowestAskAmount(@RequestParam String productId, @RequestParam String size){
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
         final Size sizeToCheck=ProductValidator.checkIfASizeExists(size);
+        final Integer amount=askService.getLowestAskAmount(productId, sizeToCheck);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("amount",
-                        askService.getLowestAskAmount(productId, sizeToCheck)));
+                .body(new SuccessfulRequestDTO(
+                        PostValidator.returnAmountAsString(amount)
+                ));
     }
 
     @GetMapping("/get/lowest-ask/")
-    public ResponseEntity<Map<String,Integer>> getLowestAsk(@RequestParam String productId){
+    public ResponseEntity<SuccessfulRequestDTO> getLowestAsk(@RequestParam String productId){
         GlobalValidator.checkIfAFieldIsEmpty(productId);
         final Ask ask= askService.getLowestAskNoMatterTheSize(
                 productService.findProductById(productId)
                         .getId()
         );
-        Integer amount=0;
-        if(ask!=null){
-            amount=ask.getAmount();
-        }
+        String amount=null;
+        if(ask!=null)
+            amount=PostValidator.returnAmountAsString(ask.getAmount());
         return ResponseEntity.status(HttpStatus.OK)
-                    .body(Map.of("amount",
-                            amount));
-
+                    .body(new SuccessfulRequestDTO(amount));
     }
 
     private Map<String,Object> returnAskOrSale(Object askOrSale) throws Exception {

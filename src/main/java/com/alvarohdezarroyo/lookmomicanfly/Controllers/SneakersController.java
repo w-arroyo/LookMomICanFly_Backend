@@ -34,11 +34,10 @@ public class SneakersController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,SneakersDTO>> getSneakersById(@RequestParam String id){
+    public ResponseEntity<SneakersDTO> getSneakersById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("sneakers",
-                        productMapper.toSneakersDTO(sneakersService.getSneakersById(id))));
+                .body(productMapper.toSneakersDTO(sneakersService.getSneakersById(id)));
     }
 
     @PostMapping("/save")

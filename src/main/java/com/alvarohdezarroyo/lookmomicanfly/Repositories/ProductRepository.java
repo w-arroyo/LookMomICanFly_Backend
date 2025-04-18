@@ -36,4 +36,19 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     @Query(value = "SELECT product FROM Product product WHERE name ILIKE %:name%")
     List<Product> findProductsByName(@Param("name") String name);
 
+    @Query(value = "SELECT po.product_id FROM transactions t JOIN sales s ON s.id = t.sale_id JOIN asks a ON a.id = s.ask_id JOIN posts po ON po.id = a.id WHERE t.date >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY po.product_id ORDER BY COUNT(*) DESC LIMIT 50", nativeQuery = true)
+    List<String> findBestSellingProductIds();
+
+    @Query("SELECT p FROM Product p WHERE p.id IN :ids")
+    List<Product> findBest50SellingProducts(@Param("ids") List<String> idList);
+
+    @Query(value = "SELECT DISTINCT release_year FROM products ORDER BY release_year DESC", nativeQuery = true)
+    List<Integer> getDifferentProductYears();
+
+    @Query(value = "SELECT DISTINCT(name) from colors WHERE id IN(SELECT color_id from colors_products) ORDER BY name", nativeQuery = true)
+    List<String> getAllProductColors();
+
+    @Query(value = "SELECT DISTINCT name FROM manufacturers WHERE id IN (SELECT manufacturer_id from products) ORDER BY name", nativeQuery = true)
+    List<String> getDifferentManufacturers();
+
 }

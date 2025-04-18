@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.BidDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Order;
@@ -61,24 +62,22 @@ public class BidController {
     }
 
     @GetMapping("/get-all/")
-    public ResponseEntity<Map<String,PostSummaryDTO[]>> getAllUserBids(@RequestParam String userId){
+    public ResponseEntity<PostSummaryDTO[]> getAllUserBids(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Bid> bids=bidService.getAllUserBids(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("bids",
-                        postMapper.bidListToSummaryDTO(bids)));
+                .body(postMapper.bidListToSummaryDTO(bids));
     }
 
     @GetMapping("/get/product/")
-    public ResponseEntity<Map<String,List<PostContainerDTO>>> getAllProductBids(@RequestParam String productId){
+    public ResponseEntity<List<PostContainerDTO>> getAllProductBids(@RequestParam String productId){
         GlobalValidator.checkIfAFieldIsEmpty(productId);
         final Product product=productService.findProductById(productId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("bids",
-                        postMapper.bidListToContainer(
+                .body(postMapper.bidListToContainer(
                                 findAllProductBids(product)
-                        )));
+                        ));
     }
 
     private Map<String,Bid> findAllProductBids(Product product){
@@ -106,10 +105,13 @@ public class BidController {
     }
 
     @GetMapping("/highest-bid/")
-    public ResponseEntity<Integer> getHighestBidAmount(@RequestParam String productId, @RequestParam String size){
+    public ResponseEntity<SuccessfulRequestDTO> getHighestBidAmount(@RequestParam String productId, @RequestParam String size){
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(bidService.getHighestBidAmount(productId, ProductValidator.checkIfASizeExists(size)));
+        final Integer amount=bidService.getHighestBidAmount(productId, ProductValidator.checkIfASizeExists(size));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO(
+                        PostValidator.returnAmountAsString(amount))
+        );
     }
 
     @PutMapping("/update")
