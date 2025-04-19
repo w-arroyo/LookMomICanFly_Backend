@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserProfileDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
@@ -8,6 +9,8 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Component
 public class UserMapper {
@@ -29,4 +32,14 @@ public class UserMapper {
         user.setName(AESEncryptionUtil.encrypt(userDTO.getName()).getBytes());
         return user;
     }
+
+    public static UserProfileDTO toProfileDTO(User user) throws Exception {
+        final DateTimeFormatter dateTimeFormatter= DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
+        final UserProfileDTO userProfileDTO=new UserProfileDTO();
+        userProfileDTO.setEmail(user.getEmail());
+        userProfileDTO.setName(AESEncryptionUtil.decrypt(new String(user.getName(), StandardCharsets.UTF_8)));
+        userProfileDTO.setRegistrationDate(dateTimeFormatter.format(user.getRegistrationDate()));
+        return userProfileDTO;
+    }
+
 }

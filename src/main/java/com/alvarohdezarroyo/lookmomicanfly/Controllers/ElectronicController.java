@@ -34,11 +34,10 @@ public class ElectronicController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String, ElectronicDTO>> getElectronicDTOById(@RequestParam String id){
+    public ResponseEntity<ElectronicDTO> getElectronicDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("electronic",
-                        productMapper.toElectronicDTO(electronicService.getElectronicById(id))));
+                .body(productMapper.toElectronicDTO(electronicService.getElectronicById(id)));
     }
 
     @PostMapping("/save")

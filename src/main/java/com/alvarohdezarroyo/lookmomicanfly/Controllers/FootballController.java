@@ -34,11 +34,10 @@ public class FootballController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String, FootballDTO>> getFootballDTOById(@RequestParam String id){
+    public ResponseEntity<FootballDTO> getFootballDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("football",
-                        productMapper.toFootballDTO(footballService.getFootballById(id))));
+                .body(productMapper.toFootballDTO(footballService.getFootballById(id)));
     }
 
     @PostMapping("/save")

@@ -3,6 +3,7 @@ package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.LoginSuccessDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserProfileDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
@@ -46,6 +47,16 @@ public class UserController {
         this.bankAccountService = bankAccountService;
         this.phoneNumberService = phoneNumberService;
         this.emailSenderService = emailSenderService;
+    }
+
+    @GetMapping("/get/")
+    public ResponseEntity<UserProfileDTO> getUserProfileData(@RequestParam String id) throws Exception {
+        GlobalValidator.checkIfAFieldIsEmpty(id);
+        authService.checkFraudulentRequest(id);
+        final User user=userValidator.returnUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                UserMapper.toProfileDTO(user)
+        );
     }
 
     @PostMapping ("/register")

@@ -32,11 +32,10 @@ public class SkateboardController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,SkateboardDTO>> getSkateboardDTOById(@RequestParam String id){
+    public ResponseEntity<SkateboardDTO> getSkateboardDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("skateboard",
-                        productMapper.toSkateboardDTO(skateboardService.findSkateboardById(id))));
+                .body(productMapper.toSkateboardDTO(skateboardService.findSkateboardById(id)));
     }
 
     @PostMapping("/save")

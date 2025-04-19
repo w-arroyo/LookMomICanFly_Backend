@@ -23,11 +23,12 @@ public class FeeController {
     }
 
     @GetMapping("/level/")
-    public ResponseEntity<Map<String,SellingFeeDTO>> getUserLevelSellingFee(@RequestParam String userId){
+    public ResponseEntity<SellingFeeDTO> getUserLevelSellingFee(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("fee",
-                        SellingFeeMapper.toDTO(sellingFeeService.selectFeeByNumberSales(userId))));
+                .body(SellingFeeMapper.toDTO(
+                                sellingFeeService.selectFeeByNumberSales(userId)
+                        ));
     }
 
     @GetMapping("/default/")

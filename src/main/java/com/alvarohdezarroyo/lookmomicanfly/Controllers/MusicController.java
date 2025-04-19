@@ -34,11 +34,10 @@ public class MusicController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,MusicDTO>> getMusicDTOById(@RequestParam String id){
+    public ResponseEntity<MusicDTO> getMusicDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("music",
-                        productMapper.toMusicDTO(musicService.getMusicById(id))));
+                .body(productMapper.toMusicDTO(musicService.getMusicById(id)));
     }
 
     @PostMapping("/save")

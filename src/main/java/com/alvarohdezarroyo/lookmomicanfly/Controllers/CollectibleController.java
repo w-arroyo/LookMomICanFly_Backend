@@ -34,11 +34,10 @@ public class CollectibleController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,CollectibleDTO>> getCollectibleDTOById(@RequestParam String id){
+    public ResponseEntity<CollectibleDTO> getCollectibleDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("collectible",
-                        productMapper.toCollectibleDTO(collectibleService.getCollectibleById(id))));
+                .body(productMapper.toCollectibleDTO(collectibleService.getCollectibleById(id)));
     }
 
     @PostMapping("/save")

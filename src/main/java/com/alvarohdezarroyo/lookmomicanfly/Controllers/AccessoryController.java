@@ -34,11 +34,10 @@ public class AccessoryController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,AccessoryDTO>> getAccessoryDTOById(@RequestParam String id){
+    public ResponseEntity<AccessoryDTO> getAccessoryDTOById(@RequestParam String id){
         GlobalValidator.checkIfAFieldIsEmpty(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("accessory",
-                        productMapper.toAccessoryDTO(accessoryService.getAccessoryById(id))));
+                .body(productMapper.toAccessoryDTO(accessoryService.getAccessoryById(id)));
     }
 
     @PostMapping("/save")
