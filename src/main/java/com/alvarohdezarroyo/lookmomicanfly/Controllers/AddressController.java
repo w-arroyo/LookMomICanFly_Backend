@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.DeactivateAddressRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AddressService;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/addresses")
@@ -31,24 +30,25 @@ public class AddressController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity <Map<String,Object>> saveAddress(@RequestBody AddressDTO address) throws Exception {
+    public ResponseEntity <SuccessfulRequestDTO> saveAddress(@RequestBody AddressDTO address) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(address);
         AddressValidator.checkIfFieldsAreEmpty(address);
         authService.checkIfAUserIsLoggedIn();
-        final Address savedAddress= addressService.saveAddress(
-                addressMapper.toEntity(address));
+        final Address addressToSave= addressMapper.toEntity(address);
+        addressService.saveAddress(addressToSave);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",
-                        AddressMapper.toDTO(savedAddress)));
+                .body(new SuccessfulRequestDTO("Address successfully created."));
     }
 
     @PutMapping("/deactivate")
-    public ResponseEntity<String> deactivateAddress(@RequestBody DeactivateAddressRequestDTO request){
+    public ResponseEntity<SuccessfulRequestDTO> deactivateAddress(@RequestBody DeactivateAddressRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getId(), request.getUserId());
         authService.checkFraudulentRequest(request.getUserId());
         addressService.deactivateAddress(request.getId(), request.getUserId());
-        return ResponseEntity.status(HttpStatus.OK).body("success");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO("Address successfully removed.")
+        );
     }
 
 }

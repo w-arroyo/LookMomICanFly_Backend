@@ -65,7 +65,7 @@ public class UserService {
     public List<Address> getUserAddresses(String id){
         return userRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException("Id is not associated with any user account in the DB.")
-        ).getAddresses();
+        ).getAddresses().stream().filter(Address::getActive).toList();
     }
 
 }

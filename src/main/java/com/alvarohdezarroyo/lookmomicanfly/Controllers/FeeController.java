@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.SellingFeeDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.SellingFeeService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.SellingFeeMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -8,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/fees")
@@ -32,27 +32,38 @@ public class FeeController {
     }
 
     @GetMapping("/default/")
-    public ResponseEntity<Map<String,SellingFeeDTO>> getCurrentSellingFee(@RequestParam String userId){
+    public ResponseEntity<SellingFeeDTO> getCurrentSellingFee(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("fee",
-                        SellingFeeMapper.toDTO(sellingFeeService.checkIfThereIsADefaultFee(userId))));
+                .body(SellingFeeMapper.toDTO(
+                        sellingFeeService.checkIfThereIsADefaultFee(userId)
+                ));
+    }
+
+    @GetMapping("/shipping")
+    public ResponseEntity<SuccessfulRequestDTO> getSellingShippingFee(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO(AppConfig.getSellingShipping()+"")
+        );
     }
 
     @PutMapping("/remove-default")
-    public ResponseEntity<String> removeSellingFeeOffer(){
+    public ResponseEntity<SuccessfulRequestDTO> removeSellingFeeOffer(){
         sellingFeeService.deactivateCurrentSellingFeeOffers();
-        return ResponseEntity.status(HttpStatus.OK).body("success");
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO("Removed")
+        );
     }
 
     @PostMapping("/save-default")
-    public ResponseEntity<Map<String,Object>> saveNewDefaultSellingFee(@RequestBody SellingFeeDTO sellingFeeDTO){
+    public ResponseEntity<SuccessfulRequestDTO> saveNewDefaultSellingFee(@RequestBody SellingFeeDTO sellingFeeDTO){
         GlobalValidator.checkIfRequestBodyIsEmpty(sellingFeeDTO);
         GlobalValidator.checkIfAFieldIsEmpty(sellingFeeDTO.getDescription());
         GlobalValidator.checkIfANumberFieldIsValid(sellingFeeDTO.getPercentage());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("success",
-                        sellingFeeService.saveSellingFeeOffer(sellingFeeDTO)));
+        sellingFeeService.saveSellingFeeOffer(sellingFeeDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO("Created")
+        );
     }
 
 }

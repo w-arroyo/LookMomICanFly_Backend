@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -35,6 +34,16 @@ public class ProductController {
     public ResponseEntity<List<ProductSummaryDTO>> getAllProductsSummary(){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productMapper.toSummaryList(productService.findAllProducts()));
+    }
+
+    @GetMapping("/get/")
+    public ResponseEntity<ProductSummaryDTO> getProductSummary(@RequestParam String productId){
+        GlobalValidator.checkIfAFieldIsEmpty(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productMapper.toSummary(
+                        productService.findProductById(productId)
+                )
+        );
     }
 
     @GetMapping("/get/all-summary-by-category/")

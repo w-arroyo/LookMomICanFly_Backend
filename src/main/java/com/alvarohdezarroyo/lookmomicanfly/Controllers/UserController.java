@@ -1,9 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
-import com.alvarohdezarroyo.lookmomicanfly.DTO.AddressDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.LoginSuccessDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.UserProfileDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmailAlreadyInUseException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Address;
@@ -23,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -79,7 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginSuccessDTO> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
+    public ResponseEntity<LoginSuccessDTO> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO) {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
         final String token=userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword());
         return ResponseEntity.status(HttpStatus.OK)
@@ -97,7 +93,7 @@ public class UserController {
     }
 
     @PutMapping("/deactivate/")
-    public ResponseEntity <Map<String,String>> deactivateAccount(@RequestParam String userId){
+    public ResponseEntity <SuccessfulRequestDTO> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final User user=userValidator.returnUserById(userId);
@@ -107,35 +103,34 @@ public class UserController {
         bankAccountService.deactivateAllUserBankAccounts(userId);
         phoneNumberService.deactivateAllUserPhoneNumbers(userId);
         emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateDeactivatedAccountParams(user.getEmail()));
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("success",userId));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO("Account successfully deactivated.")
+        );
     }
 
     @GetMapping("/addresses/")
-    public ResponseEntity<Map<String,AddressDTO[]>> getUserAddresses(@RequestParam String userId){
+    public ResponseEntity<AddressDTO[]> getUserAddresses(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Address> addresses=userService.getUserAddresses(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("addresses",
-                        AddressMapper.addressListToAddressDTOArray(addresses)
-                ));
+                .body(AddressMapper.addressListToAddressDTOArray(addresses)
+                );
     }
 
     @PutMapping("/changeEmail")
-    public ResponseEntity<Map<String,Object>> changeUserEmail(@RequestBody ChangeUserFieldsRequestDTO request){
+    public ResponseEntity<SuccessfulRequestDTO> changeUserEmail(@RequestBody ChangeUserFieldsRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         GlobalValidator.checkIfTwoFieldsAreEmpty(request.getUserId(), request.getNewField());
         authService.checkFraudulentRequest(request.getUserId());
         userService.changeEmail(request.getUserId(), request.getNewField());
         emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewEmailParams(request.getNewField()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("success",
-                        "Email modification completed. User ID: '"+request.getUserId()+
-                                "'. New email: '"+request.getNewField()+"'."));
+                .body(new SuccessfulRequestDTO("Email address updated successfully."));
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<Map<String,Object>> changeUserPassword(@RequestBody ChangePasswordRequestDTO request){
+    public ResponseEntity<SuccessfulRequestDTO> changeUserPassword(@RequestBody ChangePasswordRequestDTO request){
         GlobalValidator.checkIfRequestBodyIsEmpty(request);
         UserValidator.emptyChangePasswordFieldsValidator(request);
         authService.checkFraudulentRequest(request.getId());
@@ -143,8 +138,7 @@ public class UserController {
         userService.changeUserPassword(request);
         emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateNewPasswordParams(foundUser.getEmail()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("success",
-                        "Password modification completed. User ID: '"+request.getId()+"'."));
+                .body(new SuccessfulRequestDTO("Password updated successfully."));
     }
 
     private String userLogin(String userEmail, String password){

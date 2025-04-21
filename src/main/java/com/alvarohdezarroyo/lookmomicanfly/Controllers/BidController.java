@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
+import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.BidDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostContainerDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.PostSummaryDTO;
@@ -111,6 +112,13 @@ public class BidController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new SuccessfulRequestDTO(
                         PostValidator.returnAmountAsString(amount))
+        );
+    }
+
+    @GetMapping("get/operational")
+    public ResponseEntity<SuccessfulRequestDTO> getOperationalFee(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new SuccessfulRequestDTO(AppConfig.getOperationalBuyingFee()+"")
         );
     }
 
