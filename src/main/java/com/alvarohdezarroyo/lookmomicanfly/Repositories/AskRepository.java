@@ -20,7 +20,7 @@ public interface AskRepository extends JpaRepository<Ask,String> {
     @Query(value = "SELECT ask from Ask ask WHERE ask.id IN (SELECT post.id from Post post WHERE post.user.id= :id AND post.active=true)")
     List<Ask> findAllUserAsks(@Param("id") String id);
 
-    @Query(value = "SELECT a FROM Ask a WHERE a.product.id= :productId AND a.active= true ORDER BY a.amount ASC")
+    @Query(value = "SELECT a FROM Ask a WHERE a.product.id= :productId AND a.active= true ORDER BY a.amount ASC limit 1")
     Optional<Ask> getLowestAskOfAProduct(@Param("productId") String productId);
 
 }

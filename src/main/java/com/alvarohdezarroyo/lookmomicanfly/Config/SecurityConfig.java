@@ -64,6 +64,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/fees/shipping").permitAll();
                     auth.requestMatchers("/api/bids/get/operational").permitAll();
                     auth.requestMatchers("/api/bids/highest-bid/**").permitAll();
+                    auth.requestMatchers("/api/shipping-options/get-all").permitAll();
                     auth.requestMatchers("/api/phone-numbers/formats").permitAll();
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request

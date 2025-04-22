@@ -40,7 +40,7 @@ public class AskService {
     }
 
     public Integer getLowestAskAmount(String productId, Size size){
-        return askRepository.getLowestAskAmount(productId,size.getValue())
+        return askRepository.getLowestAskAmount(productId,size.name())
                 .orElse(null);
     }
 

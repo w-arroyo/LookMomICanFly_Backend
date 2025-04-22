@@ -40,7 +40,7 @@ public class BidService {
     }
 
     public Integer getHighestBidAmount(String productId, Size size){
-        return bidRepository.getHighestBidAmount(productId,size.getValue())
+        return bidRepository.getHighestBidAmount(productId,size.name())
                 .orElse(null);
     }
 
