@@ -50,24 +50,22 @@ public class SaleController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String,SaleDTO>> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
+    public ResponseEntity<SaleDTO> getSaleDTO(@RequestParam String saleId, @RequestParam String userId) throws Exception {
         basicValidations(saleId,userId);
         final Sale sale=saleService.getSaleById(saleId);
         GlobalValidator.checkIfDataBelongToRequestingUser(userId,sale.getAsk().getUser().getId());
         final String tracking=saleService.getSaleCurrentTrackingNumberCode(sale.getId());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("sale",
-                        transactionMapper.toSaleDTO(sale,tracking)));
+                .body(transactionMapper.toSaleDTO(sale,tracking));
     }
 
     @GetMapping("/get-all/")
-    public ResponseEntity<Map<String,List<TransactionOverviewDTO>>> getAllUserSales(@RequestParam String userId){
+    public ResponseEntity<List<TransactionOverviewDTO>> getAllUserSales(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Sale> sales=saleService.getAllUserSales(userId);
         return ResponseEntity.status(HttpStatus.OK).body(
-          Map.of("sales",
-                  transactionMapper.salesToOverview(sales))
+          transactionMapper.salesToOverview(sales)
         );
     }
 

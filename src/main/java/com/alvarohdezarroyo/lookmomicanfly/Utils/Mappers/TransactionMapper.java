@@ -28,6 +28,7 @@ public class TransactionMapper {
         transaction.setSize(sale.getAsk().getSize().getValue());
         transaction.setAddress(AddressMapper.toDTO(sale.getAsk().getAddress()));
         transaction.setAmount(AmountCalculator.getAskPayout(sale.getAsk()));
+        transaction.setId(sale.getId());
         return transaction;
     }
 
@@ -38,10 +39,11 @@ public class TransactionMapper {
         transaction.setProduct(productMapper.toSummary(order.getBid().getProduct()));
         transaction.setAddress(AddressMapper.toDTO(order.getBid().getAddress()));
         transaction.setAmount(AmountCalculator.getBidTotal(order.getBid()));
+        transaction.setId(order.getId());
         return transaction;
     }
 
-    private void fillTransactionDTOFields(TransactionDTO transaction, String reference, String tracking, Address address, int amount, String size, Product product, TransactionStatusDTO status) throws Exception {
+    private void fillTransactionDTOFields(TransactionDTO transaction, String reference, String tracking, Address address, int amount, String size, Product product, TransactionStatusDTO status, String id) throws Exception {
         transaction.setReference(reference);
         transaction.setAddress(AddressMapper.toDTO(address));
         transaction.setAmount(amount);
@@ -49,11 +51,12 @@ public class TransactionMapper {
         transaction.setTrackingNumber(tracking);
         transaction.setProduct(productMapper.toSummary(product));
         transaction.setStatus(status);
+        transaction.setId(id);
     }
 
     public SaleDTO toSaleDTO(Sale sale, String tracking) throws Exception {
         final SaleDTO saleDTO=new SaleDTO();
-        fillTransactionDTOFields(saleDTO, sale.getReference(),tracking,sale.getAsk().getAddress(),sale.getAsk().getAmount(),sale.getAsk().getSize().getValue(),sale.getAsk().getProduct(), new TransactionStatusDTO(sale.getStatus().name().replace("_"," "),sale.getStatus().getValue()));
+        fillTransactionDTOFields(saleDTO, sale.getReference(),tracking,sale.getAsk().getAddress(),sale.getAsk().getAmount(),sale.getAsk().getSize().getValue(),sale.getAsk().getProduct(), new TransactionStatusDTO(sale.getStatus().name().replace("_"," "),sale.getStatus().getValue()), sale.getId());
         saleDTO.setShippingFee(sale.getAsk().getShippingFee());
         saleDTO.setPercentage(sale.getAsk().getSellingFee().getPercentage());
         return saleDTO;
@@ -61,7 +64,7 @@ public class TransactionMapper {
 
     public OrderDTO toOrderDTO(Order order, String tracking) throws Exception {
         final OrderDTO orderDTO=new OrderDTO();
-        fillTransactionDTOFields(orderDTO,order.getReference(),tracking,order.getBid().getAddress(),order.getBid().getAmount(),order.getBid().getSize().getValue(),order.getBid().getProduct(),new TransactionStatusDTO(order.getStatus().name().replace("_"," "),order.getStatus().getValue()));
+        fillTransactionDTOFields(orderDTO,order.getReference(),tracking,order.getBid().getAddress(),order.getBid().getAmount(),order.getBid().getSize().getValue(),order.getBid().getProduct(),new TransactionStatusDTO(order.getStatus().name().replace("_"," "),order.getStatus().getValue()),order.getId());
         orderDTO.setOperationalFee(order.getBid().getOperationalFee());
         orderDTO.setShippingOption(ShippingOptionMapper.toDTO(order.getBid().getShippingOption()));
         return orderDTO;

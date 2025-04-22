@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class TransactionDTO {
 
-    private String reference,size,trackingNumber;
+    private String reference,size,trackingNumber,id;
     private AddressDTO address;
     private ProductSummaryDTO product;
     private TransactionStatusDTO status;

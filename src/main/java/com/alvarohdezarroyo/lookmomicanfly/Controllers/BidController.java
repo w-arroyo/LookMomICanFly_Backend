@@ -8,7 +8,6 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Bid;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Order;
-import com.alvarohdezarroyo.lookmomicanfly.Models.Payment;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.BidRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.UpdatePostRequestDTO;
@@ -52,14 +51,13 @@ public class BidController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String, BidDTO>> getBidById(@RequestParam String bidId, @RequestParam String userId) throws Exception {
+    public ResponseEntity<BidDTO> getBidById(@RequestParam String bidId, @RequestParam String userId) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(bidId,userId);
         authService.checkFraudulentRequest(userId);
         final Bid foundBid=bidService.findBidById(bidId);
         GlobalValidator.checkIfDataBelongToRequestingUser(userId,foundBid.getUser().getId());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("bid",
-                        postMapper.toBidDTO(foundBid)));
+                .body(postMapper.toBidDTO(foundBid));
     }
 
     @GetMapping("/get-all/")
@@ -92,7 +90,7 @@ public class BidController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String,Object>> saveBid(@RequestBody BidRequestDTO bidRequest) throws Exception {
+    public ResponseEntity<Object> saveBid(@RequestBody BidRequestDTO bidRequest) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(bidRequest);
         PostValidator.checkIfPostFieldsAreEmpty(bidRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(bidRequest.getAmount(), 1);
@@ -123,7 +121,7 @@ public class BidController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String,Object>> updateBidAmount(@RequestBody UpdatePostRequestDTO bidToUpdate) throws Exception {
+    public ResponseEntity<Object> updateBidAmount(@RequestBody UpdatePostRequestDTO bidToUpdate) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(bidToUpdate);
         PostValidator.checkPostToUpdateFields(bidToUpdate);
         authService.checkFraudulentRequest(bidToUpdate.getUserId());
@@ -132,15 +130,11 @@ public class BidController {
                 .body(returnOrderOrBid(updatedBidOrOrder));
     }
 
-    private Map<String,Object> returnOrderOrBid(Object bidOrOrder) throws Exception {
-        Map<String,Object> response;
-        if(bidOrOrder instanceof Bid){
-            response=Map.of("bid",postMapper.toBidDTO((Bid) bidOrOrder));
-        }
-        else{
-            response=Map.of("order", transactionMapper.orderToTransactionSummaryDTO((Order) bidOrOrder));
-        }
-        return response;
+    private Object returnOrderOrBid(Object bidOrOrder) throws Exception {
+        if(bidOrOrder instanceof Bid)
+            return postMapper.toBidDTO((Bid) bidOrOrder);
+        return transactionMapper.orderToTransactionSummaryDTO((Order) bidOrOrder);
+
     }
 
 }

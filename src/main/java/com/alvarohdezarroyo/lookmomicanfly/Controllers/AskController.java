@@ -48,24 +48,22 @@ public class AskController {
     }
 
     @GetMapping("/get/")
-    public ResponseEntity<Map<String, AskDTO>> getAskById(@RequestParam String userId, @RequestParam String askId) throws Exception {
+    public ResponseEntity<AskDTO> getAskById(@RequestParam String userId, @RequestParam String askId) throws Exception {
         GlobalValidator.checkIfTwoFieldsAreEmpty(userId,askId);
         authService.checkFraudulentRequest(userId);
         final Ask foundAsk=askService.findAskById(askId);
         GlobalValidator.checkIfDataBelongToRequestingUser(userId,foundAsk.getUser().getId());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("ask",
-                        postMapper.toAskDTO(foundAsk)));
+                .body(postMapper.toAskDTO(foundAsk));
     }
 
     @GetMapping("/get-all/")
-    public ResponseEntity<Map<String,PostSummaryDTO[]>> getAllUserAsks(@RequestParam String userId){
+    public ResponseEntity<PostSummaryDTO[]> getAllUserAsks(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final List<Ask> userAsks=askService.getAllUserAsks(userId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(Map.of("asks",
-                        postMapper.askListToSummaryDTO(userAsks)));
+                .body(postMapper.askListToSummaryDTO(userAsks));
     }
 
     @GetMapping("/get/product/")
@@ -89,7 +87,7 @@ public class AskController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Map<String,Object>> saveAsk(@RequestBody AskRequestDTO askRequest) throws Exception {
+    public ResponseEntity<Object> saveAsk(@RequestBody AskRequestDTO askRequest) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(askRequest);
         PostValidator.checkIfPostFieldsAreEmpty(askRequest);
         GlobalValidator.checkIfANumberIsGreaterThan(askRequest.getAmount(),1);
@@ -102,7 +100,7 @@ public class AskController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Map<String,Object>> updateAsk(@RequestBody UpdatePostRequestDTO askToUpdate) throws Exception {
+    public ResponseEntity<Object> updateAsk(@RequestBody UpdatePostRequestDTO askToUpdate) throws Exception {
         GlobalValidator.checkIfRequestBodyIsEmpty(askToUpdate);
         PostValidator.checkPostToUpdateFields(askToUpdate);
         authService.checkFraudulentRequest(askToUpdate.getUserId());
@@ -136,15 +134,10 @@ public class AskController {
                     .body(new SuccessfulRequestDTO(amount));
     }
 
-    private Map<String,Object> returnAskOrSale(Object askOrSale) throws Exception {
-        Map<String,Object> response;
-        if(askOrSale instanceof Ask){
-            response=Map.of("ask",postMapper.toAskDTO((Ask) askOrSale));
-        }
-        else{
-            response=Map.of("sale",transactionMapper.saleToTransactionSummaryDTO((Sale) askOrSale));
-        }
-        return response;
+    private Object returnAskOrSale(Object askOrSale) throws Exception {
+        if(askOrSale instanceof Ask)
+            return postMapper.toAskDTO((Ask) askOrSale);
+        return transactionMapper.saleToTransactionSummaryDTO((Sale) askOrSale);
     }
 
 

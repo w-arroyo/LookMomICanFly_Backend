@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TransactionSummaryDTO {
 
-    private String reference,size;
+    private String reference,size,id;
     private AddressDTO address;
     private ProductSummaryDTO product;
     private double amount;
