@@ -65,6 +65,7 @@ public class PostValidator {
     }
 
     public static void checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(String requestUserId, String bestPostUserId){
+        System.out.println("I'M IN BABYYYYYYYYYYYYY");
         if(requestUserId.equals(bestPostUserId))
             throw new RejectedPostException("You are not allowed to create this transaction because it matches your own offer.");
     }
@@ -82,19 +83,21 @@ public class PostValidator {
     public static void checkBidBeforeSavingIt(Bid bid, Ask lowestAsk){
         if(lowestAsk==null)
             return;
+        if(bid.getAmount()<lowestAsk.getAmount())
+            return;
         else if(bid.getAmount()>lowestAsk.getAmount())
             throw new IllegalArgumentException("Bid amount can not surpass lowest ask amount.");
-        if(bid.getAmount()==lowestAsk.getAmount())
-            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(bid.getUser().getId(),lowestAsk.getUser().getId());
+        checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(bid.getUser().getId(),lowestAsk.getUser().getId());
     }
 
     public static void checkAskBeforeSavingIt(Ask ask, Bid highestBid){
         if(highestBid==null)
             return;
+        if(ask.getAmount()>highestBid.getAmount())
+            return;
         else if(ask.getAmount()<highestBid.getAmount())
             throw new IllegalArgumentException("Ask amount can not be lower than highest bid amount.");
-        else if(ask.getAmount()==highestBid.getAmount())
-            checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),highestBid.getUser().getId());
+        checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(ask.getUser().getId(),highestBid.getUser().getId());
     }
 
     public static void checkPostToUpdateFields(UpdatePostRequestDTO request){

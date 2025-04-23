@@ -51,7 +51,7 @@ public class ProductService {
     }
 
     public boolean checkIfUserLikesAProduct(String userId, String productId){
-        return productRepository.checkIfAUserLikesAProduct(userId,productId)<1;
+        return productRepository.checkIfAUserLikesAProduct(userId,productId)>0;
     }
 
     @Transactional

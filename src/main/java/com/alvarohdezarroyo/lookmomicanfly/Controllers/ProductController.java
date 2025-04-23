@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.ProductSummaryDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulBooleanRequestDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ProductAlreadyLikedException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
@@ -64,29 +66,35 @@ public class ProductController {
     }
 
     @GetMapping("/favorites/check/")
-    public ResponseEntity<Boolean> checkIfUserLikedAProduct(@RequestParam String userId, @RequestParam String productId){
+    public ResponseEntity<SuccessfulBooleanRequestDTO> checkIfUserLikedAProduct(@RequestParam String userId, @RequestParam String productId){
         checkLikingProducts(userId,productId);
         return ResponseEntity.status(HttpStatus.OK).body(
-                productService.checkIfUserLikesAProduct(userId,productId)
+                new SuccessfulBooleanRequestDTO(
+                        productService.checkIfUserLikesAProduct(userId,productId)
+                )
         );
     }
 
     @PostMapping("/favorites/like/")
-    public ResponseEntity<String> likeProduct(@RequestParam String userId, @RequestParam String productId){
+    public ResponseEntity<SuccessfulRequestDTO> likeProduct(@RequestParam String userId, @RequestParam String productId){
         checkLikingProducts(userId,productId);
-        if(!productService.checkIfUserLikesAProduct(userId,productId))
+        if(productService.checkIfUserLikesAProduct(userId,productId))
             throw new ProductAlreadyLikedException("You already like this product.");
         productService.likeProduct(userId,productId);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new SuccessfulRequestDTO("Product added to liked products list.")
+        );
     }
 
     @PutMapping("/favorites/unlike/")
-    public ResponseEntity<String> unlikeProduct(@RequestParam String userId, @RequestParam String productId){
+    public ResponseEntity<SuccessfulRequestDTO> unlikeProduct(@RequestParam String userId, @RequestParam String productId){
         checkLikingProducts(userId,productId);
-        if(productService.checkIfUserLikesAProduct(userId,productId))
+        if(!productService.checkIfUserLikesAProduct(userId,productId))
             throw new ProductAlreadyLikedException("You already do not like this product.");
         productService.unlikeProduct(userId,productId);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new SuccessfulRequestDTO("Product removed from liked products list.")
+        );
     }
 
     @GetMapping("/find/")

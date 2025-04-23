@@ -73,7 +73,7 @@ public class SaleController {
     private ResponseEntity<SuccessfulRequestDTO> getLastSaleAmount(@RequestParam String productId, @RequestParam String size){
         GlobalValidator.checkIfTwoFieldsAreEmpty(productId,size);
         final Size sizeValue= ProductValidator.checkIfASizeExists(size);
-        final Integer amount= saleService.getProductBySizeLastSaleAmount(productId,sizeValue.getValue());
+        final Integer amount= saleService.getProductBySizeLastSaleAmount(productId,sizeValue.name());
         return ResponseEntity.status(HttpStatus.OK).body(
                 new SuccessfulRequestDTO(
                         PostValidator.returnAmountAsString(amount)

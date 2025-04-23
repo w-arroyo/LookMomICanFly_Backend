@@ -63,8 +63,7 @@ public class PostService {
         PostValidator.checkBidAmountIsPositive(bid);
         AddressValidator.checkIfAddressBelongsToAUser(bid.getUser().getId(),bid.getAddress());
         ProductValidator.checkIfSizeBelongsToACategory(bid.getSize(),bid.getProduct().getCategory());
-        final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());
-        PostValidator.checkBidBeforeSavingIt(bid,lowestAsk);
+        final Ask lowestAsk=askService.getLowestAsk(bid.getProduct().getId(),bid.getSize());PostValidator.checkBidBeforeSavingIt(bid,lowestAsk);
         final Bid savedBid= bidService.saveBid(bid);
         return checkMatchingAsk(savedBid,lowestAsk);
     }
