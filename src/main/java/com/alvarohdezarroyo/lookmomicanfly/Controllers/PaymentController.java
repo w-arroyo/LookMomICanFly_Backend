@@ -32,16 +32,15 @@ public class PaymentController {
         this.authService = authService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, PaymentDTO>> createPayment(@RequestParam String userId) throws StripeException {
+    @PostMapping("/create/")
+    public ResponseEntity<PaymentDTO> createPayment(@RequestParam String userId) throws StripeException {
         GlobalValidator.checkIfAFieldIsEmpty(userId);
         authService.checkFraudulentRequest(userId);
         final PaymentIntent intent= PaymentMapper.toPaymentIntent(userId);
         Payment payment=PaymentMapper.toPayment(intent);
         payment=paymentService.savePayment(payment);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("payment",
-                        PaymentMapper.toDTO(payment,intent)));
+                .body(PaymentMapper.toDTO(payment,intent));
     }
 
 }

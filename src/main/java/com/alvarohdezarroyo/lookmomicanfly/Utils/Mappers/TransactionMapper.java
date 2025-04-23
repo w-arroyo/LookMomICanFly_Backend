@@ -48,7 +48,9 @@ public class TransactionMapper {
         transaction.setAddress(AddressMapper.toDTO(address));
         transaction.setAmount(amount);
         transaction.setSize(size);
-        transaction.setTrackingNumber(tracking);
+        if(tracking!=null)
+            transaction.setTrackingNumber(tracking);
+        else transaction.setTrackingNumber("Not available yet.");
         transaction.setProduct(productMapper.toSummary(product));
         transaction.setStatus(status);
         transaction.setId(id);
