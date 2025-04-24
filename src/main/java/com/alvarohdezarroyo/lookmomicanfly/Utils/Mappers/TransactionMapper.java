@@ -4,7 +4,9 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.OrderStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.SaleStatus;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
+import com.alvarohdezarroyo.lookmomicanfly.Services.TransactionService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.DateGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ReferenceGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,9 +18,11 @@ public class TransactionMapper {
 
     @Autowired
     private final ProductMapper productMapper;
+    private final TransactionService transactionService;
 
-    public TransactionMapper(ProductMapper productMapper) {
+    public TransactionMapper(ProductMapper productMapper, TransactionService transactionService) {
         this.productMapper = productMapper;
+        this.transactionService = transactionService;
     }
 
     public TransactionSummaryDTO saleToTransactionSummaryDTO(Sale sale) throws Exception {
@@ -95,29 +99,35 @@ public class TransactionMapper {
         return sale;
     }
 
-    private TransactionOverviewDTO toTransactionOverviewDTO(String id,String product,String status,String size,int amount){
+    private TransactionOverviewDTO toTransactionOverviewDTO(String id,Product product,String status,String size,int amount,String date){
         return new TransactionOverviewDTO(
-            id,product,size,status,amount
+            id,size,status,amount,productMapper.toSummary(product),date
         );
     }
 
     public List<TransactionOverviewDTO> salesToOverview(List<Sale> sales){
         return sales.stream().map(sale -> toTransactionOverviewDTO(
                 sale.getId(),
-                sale.getAsk().getProduct().getName(),
+                sale.getAsk().getProduct(),
                 sale.getStatus().name().replace("_"," "),
                 sale.getAsk().getSize().getValue(),
-                AmountCalculator.getAskPayout(sale.getAsk())
+                AmountCalculator.getAskPayout(sale.getAsk()),
+                DateGenerator.formatDate(
+                        transactionService.getTransactionDate(sale.getId())
+                )
         )).toList();
     }
 
     public List<TransactionOverviewDTO> ordersToOverview(List<Order> orders){
         return orders.stream().map(order -> toTransactionOverviewDTO(
                 order.getId(),
-                order.getBid().getProduct().getName(),
+                order.getBid().getProduct(),
                 order.getStatus().name().replace("_"," "),
                 order.getBid().getSize().getValue(),
-                (int)(AmountCalculator.getBidTotal(order.getBid()))
+                (int)(AmountCalculator.getBidTotal(order.getBid())),
+                DateGenerator.formatDate(
+                        transactionService.getTransactionDate(order.getId())
+                )
         )).toList();
     }
 

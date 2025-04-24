@@ -57,7 +57,10 @@ public class PostMapper {
     }
 
     private PostSummaryDTO toSummaryDTO(Post post){
-        return new PostSummaryDTO(post.getId(),productService.findProductById(post.getProduct().getId()).getName(),post.getSize().getValue(),post.getAmount());
+        return new PostSummaryDTO(post.getId(),post.getSize().getValue(),post.getAmount(),
+                productMapper.toSummary(
+                        productService.findProductById(post.getProduct().getId())
+                ));
     }
 
     public PostSummaryDTO[] askListToSummaryDTO(List<Ask> asks){

@@ -6,11 +6,10 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.UserType;
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.AESEncryptionUtil;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.DataSafety.PasswordUtils;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.DateGenerator;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Component
 public class UserMapper {
@@ -34,11 +33,10 @@ public class UserMapper {
     }
 
     public static UserProfileDTO toProfileDTO(User user) throws Exception {
-        final DateTimeFormatter dateTimeFormatter= DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.ENGLISH);
         final UserProfileDTO userProfileDTO=new UserProfileDTO();
         userProfileDTO.setEmail(user.getEmail());
         userProfileDTO.setName(AESEncryptionUtil.decrypt(new String(user.getName(), StandardCharsets.UTF_8)));
-        userProfileDTO.setRegistrationDate(dateTimeFormatter.format(user.getRegistrationDate()));
+        userProfileDTO.setRegistrationDate(DateGenerator.formatDate(user.getRegistrationDate()));
         return userProfileDTO;
     }
 

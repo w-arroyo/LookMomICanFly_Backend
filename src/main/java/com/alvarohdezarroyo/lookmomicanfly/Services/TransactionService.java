@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TransactionService {
 
@@ -58,4 +60,9 @@ public class TransactionService {
                 ()-> new EntityNotFoundException("Sale ID does not exist.")
         );
     }
+
+    public LocalDateTime getTransactionDate(String id){
+        return transactionRepository.getTransactionDate(id);
+    }
+
 }

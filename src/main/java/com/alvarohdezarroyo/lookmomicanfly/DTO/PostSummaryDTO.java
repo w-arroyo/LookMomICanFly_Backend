@@ -11,7 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PostSummaryDTO {
 
-    private String id, productName, size;
+    private String id, size;
     private Integer amount;
+    private ProductSummaryDTO product;
 
 }

@@ -11,7 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TransactionOverviewDTO {
 
-    private String id,productName, size, status;
+    private String id,size, status;
     private Integer amount;
+    private ProductSummaryDTO product;
+    private String date;
 
 }

@@ -39,6 +39,9 @@ public class AuthService implements UserDetailsService {
         final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Email does not belong to any user."));
 
+        if(!user.getActive())
+            throw new LoginUnsuccessfulException("Invalid credentials.");
+
         return new org.springframework.security.core.userdetails.User(
                 user.getId(), // this sets the id as the username instead of the email
                 user.getPassword(),
