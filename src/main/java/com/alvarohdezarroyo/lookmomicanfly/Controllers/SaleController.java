@@ -42,10 +42,12 @@ public class SaleController {
     }
 
     @PostMapping("/new-sale-tracking/")
-    public ResponseEntity<String> generateNewSaleTrackingNumber(@RequestParam String saleId, @RequestParam String userId){
+    public ResponseEntity<SuccessfulRequestDTO> generateNewSaleTrackingNumber(@RequestParam String saleId, @RequestParam String userId){
         basicValidations(saleId,userId);
         saleService.generateNewSaleTrackingNumber(saleId);
-        return ResponseEntity.status(HttpStatus.CREATED).body("success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new SuccessfulRequestDTO("New tracking number created.")
+        );
     }
 
     @GetMapping("/get/")

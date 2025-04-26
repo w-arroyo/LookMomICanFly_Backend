@@ -63,9 +63,11 @@ public class EmailSenderService {
             javaMailSender.send(mimeMessage);
         }
         catch (MailException e){
+            System.out.println(e.getMessage());
             System.out.println("There was an issue when sending the email.");
         }
         catch (RuntimeException ex){
+            System.out.println(ex.getMessage());
             System.out.println("Server error.");
         }
     }
