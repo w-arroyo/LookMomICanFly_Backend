@@ -4,6 +4,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ProductRepository;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.FilterProductRequestDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,11 @@ public class ProductService {
     public String[] getAllProductManufacturers(){
         return productRepository.getDifferentManufacturers()
                 .toArray(String[]::new);
+    }
+
+    public List<Product> getFilteredProducts(FilterProductRequestDTO request){
+        return productRepository.filterProducts(request.getYears(),request.getManufacturers(),request.getSubcategories(),request.getColors(),
+                request.getYears().isEmpty(),request.getManufacturers().isEmpty(),request.getSubcategories().isEmpty(),request.getColors().isEmpty());
     }
 
 }

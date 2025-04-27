@@ -6,6 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductSubcategory;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EmptyFieldsException;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.FilterProductRequestDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class ProductValidator {
     public static void checkIfCategoryIsCorrect(ProductCategory categoryToCheck, ProductCategory category){
         if(!category.equals(categoryToCheck))
             throw new IllegalArgumentException("Wrong endpoint.");
+    }
+
+    public static void checkIfFiltersAreEmpty(FilterProductRequestDTO requestDTO){
+        if(requestDTO.getColors().isEmpty() && requestDTO.getManufacturers().isEmpty() && requestDTO.getYears().isEmpty() && requestDTO.getSubcategories().isEmpty())
+            throw new IllegalArgumentException("All filters are empty. Fill at least one of the sections.");
     }
 
     public static Size checkIfASizeExists(String sizeString){

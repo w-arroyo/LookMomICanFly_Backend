@@ -6,6 +6,7 @@ import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Enums.Size;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ProductAlreadyLikedException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
+import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.FilterProductRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Services.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Mappers.ProductMapper;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.GlobalValidator;
@@ -140,6 +141,15 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 Size.getSizesByCategory(product.getCategory())
                         .stream().map(Size::getValue).toList()
+        );
+    }
+
+    @PostMapping("/get/filter")
+    public ResponseEntity<List<ProductSummaryDTO>> getFilteredProducts(@RequestBody FilterProductRequestDTO request){
+        ProductValidator.checkIfFiltersAreEmpty(request);
+        final List<Product> foundProducts=productService.getFilteredProducts(request);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productMapper.toSummaryList(foundProducts)
         );
     }
 

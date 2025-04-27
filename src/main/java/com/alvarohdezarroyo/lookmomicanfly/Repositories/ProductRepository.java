@@ -51,4 +51,12 @@ public interface ProductRepository extends JpaRepository<Product,String> {
     @Query(value = "SELECT DISTINCT name FROM manufacturers WHERE id IN (SELECT manufacturer_id from products) ORDER BY name", nativeQuery = true)
     List<String> getDifferentManufacturers();
 
+    @Query("SELECT p FROM Product p WHERE " +
+            "(:yearsEmpty = true OR p.releaseYear IN :years) " +
+            "AND (:subcategoriesEmpty = true OR p.subcategory IN :subcategories) " +
+            "AND (:manufacturersEmpty = true OR p.manufacturer.name IN :manufacturers) " +
+            "AND (:colorsEmpty = true OR EXISTS (" +
+            "SELECT 1 FROM p.colors c WHERE c.name IN :colors))")
+    List<Product> filterProducts(@Param("years") List<Integer> years, @Param("manufacturers") List<String> manufacturers, @Param("subcategories") List<String> subcategories, @Param("colors") List<String> colors, @Param("yearsEmpty") boolean yearsEmpty, @Param("manufacturersEmpty") boolean manufacturersEmpty, @Param("subcategoriesEmpty") boolean subcategoriesEmpty, @Param("colorsEmpty") boolean colorsEmpty);
+
 }
