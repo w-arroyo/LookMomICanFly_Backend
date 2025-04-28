@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Our Platform</title>
+    <title>Here's a new shipping number for your sale</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -17,7 +17,7 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #ffffff;
         }
         .header {
             text-align: center;
@@ -25,7 +25,7 @@
             border-bottom: 1px solid #f5f5f5;
         }
         .logo {
-            max-height: 50px;
+            height: 30px;
         }
         .content {
             padding: 20px;
@@ -34,9 +34,13 @@
             font-size: 24px;
             color: #31355B;
             margin-top: 0;
+            text-transform: uppercase;
+            font-weight: 600;
         }
         p {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: #212121;
         }
         .footer {
             text-align: center;
@@ -44,6 +48,17 @@
             font-size: 12px;
             color: #999;
             border-top: 1px solid #f5f5f5;
+        }
+        .highlight-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .tracking-info {
+            font-weight: 500;
+            color: #755540;
         }
     </style>
 </head>
@@ -54,22 +69,23 @@
         </div>
         
         <div class="content">
-            <h1>Welcome, <span th:text="${user.name}">User</span>!</h1>
+            <h1>New Tracking Number Generated</h1>
             
-            <p>Thank you for registering with us. We're excited to have you.</p>
+            <p>Your product <strong th:text="${sale.ask.product.name}">Product Name</strong> in size <strong th:text="${sale.ask.size}">Size</strong> was sold. Here's a new tracking number for it.</p>
             
-            <p>Your account has been successfully created with the following details:</p>
+            <div class="highlight-box">
+                <p>Please ship it as soon as possible. Shipping label and instructions are in the attached PDF file.</p>
+                
+                <p class="tracking-info">
+                    Tracking number: <span th:text="${trackingNumber.code}">TRACK123</span>
+                </p>
+            </div>
             
-            <p>
-                <strong>Name:</strong> <span th:text="${user.name}"></span><br>
-                <strong>Email:</strong> <span th:text="${user.email}"></span>
-            </p>
-            
-            <p>If you didn't request this account, please ignore this email.</p>
+            <p>Go to your profile to check all your sale details.</p>
         </div>
         
         <div class="footer">
-            &copy; <span>2025.</span> LOOK MOM I CAN FLY. Shoutout to La Flame, my mom, my teacher and my cousin.
+            &copy; <span>2025</span> LOOK MOM I CAN FLY. Shoutout to La Flame, my mom, my teacher and my cousin.
         </div>
     </div>
 </body>

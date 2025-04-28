@@ -58,7 +58,7 @@ public class EmailParamsGenerator {
 
     public static EmailDetailsDTO generateFailedPaymentParams(Bid bid){
         return new EmailDetailsDTO(bid.getUser().getEmail(),"Your payment was declined","FailedPayment",AppConfig.getEmail(),
-                Map.of("product",bid.getProduct()));
+                Map.of("bid",bid));
     }
 
     public static EmailDetailsDTO generateProductAuthenticatedParams(Sale sale){

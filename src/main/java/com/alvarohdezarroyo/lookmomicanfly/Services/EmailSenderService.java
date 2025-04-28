@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.EmailDetailsDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
+import com.alvarohdezarroyo.lookmomicanfly.Models.TrackingNumber;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.PDFGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ShippingLabelGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.FileValidator;
@@ -39,10 +41,10 @@ public class EmailSenderService {
         }
     }
 
-    public void sendEmailWithAttachment(EmailDetailsDTO emailDetailsDTO, String trackingNumber){
+    public void sendEmailWithAttachment(EmailDetailsDTO emailDetailsDTO, Sale sale, TrackingNumber trackingNumber){
         try{
             final File file=new File(
-                    generateSaleAndShippingEmail(trackingNumber)
+                    generateSaleAndShippingEmail(sale,trackingNumber)
             );
             final MimeMessage mimeMessage= generateEmail(emailDetailsDTO,file);
             sendEmail(mimeMessage);
@@ -53,9 +55,9 @@ public class EmailSenderService {
         }
     }
 
-    private String generateSaleAndShippingEmail(String saleId){
-        final String shippingLabelPath= ShippingLabelGenerator.generateShippingLabel(saleId);
-        return PDFGenerator.generateSalePDF(saleId, shippingLabelPath);
+    private String generateSaleAndShippingEmail(Sale sale, TrackingNumber trackingNumber){
+        final String shippingLabelPath= ShippingLabelGenerator.generateShippingLabel(sale.getId());
+        return PDFGenerator.generateSalePDF(sale,trackingNumber, shippingLabelPath);
     }
 
     private void sendEmail(MimeMessage mimeMessage){
