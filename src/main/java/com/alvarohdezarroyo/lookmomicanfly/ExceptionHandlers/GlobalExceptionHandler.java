@@ -5,6 +5,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.*;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +16,7 @@ import java.rmi.UnexpectedException;
 import java.util.Arrays;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
@@ -68,8 +70,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<FailedRequestDTO> runTimeExceptionHandler(RuntimeException ex){
 
-        Arrays.stream(ex.getStackTrace()).toList().forEach(
-                System.out::println
+        Arrays.stream(ex.getStackTrace()).toList().forEach(e ->
+                log.error(e.toString())
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FailedRequestDTO(ex.getMessage()));
@@ -128,6 +130,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<FailedRequestDTO> invalidTokenExceptionHandler(InvalidTokenException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FailedRequestDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(PDFGeneratorErrorException.class)
+    public ResponseEntity<FailedRequestDTO> pdfGeneratorErrorExceptionHandler(PDFGeneratorErrorException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FailedRequestDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ShippingLabelGeneratorErrorException.class)
+    public ResponseEntity<FailedRequestDTO> shippingLabelGeneratorErrorExceptionHandler(ShippingLabelGeneratorErrorException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FailedRequestDTO(ex.getMessage()));
     }
 
 }

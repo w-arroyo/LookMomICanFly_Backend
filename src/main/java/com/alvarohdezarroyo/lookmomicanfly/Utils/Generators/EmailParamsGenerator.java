@@ -1,7 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Generators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.EmailDetailsDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import org.springframework.stereotype.Component;
@@ -58,7 +59,7 @@ public class EmailParamsGenerator {
 
     public static EmailDetailsDTO generateFailedPaymentParams(Bid bid){
         return new EmailDetailsDTO(bid.getUser().getEmail(),"Your payment was declined","FailedPayment",AppConfig.getEmail(),
-                Map.of("product",bid.getProduct()));
+                Map.of("bid",bid));
     }
 
     public static EmailDetailsDTO generateProductAuthenticatedParams(Sale sale){
@@ -106,6 +107,11 @@ public class EmailParamsGenerator {
                 Map.of("sale",sale,
                         "tracking",trackingNumber
                 ));
+    }
+
+    public static EmailDetailsDTO newsletterParams(String email) {
+        return new EmailDetailsDTO(email, "You are now subscribed", "Newsletter", AppConfig.getEmail(),
+                null);
     }
 
 }

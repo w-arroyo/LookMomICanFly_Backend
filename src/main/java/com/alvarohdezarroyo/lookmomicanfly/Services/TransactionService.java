@@ -33,7 +33,7 @@ public class TransactionService {
     private Transaction saveTransaction(Order order, Sale sale){
         final TrackingNumber trackingNumber=trackingNumberService.saveSaleTrackingNumber(sale.getId());
         emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateOrderParams(order));
-        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateSaleParams(sale,trackingNumber),trackingNumber.getCode());
+        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateSaleParams(sale,trackingNumber),sale,trackingNumber);
         final Transaction transaction=TransactionMapper.createTransaction(order,sale);
         return transactionRepository.save(transaction);
     }

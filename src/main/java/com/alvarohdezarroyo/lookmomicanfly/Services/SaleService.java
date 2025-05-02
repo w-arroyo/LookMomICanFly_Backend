@@ -60,7 +60,7 @@ public class SaleService {
             throw new TrackingNumberAmountLimitReachedException("You can only generate 3 tracking numbers for a sale.");
         final Sale foundSale=getSaleById(saleId);
         final TrackingNumber trackingNumber = trackingNumberService.saveSaleTrackingNumber(saleId);
-        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateNewTrackingSaleParams(foundSale,trackingNumber),trackingNumber.getCode());
+        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateNewTrackingSaleParams(foundSale,trackingNumber),foundSale,trackingNumber);
     }
 
     public String getSaleCurrentTrackingNumberCode(String saleId){

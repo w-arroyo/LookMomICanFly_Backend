@@ -1,11 +1,16 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.EmailDetailsDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PDFGeneratorErrorException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ShippingLabelGeneratorErrorException;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
+import com.alvarohdezarroyo.lookmomicanfly.Models.TrackingNumber;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.PDFGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ShippingLabelGenerator;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.FileValidator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 
 @Service
+@Slf4j
 public class EmailSenderService {
 
     @Autowired
@@ -32,30 +38,30 @@ public class EmailSenderService {
             sendEmail(mimeMessage);
         }
         catch (MessagingException | MailException e){
-            System.out.println("There was an issue when sending the email.");
+            log.error("There was an issue sending the email.");
         }
         catch (RuntimeException ex){
-            System.out.println("Server error.");
+            log.error("Server error");
         }
     }
 
-    public void sendEmailWithAttachment(EmailDetailsDTO emailDetailsDTO, String trackingNumber){
+    public void sendEmailWithAttachment(EmailDetailsDTO emailDetailsDTO, Sale sale, TrackingNumber trackingNumber){
         try{
             final File file=new File(
-                    generateSaleAndShippingEmail(trackingNumber)
+                    generateSaleAndShippingEmail(sale,trackingNumber)
             );
             final MimeMessage mimeMessage= generateEmail(emailDetailsDTO,file);
             sendEmail(mimeMessage);
             FileValidator.removeShippingLabelDirectory();
-        }
-        catch(NullPointerException | MessagingException ex){
+        } catch (NullPointerException | MessagingException | PDFGeneratorErrorException |
+                 ShippingLabelGeneratorErrorException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
 
-    private String generateSaleAndShippingEmail(String saleId){
-        final String shippingLabelPath= ShippingLabelGenerator.generateShippingLabel(saleId);
-        return PDFGenerator.generateSalePDF(saleId, shippingLabelPath);
+    private String generateSaleAndShippingEmail(Sale sale, TrackingNumber trackingNumber){
+        final String shippingLabelPath= ShippingLabelGenerator.generateShippingLabel(sale.getId());
+        return PDFGenerator.generateSalePDF(sale,trackingNumber, shippingLabelPath);
     }
 
     private void sendEmail(MimeMessage mimeMessage){
@@ -63,12 +69,12 @@ public class EmailSenderService {
             javaMailSender.send(mimeMessage);
         }
         catch (MailException e){
-            System.out.println(e.getMessage());
-            System.out.println("There was an issue when sending the email.");
+            log.error(e.getMessage());
+            log.error("There was an issue when sending the email.");
         }
         catch (RuntimeException ex){
-            System.out.println(ex.getMessage());
-            System.out.println("Server error.");
+            log.error(ex.getMessage());
+            log.error("Server error.");
         }
     }
 
@@ -86,7 +92,7 @@ public class EmailSenderService {
             return mimeMessage;
         }
         catch(Exception ex){
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
             return null;
         }
     }

@@ -65,7 +65,6 @@ public class PostValidator {
     }
 
     public static void checkIfUserCreatingThePostIsTheSameAsTheBestOfferOne(String requestUserId, String bestPostUserId){
-        System.out.println("I'M IN BABYYYYYYYYYYYYY");
         if(requestUserId.equals(bestPostUserId))
             throw new RejectedPostException("You are not allowed to create this transaction because it matches your own offer.");
     }
