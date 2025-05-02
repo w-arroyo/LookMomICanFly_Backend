@@ -27,7 +27,7 @@ public class PDFGenerator {
 
             try (PDPageContentStream contentStream = new PDPageContentStream(pdfDocument, page)) {
                 PDType0Font font=PDType0Font.load(pdfDocument,
-                        new File("src/main/resources/fonts/EBGaramond-Regular.ttf")
+                        new File("src/main/resources/static/fonts/EBGaramond-Regular.ttf")
                 );
 
                 contentStream.setFont(font,14);

@@ -1,6 +1,5 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
-import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.JwtAuthenticationFilter;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Handlers.JwtLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
@@ -67,6 +66,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/shipping-options/get-all").permitAll();
                     auth.requestMatchers("/api/shipping-options/get-price/**").permitAll();
                     auth.requestMatchers("/api/phone-numbers/formats").permitAll();
+                    auth.requestMatchers("/api/newsletter/**").permitAll();
                     //auth.anyRequest().permitAll(); this would allow any request without being authenticated
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })

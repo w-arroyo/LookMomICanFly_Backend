@@ -30,14 +30,14 @@ public class TransactionStatusService {
     @Transactional
     public String changeSaleStatus(){
         AtomicInteger updatedSales=new AtomicInteger(0);
-        saleService.getAllOngoingSales().forEach(
-                sale -> {
-                        saleService.changeSaleStatus(sale.getId(),switchSaleStatus(sale.getStatus(),sale));
-                        checkIfSaleNeedsEmail(sale);
-                    updatedSales.incrementAndGet();
-                }
-        );
-        return updatedSales.get()+" transactions were updated.";
+        saleService.getAllOngoingSales().forEach(sale -> updateSale(sale, updatedSales));
+        return updatedSales.get() + " transactions were updated.";
+    }
+
+    private void updateSale(Sale sale, AtomicInteger updatedSales) {
+        saleService.changeSaleStatus(sale.getId(), switchSaleStatus(sale.getStatus(), sale));
+        checkIfSaleNeedsEmail(sale);
+        updatedSales.incrementAndGet();
     }
 
     @Transactional

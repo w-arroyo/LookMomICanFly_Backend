@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -9,6 +10,7 @@ import org.thymeleaf.exceptions.TemplateInputException;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class EmailTemplateService {
 
     @Autowired
@@ -25,7 +27,7 @@ public class EmailTemplateService {
             return templateEngine.process(template,context);
         }
         catch (TemplateInputException ex){
-            System.out.println("Email template not found.");
+            log.error("Email template not found.");
             return null;
         }
     }

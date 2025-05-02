@@ -8,6 +8,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.ShippingLabelGenerat
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.FileValidator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 
 @Service
+@Slf4j
 public class EmailSenderService {
 
     @Autowired
@@ -34,10 +36,10 @@ public class EmailSenderService {
             sendEmail(mimeMessage);
         }
         catch (MessagingException | MailException e){
-            System.out.println("There was an issue when sending the email.");
+            log.error("There was an issue sending the email.");
         }
         catch (RuntimeException ex){
-            System.out.println("Server error.");
+            log.error("Server error");
         }
     }
 
@@ -65,12 +67,12 @@ public class EmailSenderService {
             javaMailSender.send(mimeMessage);
         }
         catch (MailException e){
-            System.out.println(e.getMessage());
-            System.out.println("There was an issue when sending the email.");
+            log.error(e.getMessage());
+            log.error("There was an issue when sending the email.");
         }
         catch (RuntimeException ex){
-            System.out.println(ex.getMessage());
-            System.out.println("Server error.");
+            log.error(ex.getMessage());
+            log.error("Server error.");
         }
     }
 
@@ -88,7 +90,7 @@ public class EmailSenderService {
             return mimeMessage;
         }
         catch(Exception ex){
-            System.out.println(ex.getMessage());
+            log.error(ex.getMessage());
             return null;
         }
     }
