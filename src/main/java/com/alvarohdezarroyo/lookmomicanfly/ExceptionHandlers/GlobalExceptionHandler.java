@@ -132,4 +132,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FailedRequestDTO(ex.getMessage()));
     }
 
+    @ExceptionHandler(PDFGeneratorErrorException.class)
+    public ResponseEntity<FailedRequestDTO> pdfGeneratorErrorExceptionHandler(PDFGeneratorErrorException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FailedRequestDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ShippingLabelGeneratorErrorException.class)
+    public ResponseEntity<FailedRequestDTO> shippingLabelGeneratorErrorExceptionHandler(ShippingLabelGeneratorErrorException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FailedRequestDTO(ex.getMessage()));
+    }
+
 }

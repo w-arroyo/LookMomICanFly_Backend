@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Generators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ShippingLabelGeneratorErrorException;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.FileValidator;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -40,7 +41,7 @@ public class ShippingLabelGenerator {
             MatrixToImageWriter.writeToPath(bitMatrix,"PNG",path,config);
             return filePath;
         } catch(IOException | WriterException ex) {
-            throw new RuntimeException("Error generating shipping label: "+ex.getMessage());
+            throw new ShippingLabelGeneratorErrorException("Error generating shipping label: " + ex.getMessage());
         }
     }
 

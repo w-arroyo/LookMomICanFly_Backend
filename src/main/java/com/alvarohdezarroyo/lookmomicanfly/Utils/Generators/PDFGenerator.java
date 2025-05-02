@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Generators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PDFGeneratorErrorException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Models.TrackingNumber;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -69,7 +70,7 @@ public class PDFGenerator {
             pdfDocument.save(pdfPath);
             return pdfPath;
         } catch (IOException e) {
-            throw new RuntimeException("Error generating PDF: " + e.getMessage());
+            throw new PDFGeneratorErrorException("Error generating PDF: " + e.getMessage());
         }
     }
 

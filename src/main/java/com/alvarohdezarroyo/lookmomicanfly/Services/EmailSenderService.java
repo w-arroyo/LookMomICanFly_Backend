@@ -1,6 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.EmailDetailsDTO;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.PDFGeneratorErrorException;
+import com.alvarohdezarroyo.lookmomicanfly.Exceptions.ShippingLabelGeneratorErrorException;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Sale;
 import com.alvarohdezarroyo.lookmomicanfly.Models.TrackingNumber;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.PDFGenerator;
@@ -51,8 +53,8 @@ public class EmailSenderService {
             final MimeMessage mimeMessage= generateEmail(emailDetailsDTO,file);
             sendEmail(mimeMessage);
             FileValidator.removeShippingLabelDirectory();
-        }
-        catch(NullPointerException | MessagingException ex){
+        } catch (NullPointerException | MessagingException | PDFGeneratorErrorException |
+                 ShippingLabelGeneratorErrorException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
