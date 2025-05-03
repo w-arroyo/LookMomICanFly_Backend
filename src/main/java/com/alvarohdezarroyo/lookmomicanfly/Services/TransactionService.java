@@ -20,13 +20,15 @@ public class TransactionService {
     private final SaleService saleService;
     private final TrackingNumberService trackingNumberService;
     private final EmailSenderService emailSenderService;
+    private final SMSService smsService;
 
-    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService) {
+    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService, SMSService smsService) {
         this.transactionRepository = transactionRepository;
         this.orderService = orderService;
         this.saleService=saleService;
         this.trackingNumberService = trackingNumberService;
         this.emailSenderService = emailSenderService;
+        this.smsService = smsService;
     }
 
     @Transactional
@@ -52,6 +54,7 @@ public class TransactionService {
     @Transactional
     private Sale createSale(Ask ask){
         final Sale sale=TransactionMapper.createSale(ask);
+        smsService.sendSMS(sale.getAsk().getUser().getId());
         return saleService.saveSale(sale);
     }
 
