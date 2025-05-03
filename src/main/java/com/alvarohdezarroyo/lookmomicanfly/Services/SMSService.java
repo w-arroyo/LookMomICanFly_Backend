@@ -36,14 +36,14 @@ public class SMSService {
         Twilio.init(accountSid, authToken);
     }
 
-    public void sendSMS(String userId) {
+    public void sendSMS(String userId, String messageBody) {
         final PhoneNumber phoneNumberTo = getUserPhoneNumber(userId);
         if (phoneNumberTo != null) {
             try {
                 final Message message = Message.creator(
                                 new com.twilio.type.PhoneNumber(phoneNumberTo.getPrefix() + phoneNumberTo.getNumber()),
                                 new com.twilio.type.PhoneNumber(appPhoneNumber),
-                                "Your item was sold. Please check your email or account for more details."
+                                messageBody
                         )
                         .create();
             } catch (ApiException e) {
