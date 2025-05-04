@@ -18,25 +18,25 @@ public class EmailParamsGenerator {
     }
 
     public static EmailDetailsDTO generateSavedBidParams(Bid bid){
-        return new EmailDetailsDTO(bid.getUser().getId(),"Your bid was placed","Bid",AppConfig.getEmail(),
+        return new EmailDetailsDTO(bid.getUser().getEmail(), "Your bid was placed", "Bid", AppConfig.getEmail(),
                 Map.of("bid",bid,
                         "amount", AmountCalculator.getBidTotal(bid)));
     }
 
     public static EmailDetailsDTO generateSavedAskParams(Ask ask){
-        return new EmailDetailsDTO(ask.getUser().getId(),"Your ask was placed","Ask",AppConfig.getEmail(),
+        return new EmailDetailsDTO(ask.getUser().getEmail(), "Your ask was placed", "Ask", AppConfig.getEmail(),
                 Map.of("ask",ask,
                         "amount", AmountCalculator.getAskPayout(ask)));
     }
 
     public static EmailDetailsDTO generateOrderParams(Order order){
-        return new EmailDetailsDTO(order.getBid().getUser().getId(),"Order confirmed","Order",AppConfig.getEmail(),
+        return new EmailDetailsDTO(order.getBid().getUser().getEmail(), "Order confirmed", "Order", AppConfig.getEmail(),
                 Map.of("order",order,
                         "amount", AmountCalculator.getBidTotal(order.getBid())));
     }
 
     public static EmailDetailsDTO generateSaleParams(Sale sale, TrackingNumber trackingNumber){
-        return new EmailDetailsDTO(sale.getAsk().getUser().getId(),"Sale confirmed","Sale",AppConfig.getEmail(),
+        return new EmailDetailsDTO(sale.getAsk().getUser().getEmail(), "Sale confirmed", "Sale", AppConfig.getEmail(),
                 Map.of("sale",sale,
                         "amount", AmountCalculator.getAskPayout(sale.getAsk()),
                         "tracking",trackingNumber));
