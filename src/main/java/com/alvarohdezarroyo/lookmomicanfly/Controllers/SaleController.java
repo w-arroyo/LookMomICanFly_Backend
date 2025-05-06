@@ -37,8 +37,10 @@ public class SaleController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateTransactions(){
-        return ResponseEntity.status(HttpStatus.OK).body(transactionStatusService.changeSaleStatus());
+    public ResponseEntity<SuccessfulRequestDTO> updateTransactions() {
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessfulRequestDTO(
+                transactionStatusService.changeSaleStatus())
+        );
     }
 
     @PostMapping("/new-sale-tracking/")

@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Controllers;
 
 import com.alvarohdezarroyo.lookmomicanfly.DTO.OrderDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.SuccessfulRequestDTO;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.TransactionOverviewDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.Order;
 import com.alvarohdezarroyo.lookmomicanfly.Services.AuthService;
@@ -30,9 +31,11 @@ public class OrderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> completeShippedOrders(){
+    public ResponseEntity<SuccessfulRequestDTO> completeShippedOrders() {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderService.completeShippedOrders());
+                .body(new SuccessfulRequestDTO(
+                        orderService.completeShippedOrders()
+                ));
     }
 
     @GetMapping("/get/")
