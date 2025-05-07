@@ -1,7 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Generators;
 
 import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
-import com.alvarohdezarroyo.lookmomicanfly.DTO.*;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.EmailDetailsDTO;
+import com.alvarohdezarroyo.lookmomicanfly.DTO.UserDTO;
 import com.alvarohdezarroyo.lookmomicanfly.Models.*;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Calculators.AmountCalculator;
 import org.springframework.stereotype.Component;
@@ -17,25 +18,25 @@ public class EmailParamsGenerator {
     }
 
     public static EmailDetailsDTO generateSavedBidParams(Bid bid){
-        return new EmailDetailsDTO(bid.getUser().getId(),"Your bid was placed","Bid",AppConfig.getEmail(),
+        return new EmailDetailsDTO(bid.getUser().getEmail(), "Your bid was placed", "Bid", AppConfig.getEmail(),
                 Map.of("bid",bid,
                         "amount", AmountCalculator.getBidTotal(bid)));
     }
 
     public static EmailDetailsDTO generateSavedAskParams(Ask ask){
-        return new EmailDetailsDTO(ask.getUser().getId(),"Your ask was placed","Ask",AppConfig.getEmail(),
+        return new EmailDetailsDTO(ask.getUser().getEmail(), "Your ask was placed", "Ask", AppConfig.getEmail(),
                 Map.of("ask",ask,
                         "amount", AmountCalculator.getAskPayout(ask)));
     }
 
     public static EmailDetailsDTO generateOrderParams(Order order){
-        return new EmailDetailsDTO(order.getBid().getUser().getId(),"Order confirmed","Order",AppConfig.getEmail(),
+        return new EmailDetailsDTO(order.getBid().getUser().getEmail(), "Order confirmed", "Order", AppConfig.getEmail(),
                 Map.of("order",order,
                         "amount", AmountCalculator.getBidTotal(order.getBid())));
     }
 
     public static EmailDetailsDTO generateSaleParams(Sale sale, TrackingNumber trackingNumber){
-        return new EmailDetailsDTO(sale.getAsk().getUser().getId(),"Sale confirmed","Sale",AppConfig.getEmail(),
+        return new EmailDetailsDTO(sale.getAsk().getUser().getEmail(), "Sale confirmed", "Sale", AppConfig.getEmail(),
                 Map.of("sale",sale,
                         "amount", AmountCalculator.getAskPayout(sale.getAsk()),
                         "tracking",trackingNumber));
@@ -58,7 +59,7 @@ public class EmailParamsGenerator {
 
     public static EmailDetailsDTO generateFailedPaymentParams(Bid bid){
         return new EmailDetailsDTO(bid.getUser().getEmail(),"Your payment was declined","FailedPayment",AppConfig.getEmail(),
-                Map.of("product",bid.getProduct()));
+                Map.of("bid",bid));
     }
 
     public static EmailDetailsDTO generateProductAuthenticatedParams(Sale sale){
@@ -106,6 +107,11 @@ public class EmailParamsGenerator {
                 Map.of("sale",sale,
                         "tracking",trackingNumber
                 ));
+    }
+
+    public static EmailDetailsDTO newsletterParams(String email) {
+        return new EmailDetailsDTO(email, "You are now subscribed", "Newsletter", AppConfig.getEmail(),
+                null);
     }
 
 }

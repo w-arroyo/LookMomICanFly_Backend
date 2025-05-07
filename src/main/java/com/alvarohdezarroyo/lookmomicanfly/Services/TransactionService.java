@@ -20,20 +20,22 @@ public class TransactionService {
     private final SaleService saleService;
     private final TrackingNumberService trackingNumberService;
     private final EmailSenderService emailSenderService;
+    private final SMSService smsService;
 
-    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService) {
+    public TransactionService(TransactionRepository transactionRepository, OrderService orderService, SaleService saleService, TrackingNumberService trackingNumberService, EmailSenderService emailSenderService, SMSService smsService) {
         this.transactionRepository = transactionRepository;
         this.orderService = orderService;
         this.saleService=saleService;
         this.trackingNumberService = trackingNumberService;
         this.emailSenderService = emailSenderService;
+        this.smsService = smsService;
     }
 
     @Transactional
     private Transaction saveTransaction(Order order, Sale sale){
         final TrackingNumber trackingNumber=trackingNumberService.saveSaleTrackingNumber(sale.getId());
         emailSenderService.sendEmailWithNoAttachment(EmailParamsGenerator.generateOrderParams(order));
-        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateSaleParams(sale,trackingNumber),trackingNumber.getCode());
+        emailSenderService.sendEmailWithAttachment(EmailParamsGenerator.generateSaleParams(sale,trackingNumber),sale,trackingNumber);
         final Transaction transaction=TransactionMapper.createTransaction(order,sale);
         return transactionRepository.save(transaction);
     }
@@ -46,12 +48,14 @@ public class TransactionService {
     @Transactional
     private Order createOrder(Bid bid){
         final Order order=TransactionMapper.createOrder(bid);
+        smsService.sendSMS(order.getBid().getUser().getId(), "Your LOOK MOM I CAN FLY order is on! Your bid for '" + order.getBid().getProduct().getName() + "' in size '" + order.getBid().getSize().getValue() + "' was accepted. Check your email and profile for further details.");
         return orderService.saveOrder(order);
     }
 
     @Transactional
     private Sale createSale(Ask ask){
         final Sale sale=TransactionMapper.createSale(ask);
+        smsService.sendSMS(sale.getAsk().getUser().getId(), "Congrats! Your item '" + sale.getAsk().getProduct().getName() + "' in size '" + sale.getAsk().getSize().getValue() + "' was sold on LOOK MOM I CAN FLY. Please check your email and profile to follow the shipping instructions.");
         return saleService.saveSale(sale);
     }
 

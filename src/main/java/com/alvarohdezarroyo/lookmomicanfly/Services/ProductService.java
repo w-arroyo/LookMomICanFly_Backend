@@ -2,13 +2,14 @@ package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Enums.ProductCategory;
 import com.alvarohdezarroyo.lookmomicanfly.Exceptions.EntityNotFoundException;
-import com.alvarohdezarroyo.lookmomicanfly.Models.*;
+import com.alvarohdezarroyo.lookmomicanfly.Models.Product;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.ProductRepository;
 import com.alvarohdezarroyo.lookmomicanfly.RequestDTO.FilterProductRequestDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -40,11 +41,15 @@ public class ProductService {
     }
 
     public List<Product> findAllProducts(){
-        return productRepository.findAll();
+        final List<Product> allProducts = productRepository.findAll();
+        Collections.shuffle(allProducts);
+        return allProducts;
     }
 
     public List<Product> findAllProductsByCategory(ProductCategory category){
-        return productRepository.findAllByCategory(category);
+        final List<Product> products = productRepository.findAllByCategory(category);
+        Collections.shuffle(products);
+        return products;
     }
 
     public List<Product> findUserLikedProducts(String userId){
