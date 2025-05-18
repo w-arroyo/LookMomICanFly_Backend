@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="./logo_white_font.png" alt="LOOK MOM I CAN FLY Logo" width="150" height="150">
-  <p style="font-size: 1.2em; color: #755540; margin-top: 0.5em;">An Online Marketplace for Sneakers and Hype Products.</p>
+  <img src="./logo.png" alt="LOOK MOM I CAN FLY Logo" width="700" height="150">
 </div>
 
 <p style="font-size: 1.1em; text-align: center; margin: 2em 0;">
@@ -23,8 +22,8 @@ The core strength of this project lies in its robust backend, developed with a m
 - **Spring Security + JWT** — Implements secure user authentication, role-based access control, and token-based session handling.
 - **Stripe API** — Integrates secure payment handling.
 - **Twilio API** — Sends SMS notifications for real-time transaction updates.
-- **Thymeleaf** — Used to send dynamic and styled HTML emails. [GitHub repository](https://github.com/w-arroyo/LookMomICanFly_Resources)Visit the repository with the resources needed to download the templates and the SQL to add products and selling fees.
-- **SonarQube** — All backend code passed Sonar's Quality Gates, ensuring code quality, maintainability, and zero critical bugs. Check [SonarQube Analysis](https://sonarcloud.io/project/overview?id=w-arroyo_LookMomICanFly)here the analysis.
+- **Thymeleaf** — Used to send dynamic and styled HTML emails. [Visit the repository with the resources needed to download the templates and the SQL to add products and selling fees.](https://github.com/w-arroyo/LookMomICanFly_Resources)
+- **SonarQube** — All backend code passed Sonar's Quality Gates, ensuring code quality, maintainability, and zero critical bugs. [Check here the analysis.](https://sonarcloud.io/project/overview?id=w-arroyo_LookMomICanFly)
 
 This backend follows industry standards and embraces clean code principles. Extensive attention was given to architecture, security, and maintainability.
 
@@ -35,8 +34,8 @@ This backend follows industry standards and embraces clean code principles. Exte
 
 ## Frontend
 
-- **Angular 19 (TypeScript)** — Provides a modern SPA built on RxJS for reactive programming using observables. [Frontend Repository](https://github.com/w-arroyo/LookMomICanFly_Frontend)Check it on my frontend repository.
-- A lightweight JavaScript script was developed to dynamically update the status of active orders and sales. [Script Repository](https://github.com/w-arroyo/LookMomICanFly_Transaction-Status-Updater)Download it from the repository.
+- **Angular 19 (TypeScript)** — Provides a modern SPA built on RxJS for reactive programming using observables. [Check it on my frontend repository.](https://github.com/w-arroyo/LookMomICanFly_Frontend)
+- A lightweight JavaScript script was developed to dynamically update the status of active orders and sales. [Download it from the repository.](https://github.com/w-arroyo/LookMomICanFly_Transaction-Status-Updater)
 
 ## Database
 
@@ -47,202 +46,3 @@ Relational SQL database — Structured for transactional integrity and optimized
 This project is the culmination of my software developing degree and was built to demonstrate my ability to architect, develop, and maintain clean and intelligent backend and frontend systems.
 
 </div>
-
-<style>
-  .create-ask-container {
-    max-width: 1200px;
-    margin: 70px auto 0 auto;
-    padding: 20px;
-    min-height: 530px;
-  }
-  
-  .product-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .product-header h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #212121;
-    text-transform: uppercase;
-    margin: 0;
-  }
-  
-  .size-label {
-    font-size: 16px;
-    color: #755540;
-    font-weight: 500;
-  }
-  
-  .ask-content {
-    display: flex;
-    gap: 40px;
-  }
-  
-  .product-image-container {
-    margin-top: 20px;
-    margin-left: 60px;
-    flex: 0 0 55%; 
-    max-width: 60%; 
-    margin-right: 5%; 
-    padding-left: 0;
-  }
-  
-  .product-image {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    max-height: 500px; 
-    margin-left: -10%; 
-  }
-  
-  .ask-form-container {
-    flex: 1;
-    max-width: 500px;
-    margin-top: -10px;
-  }
-  
-  .form-group {
-    margin-bottom: 10px;
-  }
-  
-  .form-group label {
-    display: block;
-    font-size: 14px;
-    color: #755540;
-    margin-bottom: 8px;
-    font-weight: 500;
-    text-transform: uppercase;
-  }
-  
-  .form-group input,
-  .form-group select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #f5f5f5;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s;
-  }
-  
-  .form-group input:focus,
-  .form-group select:focus {
-    outline: none;
-    border-color: #755540;
-  }
-  
-  .price-info {
-    margin: 5px 0;
-    padding: 8px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
-  
-  .price-info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .price-info-row:last-child {
-    margin-bottom: 0;
-  }
-  
-  .user-info {
-    margin: 20px 0;
-  }
-  
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f5f5f5;
-  }
-  
-  .info-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-  
-  .payout-breakdown {
-    margin: 15px 0;
-    border-top: 1px solid #f5f5f5;
-    padding-top: 15px;
-  }
-  
-  .breakdown-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  
-  .breakdown-row.total {
-    font-weight: 600;
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #f5f5f5;
-  }
-  
-  .form-actions {
-    margin-top: 30px;
-  }
-  
-  .create-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #31355B;
-    color: #F8C1E1;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .create-button:hover {
-    background-color: #414675;
-  }
-  
-  .create-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .error-message {
-    color: #ED1C24;
-    font-size: 14px;
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    display: block; 
-  }
-  
-  .error-message.show {
-    display: block;
-  }
-  
-  .loading-spinner {
-    text-align: center;
-    padding: 50px;
-    font-size: 18px;
-    color: #755540;
-  }
-  
-  @media (max-width: 768px) {
-    .ask-content {
-      flex-direction: column;
-    }
-    
-    .product-image-container,
-    .ask-form-container {
-      max-width: 100%;
-    }
-  }
-</style>
