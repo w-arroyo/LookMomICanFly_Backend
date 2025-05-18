@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="https://via.placeholder.com/150x150/31355B/F8C1E1?text=LMICF" alt="LOOK MOM I CAN FLY Logo" width="150" height="150">
-  <h1 style="font-size: 3em; color: #31355B; text-transform: uppercase; margin-bottom: 0;">LOOK MOM I CAN FLY</h1>
+  <img src="./logo_white_font.png" alt="LOOK MOM I CAN FLY Logo" width="150" height="150">
   <p style="font-size: 1.2em; color: #755540; margin-top: 0.5em;">An Online Marketplace for Sneakers and Hype Products.</p>
 </div>
 
@@ -10,11 +9,11 @@
 
 <div class="create-ask-container" style="max-width: 1200px; margin: 70px auto 0 auto; padding: 20px; min-height: 530px;">
 
-## 🧠 Project Overview
+## Project Overview
 
 "LOOK MOM I CAN FLY" is a full-stack e-commerce platform built to showcase advanced programming skills, particularly in backend development. This project emulates the mechanics of a real-time resale marketplace, enabling users to buy and sell high-demand products such as sneakers and streetwear.
 
-## ⚙️ Backend
+## Backend
 
 The core strength of this project lies in its robust backend, developed with a modern, scalable, and maintainable architecture using:
 
@@ -24,26 +23,26 @@ The core strength of this project lies in its robust backend, developed with a m
 - **Spring Security + JWT** — Implements secure user authentication, role-based access control, and token-based session handling.
 - **Stripe API** — Integrates secure payment handling.
 - **Twilio API** — Sends SMS notifications for real-time transaction updates.
-- **Thymeleaf** — Used to send dynamic and styled HTML emails.
-- **SonarQube** — All backend code passed Sonar's Quality Gates, ensuring code quality, maintainability, and zero critical bugs.
+- **Thymeleaf** — Used to send dynamic and styled HTML emails. [GitHub repository](https://github.com/w-arroyo/LookMomICanFly_Resources)Visit the repository with the resources needed to download the templates and the SQL to add products and selling fees.
+- **SonarQube** — All backend code passed Sonar's Quality Gates, ensuring code quality, maintainability, and zero critical bugs. Check [SonarQube Analysis](https://sonarcloud.io/project/overview?id=w-arroyo_LookMomICanFly)here the analysis.
 
-✅ This backend follows industry standards and embraces clean code principles. Extensive attention was given to architecture, security, and maintainability.
+This backend follows industry standards and embraces clean code principles. Extensive attention was given to architecture, security, and maintainability.
 
-## 🔁 CI/CD & DevOps
+## CI/CD & DevOps
 
 - **GitHub Actions** — Configured for continuous integration and to enforce quality checks before allowing merges to the main branch.
 - **Version Control** — Git used rigorously throughout the project with structured commits and pull request reviews.
 
-## 💻 Frontend
+## Frontend
 
-- **Angular 19 (TypeScript)** — Provides a modern SPA built on RxJS for reactive programming using observables.
-- A lightweight JavaScript script was developed to dynamically update the status of active orders and sales.
+- **Angular 19 (TypeScript)** — Provides a modern SPA built on RxJS for reactive programming using observables. [Frontend Repository](https://github.com/w-arroyo/LookMomICanFly_Frontend)Check it on my frontend repository.
+- A lightweight JavaScript script was developed to dynamically update the status of active orders and sales. [Script Repository](https://github.com/w-arroyo/LookMomICanFly_Transaction-Status-Updater)Download it from the repository.
 
-## 🗄️ Database
+## Database
 
 Relational SQL database — Structured for transactional integrity and optimized query performance.
 
-## 📌 Why This Project?
+## Why This Project?
 
 This project is the culmination of my software developing degree and was built to demonstrate my ability to architect, develop, and maintain clean and intelligent backend and frontend systems.
 
