@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class RedisTokenService {
@@ -26,6 +28,7 @@ public class RedisTokenService {
         userTokenPrefix = AppConfig.getUserTokensPrefixValue();
     }
 
+    @Transactional
     public void save(String token, String userId, String ip, String device) {
         stringRedisTemplate.opsForHash()
                 .putAll(tokenPrefix + token,
@@ -38,9 +41,19 @@ public class RedisTokenService {
         stringRedisTemplate.opsForSet().add(userTokenPrefix + userId, tokenPrefix + token);
     }
 
+    @Transactional
+    public boolean removeToken(String userId, String token) {
+        final Boolean wasRemoved = stringRedisTemplate.delete(tokenPrefix + token);
+        if (wasRemoved.equals(Boolean.TRUE)) {
+            final Long deletedEntriesFromSet = stringRedisTemplate.opsForSet().remove(userTokenPrefix + userId, tokenPrefix + token);
+            return deletedEntriesFromSet != null && deletedEntriesFromSet > 0;
+        }
+        return false;
+    }
+
     public boolean checkIfTokenIsValid(String token) {
         Boolean exists = stringRedisTemplate.hasKey(tokenPrefix + token); // needs to be primitive in order to check if it's null
-        if (!exists) {
+        if (exists.equals(Boolean.FALSE)) {
             return false;
         }
         final String expiresAt = (String) stringRedisTemplate.opsForHash().get(tokenPrefix + token, "expiresAt");
@@ -50,8 +63,8 @@ public class RedisTokenService {
         return Instant.parse(expiresAt).isAfter(Instant.now());
     }
 
-    public void getAllTokensByUserId(String userId) {
-
+    public Set<String> getAllTokensByUserId(String userId) {
+        return stringRedisTemplate.opsForSet().members(userTokenPrefix + userId);
     }
 
 }
