@@ -28,10 +28,12 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
+    private final RedisTokenService redisTokenService;
 
-    public AuthService(UserRepository userRepository, @Lazy AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, @Lazy AuthenticationManager authenticationManager, RedisTokenService redisTokenService) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
+        this.redisTokenService = redisTokenService;
     }
 
     @Override
@@ -49,11 +51,14 @@ public class AuthService implements UserDetailsService {
         );
     }
 
-    public String authenticateUserAndGenerateToken(String email, String password){
+    public String authenticateUserAndGenerateToken(String email, String password, String ip, String device) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
-            return TokenGenerator.generateToken(authentication.getName());
+            String userId = authentication.getName();
+            String token = TokenGenerator.generateToken(userId);
+            redisTokenService.save(token, userId, ip, device);
+            return token;
         } catch (AuthenticationException ex){
             throw new LoginUnsuccessfulException("Wrong credentials.");
         }

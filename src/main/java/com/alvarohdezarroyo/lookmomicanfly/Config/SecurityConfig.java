@@ -1,5 +1,6 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
+import com.alvarohdezarroyo.lookmomicanfly.Services.RedisTokenService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.JwtAuthenticationFilter;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Handlers.JwtLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,9 +26,11 @@ public class SecurityConfig {
 
     @Autowired
     private final JwtLogoutHandler logoutHandler;
+    private final RedisTokenService redisTokenService;
 
-    public SecurityConfig(JwtLogoutHandler logoutHandler) {
+    public SecurityConfig(JwtLogoutHandler logoutHandler, RedisTokenService redisTokenService) {
         this.logoutHandler = logoutHandler;
+        this.redisTokenService = redisTokenService;
     }
 
     @Bean
@@ -71,7 +74,7 @@ public class SecurityConfig {
                     auth.anyRequest().authenticated(); // requires being logged in to access any request
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no sessions
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // filters token
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // filters token. that is why that class is not annotated as @Component, cause Spring would create the same filter twice
                 .formLogin(AbstractHttpConfigurer::disable) // disables login via html form
                 .logout(logout -> logout
                         .logoutUrl("/api/users/logout")
@@ -96,7 +99,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+        return new JwtAuthenticationFilter(redisTokenService);
     }
 
 }
