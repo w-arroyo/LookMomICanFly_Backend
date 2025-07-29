@@ -8,6 +8,7 @@ import com.alvarohdezarroyo.lookmomicanfly.Exceptions.UnauthorizedRequestExcepti
 import com.alvarohdezarroyo.lookmomicanfly.Models.User;
 import com.alvarohdezarroyo.lookmomicanfly.Repositories.UserRepository;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Generators.TokenGenerator;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -84,6 +85,12 @@ public class AuthService implements UserDetailsService {
         if(!userRepository.findById(getAuthenticatedUserId()).orElseThrow(
                 ()-> new EntityNotFoundException("User id does not exist.")
         ).getUserType().equals(UserType.ADMIN))
+            throw new FraudulentRequestException("You do not have permission to make this request.");
+    }
+
+    public void logUserOut(String token) {
+        final String userId = TokenValidator.getTokenUserId(token);
+        if (!redisTokenService.removeToken(userId, token))
             throw new FraudulentRequestException("You do not have permission to make this request.");
     }
 

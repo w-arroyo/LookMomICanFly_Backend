@@ -34,6 +34,7 @@ public class UserController {
     private final PhoneNumberService phoneNumberService;
     private final EmailSenderService emailSenderService;
 
+
     UserController(UserService userService, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService, PhoneNumberService phoneNumberService, EmailSenderService emailSenderService){
         this.userService=userService;
         this.authService = authService;
@@ -84,12 +85,12 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-
-
+    public ResponseEntity<SuccessfulRequestDTO> logout(@RequestParam String token) {
+        GlobalValidator.checkIfAFieldIsEmpty(token);
+        authService.logUserOut(token);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new SuccessfulRequestDTO("You successfully logged out of your account."));
         // FIX
-
-        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/deactivate/")

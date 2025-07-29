@@ -44,6 +44,9 @@ public class RedisTokenService {
     @Transactional
     public boolean removeToken(String userId, String token) {
         final Boolean wasRemoved = stringRedisTemplate.delete(tokenPrefix + token);
+
+        System.out.println("Removing token");
+
         if (wasRemoved.equals(Boolean.TRUE)) {
             final Long deletedEntriesFromSet = stringRedisTemplate.opsForSet().remove(userTokenPrefix + userId, tokenPrefix + token);
             return deletedEntriesFromSet != null && deletedEntriesFromSet > 0;
@@ -56,7 +59,9 @@ public class RedisTokenService {
         if (exists.equals(Boolean.FALSE)) {
             return false;
         }
+
         final String expiresAt = (String) stringRedisTemplate.opsForHash().get(tokenPrefix + token, "expiresAt");
+        System.out.println(expiresAt);
         if (expiresAt == null) {
             return false;
         }
