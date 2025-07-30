@@ -21,7 +21,7 @@ public class RedisTokenService {
     @Autowired
     private final StringRedisTemplate stringRedisTemplate;
 
-    // needs VALUE injection because AppConfig is initialized after this service and i don't think Lazy Loading is the best option
+    // needs VALUE injection because AppConfig is initialized after this service
 
     public RedisTokenService(StringRedisTemplate stringRedisTemplate, @Value("${app.redisTokenPrefix}") String tokenPrefix, @Value("${app.tokenLength}") String tokenLength, @Value("${app.redisUserIdSetPrefix}") String userTokenPrefix) {
         this.stringRedisTemplate = stringRedisTemplate;
