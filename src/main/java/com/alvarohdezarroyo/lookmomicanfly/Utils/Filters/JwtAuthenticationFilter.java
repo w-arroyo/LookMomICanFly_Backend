@@ -1,9 +1,11 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Filters;
 
+import com.alvarohdezarroyo.lookmomicanfly.Services.RedisTokenService;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.TokenValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -14,11 +16,18 @@ import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    @Autowired
+    private final RedisTokenService redisTokenService;
+
+    public JwtAuthenticationFilter(RedisTokenService redisTokenService) {
+        this.redisTokenService = redisTokenService;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try{
             final String token=getToken(request);
-            if(token!=null && TokenValidator.checkIfTokenIsStillValid(token)){
+            if (token != null && TokenValidator.checkIfTokenIsStillValid(token) && redisTokenService.checkIfTokenIsValid(token)) {
                 final String userId= TokenValidator.getTokenUserId(token);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 userId,

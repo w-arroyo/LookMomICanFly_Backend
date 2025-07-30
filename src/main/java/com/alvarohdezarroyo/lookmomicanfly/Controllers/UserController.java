@@ -34,6 +34,7 @@ public class UserController {
     private final PhoneNumberService phoneNumberService;
     private final EmailSenderService emailSenderService;
 
+
     UserController(UserService userService, AuthService authService, UserValidator userValidator, PostService postService, AddressService addressService, BankAccountService bankAccountService, PhoneNumberService phoneNumberService, EmailSenderService emailSenderService){
         this.userService=userService;
         this.authService = authService;
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping ("/register")
-    public ResponseEntity<LoginSuccessDTO> createUser(@RequestBody UserDTO user) throws Exception {
+    public ResponseEntity<LoginSuccessDTO> createUser(@RequestBody RegistrationRequestDTO user) throws Exception {
         UserValidator.emptyUserDTOFieldsValidator(user);
         user.setUserType(UserType.STANDARD.name());
         if(userValidator.checkUserByEmail(user.getEmail()))
@@ -64,7 +65,7 @@ public class UserController {
         final User savedUser=userService.saveUser(
                 UserMapper.toUser(user)
         );
-        final String token= authService.authenticateUserAndGenerateToken(savedUser.getEmail(),user.getPassword());
+        final String token = authService.authenticateUserAndGenerateToken(savedUser.getEmail(), user.getPassword(), user.getIp(), user.getDevice());
         final UserDTO userDTO=UserMapper.toDTO(savedUser);
         emailSenderService.sendEmailWithNoAttachment(
                 EmailParamsGenerator.generateRegistrationParams(userDTO)
@@ -77,19 +78,19 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginSuccessDTO> loginAuthentication(@RequestBody LoginRequestDTO loginRequestDTO) {
         GlobalValidator.checkIfTwoFieldsAreEmpty(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
-        final String token=userLogin(loginRequestDTO.getEmail(),loginRequestDTO.getPassword());
+        final String token = userLogin(loginRequestDTO.getEmail(), loginRequestDTO.getPassword(), loginRequestDTO.getIp(), loginRequestDTO.getDevice());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new LoginSuccessDTO(token)
                 );
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-
-
+    public ResponseEntity<SuccessfulRequestDTO> logout(@RequestParam String token) {
+        GlobalValidator.checkIfAFieldIsEmpty(token);
+        authService.logUserOut(token);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new SuccessfulRequestDTO("You successfully logged out of your account."));
         // FIX
-
-        return ResponseEntity.ok("success");
     }
 
     @PutMapping("/deactivate/")
@@ -141,8 +142,8 @@ public class UserController {
                 .body(new SuccessfulRequestDTO("Password updated successfully."));
     }
 
-    private String userLogin(String userEmail, String password){
-        return authService.authenticateUserAndGenerateToken(userEmail,password);
+    private String userLogin(String email, String password, String ip, String device) {
+        return authService.authenticateUserAndGenerateToken(email, password, ip, device);
     }
 
 }
