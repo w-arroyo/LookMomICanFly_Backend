@@ -1,8 +1,8 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
-import com.alvarohdezarroyo.lookmomicanfly.Config.AppConfig;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +21,13 @@ public class RedisTokenService {
     @Autowired
     private final StringRedisTemplate stringRedisTemplate;
 
-    public RedisTokenService(StringRedisTemplate stringRedisTemplate) {
+    // needs VALUE injection because AppConfig is initialized after this service
+
+    public RedisTokenService(StringRedisTemplate stringRedisTemplate, @Value("${app.redisTokenPrefix}") String tokenPrefix, @Value("${app.tokenLength}") String tokenLength, @Value("${app.redisUserIdSetPrefix}") String userTokenPrefix) {
         this.stringRedisTemplate = stringRedisTemplate;
-        tokenLength = Duration.ofMillis(AppConfig.getTokenDuration()); // Long.valueOf(AppConfig.getTokenDuration())
-        tokenPrefix = AppConfig.getJwtTokenPrefix();
-        userTokenPrefix = AppConfig.getUserTokensPrefixValue();
+        this.tokenLength = Duration.ofMillis(Integer.parseInt(tokenLength)); // Long.valueOf(AppConfig.getTokenDuration())
+        this.tokenPrefix = tokenPrefix;
+        this.userTokenPrefix = userTokenPrefix;
     }
 
     @Transactional
@@ -34,8 +36,8 @@ public class RedisTokenService {
                 .putAll(tokenPrefix + token,
                         Map.of("userId", userId,
                                 "createdAt", Instant.now().toString(),
-                                "ip", ip,
-                                "device", device,
+                                "ip", "ipppppppppppppppppp",
+                                "device", "deviceeeeeeeeeeeeeeeeeeeeeee",
                                 "expiresAt", Instant.now().plusSeconds(tokenLength.toSeconds()).toString()));
         stringRedisTemplate.expire(tokenPrefix + token, tokenLength);
         stringRedisTemplate.opsForSet().add(userTokenPrefix + userId, tokenPrefix + token);
@@ -59,9 +61,7 @@ public class RedisTokenService {
         if (exists.equals(Boolean.FALSE)) {
             return false;
         }
-
         final String expiresAt = (String) stringRedisTemplate.opsForHash().get(tokenPrefix + token, "expiresAt");
-        System.out.println(expiresAt);
         if (expiresAt == null) {
             return false;
         }
