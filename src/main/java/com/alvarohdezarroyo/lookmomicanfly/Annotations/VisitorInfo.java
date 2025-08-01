@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoggedUserInfo {
+public @interface VisitorInfo {
 
     boolean logAccess() default false;
 
