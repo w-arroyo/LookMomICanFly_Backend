@@ -3,11 +3,13 @@ package com.alvarohdezarroyo.lookmomicanfly.Utils.Extractors;
 import com.alvarohdezarroyo.lookmomicanfly.DTO.VisitorInfoDTO;
 import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VisitorInfoExtractor {
 
     public VisitorInfoDTO extractVisitorInfo(HttpServletRequest request) {
-        UserAgent userAgent = getUserAgent(request);
+        final UserAgent userAgent = getUserAgent(request);
         return new VisitorInfoDTO(
                 getVisitorsIp(request),
                 userAgent.getOperatingSystem().getDeviceType().getName(),

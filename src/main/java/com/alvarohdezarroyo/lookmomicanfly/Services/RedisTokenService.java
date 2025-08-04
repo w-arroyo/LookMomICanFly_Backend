@@ -31,16 +31,23 @@ public class RedisTokenService {
     }
 
     @Transactional
-    public void save(String token, String userId, String ip, String device) {
+    public void save(String token, String userId, String ip, String device, String browser, String os, String browserType) {
         stringRedisTemplate.opsForHash()
                 .putAll(tokenPrefix + token,
                         Map.of("userId", userId,
                                 "createdAt", Instant.now().toString(),
-                                "ip", "ipppppppppppppppppp",
-                                "device", "deviceeeeeeeeeeeeeeeeeeeeeee",
+                                "ip", ip,
+                                "device", device,
+                                "browser", browser,
+                                "operatingSystem", os,
+                                "browserType", browserType,
                                 "expiresAt", Instant.now().plusSeconds(tokenLength.toSeconds()).toString()));
         stringRedisTemplate.expire(tokenPrefix + token, tokenLength);
         stringRedisTemplate.opsForSet().add(userTokenPrefix + userId, tokenPrefix + token);
+
+        // SENDING REQUESTS FROM POSTMAN PRINTS: 0:0:0:0:0:0:0:1, Unknown, Unknown, Unknown, unknown
+        // System.out.println(ip+", "+device+", "+browser+", "+os+", "+browserType);
+
     }
 
     @Transactional

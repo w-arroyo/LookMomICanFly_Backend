@@ -38,7 +38,7 @@ public class AppConfig {
         tokenPrefix = value;
     }
 
-    @Value("{app.VISITOR_INFO_ATTRIBUTE}")
+    @Value("${app.visitorInfoAttribute}")
     public void setVisitorInfoAtt(String value) {
         visitorInfoAttribute = value;
     }
@@ -101,6 +101,10 @@ public class AppConfig {
 
     public static SecretKey getTokenSigningSecretKey(){
         return Keys.hmacShaKeyFor(tokenSigningKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String getVisitorInfoAttrib() {
+        return visitorInfoAttribute;
     }
 
     @Bean

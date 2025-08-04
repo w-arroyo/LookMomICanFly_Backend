@@ -52,13 +52,13 @@ public class AuthService implements UserDetailsService {
         );
     }
 
-    public String authenticateUserAndGenerateToken(String email, String password, String ip, String device) {
+    public String authenticateUserAndGenerateToken(String email, String password, String ip, String device, String browser, String os, String browserType) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
             String userId = authentication.getName();
             String token = TokenGenerator.generateToken(userId);
-            redisTokenService.save(token, userId, ip, device);
+            redisTokenService.save(token, userId, ip, device, browser, os, browserType);
             return token;
         } catch (AuthenticationException ex){
             throw new LoginUnsuccessfulException("Wrong credentials.");
