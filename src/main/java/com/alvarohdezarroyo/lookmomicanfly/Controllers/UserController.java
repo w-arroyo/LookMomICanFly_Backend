@@ -85,16 +85,6 @@ public class UserController {
                 );
     }
 
-    /*
-    @PostMapping("/logout")
-    public ResponseEntity<SuccessfulRequestDTO> logout(@RequestParam String token) {
-        GlobalValidator.checkIfAFieldIsEmpty(token);
-        authService.logUserOut(token);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new SuccessfulRequestDTO("You successfully logged out of your account."));
-        // FIX
-    }
-    */
     @PutMapping("/deactivate/")
     public ResponseEntity <SuccessfulRequestDTO> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);
