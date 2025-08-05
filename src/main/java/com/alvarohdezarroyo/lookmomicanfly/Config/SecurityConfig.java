@@ -1,15 +1,16 @@
 package com.alvarohdezarroyo.lookmomicanfly.Config;
 
 import com.alvarohdezarroyo.lookmomicanfly.Services.RedisTokenService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Extractors.JwtTokenExtractor;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Extractors.VisitorInfoExtractor;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.JwtAuthenticationFilter;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Filters.VisitorInfoFilter;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Handlers.JwtLogoutHandler;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,12 +33,14 @@ public class SecurityConfig {
     private final JwtLogoutHandler logoutHandler;
     private final RedisTokenService redisTokenService;
     private final VisitorInfoExtractor visitorInfoExtractor;
+    private final JwtTokenExtractor jwtTokenExtractor;
     private final AppConfig appConfig;
 
-    public SecurityConfig(JwtLogoutHandler logoutHandler, RedisTokenService redisTokenService, VisitorInfoExtractor visitorInfoExtractor, @Lazy AppConfig appConfig) {
+    public SecurityConfig(JwtLogoutHandler logoutHandler, RedisTokenService redisTokenService, VisitorInfoExtractor visitorInfoExtractor, JwtTokenExtractor jwtTokenExtractor, @Lazy AppConfig appConfig) {
         this.logoutHandler = logoutHandler;
         this.redisTokenService = redisTokenService;
         this.visitorInfoExtractor = visitorInfoExtractor;
+        this.jwtTokenExtractor = jwtTokenExtractor;
         this.appConfig = appConfig;
     }
 
@@ -89,7 +92,7 @@ public class SecurityConfig {
                         .logoutUrl("/api/users/logout")
                         .addLogoutHandler(logoutHandler) // handles the logout process (this class implements LogoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.setStatus(HttpStatus.OK.value());
                             response.getWriter().write("Successful logout.");
                         }));
         return http.build();
@@ -108,7 +111,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(redisTokenService);
+        return new JwtAuthenticationFilter(redisTokenService, jwtTokenExtractor);
     }
 
     @Bean

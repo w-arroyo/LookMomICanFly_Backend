@@ -85,6 +85,7 @@ public class UserController {
                 );
     }
 
+    /*
     @PostMapping("/logout")
     public ResponseEntity<SuccessfulRequestDTO> logout(@RequestParam String token) {
         GlobalValidator.checkIfAFieldIsEmpty(token);
@@ -93,7 +94,7 @@ public class UserController {
                 .body(new SuccessfulRequestDTO("You successfully logged out of your account."));
         // FIX
     }
-
+    */
     @PutMapping("/deactivate/")
     public ResponseEntity <SuccessfulRequestDTO> deactivateAccount(@RequestParam String userId){
         GlobalValidator.checkIfAFieldIsEmpty(userId);

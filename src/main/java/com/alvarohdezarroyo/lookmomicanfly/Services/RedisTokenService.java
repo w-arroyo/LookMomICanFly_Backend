@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Services;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,6 +12,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Service
 public class RedisTokenService {
 
@@ -44,18 +46,12 @@ public class RedisTokenService {
                                 "expiresAt", Instant.now().plusSeconds(tokenLength.toSeconds()).toString()));
         stringRedisTemplate.expire(tokenPrefix + token, tokenLength);
         stringRedisTemplate.opsForSet().add(userTokenPrefix + userId, tokenPrefix + token);
-
-        // SENDING REQUESTS FROM POSTMAN PRINTS: 0:0:0:0:0:0:0:1, Unknown, Unknown, Unknown, unknown
-        // System.out.println(ip+", "+device+", "+browser+", "+os+", "+browserType);
-
+        log.info("Logged user info: " + ip + ", " + device + ", " + browser + ", " + os + ", " + browserType);
     }
 
     @Transactional
     public boolean removeToken(String userId, String token) {
         final Boolean wasRemoved = stringRedisTemplate.delete(tokenPrefix + token);
-
-        System.out.println("Removing token");
-
         if (wasRemoved.equals(Boolean.TRUE)) {
             final Long deletedEntriesFromSet = stringRedisTemplate.opsForSet().remove(userTokenPrefix + userId, tokenPrefix + token);
             return deletedEntriesFromSet != null && deletedEntriesFromSet > 0;

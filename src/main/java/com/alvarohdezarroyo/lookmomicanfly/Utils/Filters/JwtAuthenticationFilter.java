@@ -1,6 +1,7 @@
 package com.alvarohdezarroyo.lookmomicanfly.Utils.Filters;
 
 import com.alvarohdezarroyo.lookmomicanfly.Services.RedisTokenService;
+import com.alvarohdezarroyo.lookmomicanfly.Utils.Extractors.JwtTokenExtractor;
 import com.alvarohdezarroyo.lookmomicanfly.Utils.Validators.TokenValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,15 +19,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private final RedisTokenService redisTokenService;
+    private final JwtTokenExtractor jwtTokenExtractor;
 
-    public JwtAuthenticationFilter(RedisTokenService redisTokenService) {
+    public JwtAuthenticationFilter(RedisTokenService redisTokenService, JwtTokenExtractor jwtTokenExtractor) {
         this.redisTokenService = redisTokenService;
+        this.jwtTokenExtractor = jwtTokenExtractor;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try{
-            final String token=getToken(request);
+            final String token = jwtTokenExtractor.getToken(request);
             if (token != null && TokenValidator.checkIfTokenIsStillValid(token) && redisTokenService.checkIfTokenIsValid(token)) {
                 final String userId= TokenValidator.getTokenUserId(token);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -40,13 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not allowed.");
         }
-    }
-
-    private String getToken(HttpServletRequest request){
-        final String header=request.getHeader("Authorization");
-        if(header!=null && !header.trim().isEmpty() && header.startsWith("Bearer "))
-            return header.substring(7); // removes Bearer from the header to get just the token
-        return null;
     }
 
 }
